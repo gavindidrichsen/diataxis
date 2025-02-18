@@ -248,32 +248,44 @@ module Diataxis
       sections = @document_types.map do |doc_type|
         section_name = doc_type.name.split('::').last
         entries = document_entries[doc_type]
-        <<~SECTION
-          ### #{section_name}s
-
-          <!-- #{section_name.downcase}log -->
-          #{entries.join("\n")}
-          <!-- #{section_name.downcase}logstop -->
-        SECTION
-      end.join("\n\n")
-
+        if entries.empty?
+          <<~SECTION
+            ### #{section_name}s
+    
+            <!-- #{section_name.downcase}log -->
+            <!-- #{section_name.downcase}logstop -->
+          SECTION
+        else
+          <<~SECTION
+            ### #{section_name}s
+    
+            <!-- #{section_name.downcase}log -->
+            #{entries.join("\n")}
+            <!-- #{section_name.downcase}logstop -->
+          SECTION
+        end
+      end.join("\n")
+    
       content = <<~HEREDOC
         # #{current_directory_name}
-
+    
         ## Description
-
+    
         ## Usage
-
+    
         ## Appendix
-
+    
         ### Design Decisions
-
+    
         <!-- adrlog -->
         <!-- adrlogstop -->
-
+    
         #{sections}
       HEREDOC
 
+      # Ensure content only has a single newline at the end
+      content = content.rstrip + "\n"
+    
       File.write(readme_path, content)
       puts "Created new README.md in #{@directory}"
     end
