@@ -2,9 +2,5 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in diataxis.gemspec
+# Let gemspec handle all dependencies
 gemspec
-
-gem "rake", "~> 13.0"
-
-gem "rspec", "~> 3.0"
