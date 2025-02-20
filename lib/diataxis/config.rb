@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module Diataxis
+  # Configuration manager for Diataxis
+  # Handles reading and writing configuration settings from .diataxis file
   class Config
     CONFIG_FILE = '.diataxis'
     DEFAULT_CONFIG = {
@@ -24,8 +28,6 @@ module Diataxis
       File.write(config_path, JSON.pretty_generate(config))
       puts "Created #{config_path} with default configuration"
     end
-
-    private
 
     def self.find_config(start_dir)
       current_dir = File.expand_path(start_dir)
