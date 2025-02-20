@@ -4,11 +4,11 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 
 ## Features
 
-- Create How-To guides with proper formatting and naming conventions
-- Create tutorials with consistent structure
-- Automatically update README.md with links to documentation
-- Smart title formatting that converts statements to "How to" format
-- Maintains alphabetical order in documentation lists
+* Create How-To guides with proper formatting and naming conventions
+* Create tutorials with consistent structure
+* Automatically update README.md with links to documentation
+* Smart title formatting that converts statements to "How to" format
+* Maintains alphabetical order in documentation lists
 
 ## Installation
 
@@ -18,31 +18,27 @@ Install the gem by executing:
 gem install diataxis
 ```
 
+Make sure that `dia` is available on your PATH.  
+
 ## Usage
 
-### Creating a New How-To Guide
-
 ```bash
-# Create with a "How to" title
-dia howto new "How to configure SSL certificates"
+# initialize a new diataxis project (creates .diataxis config)
+dia init
+cat .diataxis                                           # view and edit the default configuration
 
-# Or use an imperative statement (automatically converted)
-dia howto new "Configure SSL certificates"
-# Creates: how_to_configure_ssl_certificates.md
-# Title becomes: "How to configure SSL certificates"
-```
+# Create a New How-To Guide
+dia howto new "How to configure SSL certificates"       # create with a "How to" title
+dia howto new "Configure SSL certificates"              # or use an imperative statement (automatically converted)
 
-### Creating a New Tutorial
-
-```bash
+# Create a New Tutorial
 dia tutorial new "Getting Started with Docker"
+
+# Create a new ADR
+dia adr new "Do whiteboard wednesday talks"
 ```
 
-### Updating Documentation
-
-The `update` command will:
-1. Normalize filenames based on their titles
-2. Update the README.md with links to all documentation
+If you change any document titles, then run the following to automatically rename the filenames and update the links:
 
 ```bash
 dia update .

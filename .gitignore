@@ -10,3 +10,7 @@
 # rspec failure tracking
 .rspec_status
 *.gem
+
+# Ignore everything in bin except bin/dia
+bin/*
+!bin/dia
