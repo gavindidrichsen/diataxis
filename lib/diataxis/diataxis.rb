@@ -1,4 +1,6 @@
 require 'fileutils'
+require 'pathname'
+require_relative 'config'
 
 module Diataxis
   # Base document class following Template Method pattern
@@ -176,6 +178,7 @@ module Diataxis
     def initialize(directory, document_types)
       @directory = directory
       @document_types = document_types
+      @config = Config.load(directory)
     end
 
     def update
@@ -189,7 +192,7 @@ module Diataxis
     private
 
     def readme_path
-      File.join(@directory, "README.md")
+      File.join(@directory, @config['readme'])
     end
 
     def document_entries
@@ -201,12 +204,24 @@ module Diataxis
     end
 
     def collect_entries(doc_type)
-      pattern = File.join(@directory, doc_type.pattern)
+      search_dir = if doc_type == HowTo
+                    File.join(@directory, @config['howtos'])
+                  elsif doc_type == Tutorial
+                    File.join(@directory, @config['tutorials'])
+                  else
+                    @directory
+                  end
+      
+      pattern = File.join(search_dir, doc_type.pattern)
       files = Dir.glob(pattern)
       puts "Found #{files.length} files matching #{pattern}"
+      
+      readme_dir = File.dirname(readme_path)
+      
       files.map do |file|
         title = File.open(file, &:readline).strip[2..] # Extract title from first line
-        "* [#{title}](#{File.basename(file)})"
+        relative_path = Pathname.new(file).relative_path_from(Pathname.new(readme_dir)).to_s
+        "* [#{title}](#{relative_path})"
       end
     end
 
