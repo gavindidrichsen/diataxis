@@ -34,6 +34,7 @@ module Diataxis
       while current_dir != '/'
         config_path = File.join(current_dir, CONFIG_FILE)
         return config_path if File.exist?(config_path)
+
         current_dir = File.dirname(current_dir)
       end
       nil
