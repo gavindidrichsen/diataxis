@@ -272,6 +272,44 @@ module Diataxis
     end
   end
 
+  # Explanation document type for understanding concepts and background
+  # Follows the Diataxis framework's explanation format
+  class Explanation < Document
+    def self.pattern
+      '**/explanation_*.md'
+    end
+
+    def content
+      <<~CONTENT
+        # #{title}
+
+        ## Overview
+
+        A brief introduction to what this explanation covers.
+
+        ## Background
+
+        Historical context and evolution of the concept/system.
+
+        ## Key Concepts
+
+        Core ideas and principles that help understand the topic.
+
+        ## Technical Context
+
+        How this fits into the broader technical landscape.
+
+        ## Rationale
+
+        Why things are done this way and what trade-offs were considered.
+
+        ## Related Concepts
+
+        Links to related topics and further reading.
+      CONTENT
+    end
+  end
+
   # README management
   class ReadmeManager
     def initialize(directory, document_types)
