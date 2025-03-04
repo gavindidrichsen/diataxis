@@ -18,6 +18,7 @@ Install the gem by executing:
 ```bash
 git clone https://github.com/gavindidrichsen/diataxis.git
 cd diataxis
+gem build diataxis.gemspec
 gem install diataxis
 ```
 
