@@ -188,34 +188,3 @@ After running each test case:
 3. Confirm README updates
 4. Validate directory structure
 5. Check error messages (for error cases)
-
-## Converting to Automated Tests
-
-These manual tests can be automated by:
-
-1. Creating a test fixture directory
-2. Using Ruby's FileUtils to set up test conditions
-3. Implementing each test case as a separate RSpec example
-4. Using file comparison to verify results
-5. Capturing and verifying command output
-
-Example test structure:
-
-```ruby
-RSpec.describe Diataxis::CLI do
-  let(:test_dir) { Dir.mktmpdir }
-  after { FileUtils.remove_entry test_dir }
-
-  context "document creation" do
-    it "creates how-to with default config" do
-      # Test implementation
-    end
-  end
-
-  context "README management" do
-    it "preserves custom content" do
-      # Test implementation
-    end
-  end
-end
-```
