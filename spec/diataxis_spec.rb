@@ -11,6 +11,7 @@ RSpec.describe Diataxis do
   let(:howto_dir) { File.join(docs_dir, 'how-to') }
   let(:tutorial_dir) { File.join(docs_dir, 'tutorials') }
   let(:adr_dir) { File.join(docs_dir, 'exp/adr') }
+  let(:explanation_dir) { File.join(docs_dir, 'explanations') }
   let(:readme_path) { File.join(docs_dir, 'README.md') }
   let(:config_path) { File.join(test_dir, '.diataxis') }
 
@@ -24,6 +25,7 @@ RSpec.describe Diataxis do
       'readme' => 'docs/README.md',
       'howtos' => 'docs/how-to',
       'tutorials' => 'docs/tutorials',
+      'explanations' => 'docs/explanations',
       'adr' => 'docs/exp/adr'
     }
     FileUtils.mkdir_p(File.dirname(config_path))
@@ -138,6 +140,30 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(readme_path)
         expect(readme_content).to include('[ADR-0001]')
+      end
+    end
+
+    context 'creating explanation' do
+      it 'creates explanation with correct template and updates README' do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+        end
+
+        explanation_path = File.join(explanation_dir, 'explanation_system_architecture.md')
+        expect(File).to exist(explanation_path)
+
+        content = File.read(explanation_path)
+        expect(content).to include('# System Architecture')
+        expect(content).to include('## Overview')
+        expect(content).to include('## Background')
+        expect(content).to include('## Key Concepts')
+        expect(content).to include('## Technical Context')
+        expect(content).to include('## Rationale')
+        expect(content).to include('## Related Concepts')
+
+        readme_content = File.read(readme_path)
+        expect(readme_content).to include('[System Architecture]')
+        expect(readme_content).to include('### Explanations')
       end
     end
   end
