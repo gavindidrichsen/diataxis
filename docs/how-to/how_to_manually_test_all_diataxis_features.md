@@ -1,11 +1,11 @@
-# How to Manually Test All Diataxis Features
+# How to manually test all diataxis features
 
 ## Description
 
 The diataxis gem provides several key features that need testing:
 
 * Configuration management via `.diataxis` file
-* Document creation (how-tos, tutorials, ADRs)
+* Document creation (how-tos, tutorials, explanations, ADRs)
 * Document renaming based on title changes
 * README generation and updates
 * Directory structure maintenance
@@ -85,6 +85,17 @@ bundle exec dia adr new "Use PostgreSQL Database"
 # - Creates 0001-use-postgresql-database.md
 # - Updates README.md with link
 # - Uses correct template and numbering
+```
+
+#### Test Explanation Creation
+
+```bash
+bundle exec dia explanation new "Why We Use This Architecture"
+
+# Expected:
+# - Creates explanation_why_we_use_this_architecture.md
+# - Updates README.md with link
+# - Uses correct template with Overview, Background, Key Concepts, etc.
 ```
 
 ### 3. Document Title Changes

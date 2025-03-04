@@ -6,6 +6,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 
 * Create How-To guides with proper formatting and naming conventions
 * Create tutorials with consistent structure
+* Create explanation documents following the Diataxis framework
 * Automatically update README.md with links to documentation
 * Smart title formatting that converts statements to "How to" format
 * Maintains alphabetical order in documentation lists
@@ -33,6 +34,9 @@ dia howto new "Configure SSL certificates"              # or use an imperative s
 
 # Create a New Tutorial
 dia tutorial new "Getting Started with Docker"
+
+# Create a New Explanation
+dia explanation new "Why We Use PostgreSQL"
 
 # Create a new ADR
 dia adr new "Do whiteboard wednesday talks"
