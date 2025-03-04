@@ -16,6 +16,8 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 Install the gem by executing:
 
 ```bash
+git clone https://github.com/gavindidrichsen/diataxis.git
+cd diataxis
 gem install diataxis
 ```
 
@@ -47,6 +49,8 @@ If you change any document titles, then run the following to automatically renam
 ```bash
 dia update .
 ```
+
+For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
 
 ## Development
 
