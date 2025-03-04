@@ -3,5 +3,5 @@
   "howtos": "docs/how-to",
   "tutorials": "docs/tutorials",
   "explanations": "docs/explanations",
-  "adr": "docs/exp/adr"
+  "adr": "docs/explanations/adr"
 }
