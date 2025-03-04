@@ -9,7 +9,7 @@
 ### HowTos
 
 <!-- howtolog -->
-* [How to manually Test All Diataxis Features](how-to/how_to_manually_test_all_diataxis_features.md)
+* [How to manually test all diataxis features](how-to/how_to_manually_test_all_diataxis_features.md)
 <!-- howtologstop -->
 
 ### Tutorials
@@ -25,3 +25,9 @@
 * [ADR-0002](exp/adr/0002-use-configuration-file-for-document-paths.md) - Use Configuration File for Document Paths
 * [ADR-0003](exp/adr/0003-auto-generate-readme-with-document-links.md) - Auto-Generate README with Document Links
 <!-- adrlogstop -->
+
+### Explanations
+
+<!-- explanationlog -->
+
+<!-- explanationlogstop -->

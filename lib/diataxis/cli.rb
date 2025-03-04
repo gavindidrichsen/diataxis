@@ -21,6 +21,8 @@ module Diataxis
         handle_tutorial(args)
       when 'adr'
         handle_adr(args)
+      when 'explanation'
+        handle_explanation(args)
       when 'update'
         handle_update(args)
       else
@@ -37,6 +39,7 @@ module Diataxis
       puts '  howto new "Title"     - Create a new how-to guide'
       puts '  tutorial new "Title"  - Create a new tutorial'
       puts '  adr new "Title"      - Create a new architectural decision record'
+      puts '  explanation new "Title" - Create a new explanation document'
       puts '  update <directory>    - Update document filenames and README.md'
       exit 1
     end
@@ -48,6 +51,7 @@ module Diataxis
         'readme' => 'docs/README.md',
         'howtos' => 'docs/how-to',
         'tutorials' => 'docs/tutorials',
+        'explanations' => 'docs/explanations',
         'adr' => 'docs/exp/adr'
       }
       Config.create(directory, config)
@@ -68,7 +72,7 @@ module Diataxis
       HowTo.new(title, howto_dir).create
 
       # Update the README.md after creating a new how-to
-      document_types = [HowTo, Tutorial]
+      document_types = [HowTo, Tutorial, Explanation]
       ReadmeManager.new(directory, document_types).update
     end
 
@@ -87,7 +91,7 @@ module Diataxis
       Tutorial.new(title, tutorial_dir).create
 
       # Update the README.md after creating a new tutorial
-      document_types = [HowTo, Tutorial]
+      document_types = [HowTo, Tutorial, Explanation]
       ReadmeManager.new(directory, document_types).update
     end
 
@@ -120,11 +124,30 @@ module Diataxis
       abort("Error: '#{directory}' is not a valid directory.") unless Dir.exist?(directory)
 
       Config.load(directory)
-      document_types = [HowTo, Tutorial, ADR]
+      document_types = [HowTo, Tutorial, Explanation, ADR]
 
       # First collect all files and update filenames
       readme_manager = ReadmeManager.new(directory, document_types)
       readme_manager.update
+    end
+
+    def self.handle_explanation(args)
+      if args.length < 2 || args[0] != 'new'
+        puts 'Usage: diataxis explanation new "Title of the Explanation"'
+        exit 1
+      end
+      directory = Dir.pwd
+      title = args[1..].join(' ')
+      config = Config.load(directory)
+
+      explanation_dir = File.join(directory, config['explanations'])
+      FileUtils.mkdir_p(explanation_dir)
+
+      Explanation.new(title, explanation_dir).create
+
+      # Update the README.md after creating a new explanation
+      document_types = [HowTo, Tutorial, Explanation]
+      ReadmeManager.new(directory, document_types).update
     end
   end
 end
