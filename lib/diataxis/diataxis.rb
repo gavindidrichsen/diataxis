@@ -100,10 +100,7 @@ module Diataxis
 
         List any setup steps, dependencies, or prior knowledge needed before following this guide.
 
-        ## Steps
-
-        **Step 1: [Action]**#{'  '}
-        Explanation of the step with commands or code snippets if applicable.#{'  '}
+        ## Usage
 
         ```bash
         # step 1
@@ -114,17 +111,12 @@ module Diataxis
         # step 3
         ```
 
-        ## Verification
-
-        How to confirm that the how-to was successful. Example output or tests.
-
-        ## Troubleshooting
-
-        Common issues and resolutions.
-
         ## Appendix
 
-        Additional references, sample outputs, or related links.
+        ### Sample usage output
+
+        ```bash
+        ```
       CONTENT
     end
   end
