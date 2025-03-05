@@ -66,8 +66,10 @@ module Diataxis
 
   # Concrete document types
   class HowTo < Document
-    def self.pattern
-      '**/how_to_*.md'
+    def self.pattern(config_root = '.')
+      config = Config.load(config_root)
+      path = config['howtos'] || '.'
+      File.join(path, 'how_to_*.md')
     end
 
     def initialize(title, directory = '.')
@@ -130,8 +132,10 @@ module Diataxis
   # Tutorial document type for step-by-step learning content
   # Follows the Diataxis framework's tutorial format
   class Tutorial < Document
-    def self.pattern
-      '**/tutorial_*.md'
+    def self.pattern(config_root = '.')
+      config = Config.load(config_root)
+      path = config['tutorials'] || '.'
+      File.join(path, 'tutorial_*.md')
     end
 
     protected
@@ -158,8 +162,10 @@ module Diataxis
   # Architecture Decision Record (ADR) document type
   # Captures important architectural decisions and their context
   class ADR < Document
-    def self.pattern
-      '**/[0-9][0-9][0-9][0-9]-*.md'
+    def self.pattern(config_root = '.')
+      config = Config.load(config_root)
+      path = config['adr'] || 'exp/adr'
+      File.join(path, '[0-9][0-9][0-9][0-9]-*.md')
     end
 
     protected
@@ -275,8 +281,10 @@ module Diataxis
   # Explanation document type for understanding concepts and background
   # Follows the Diataxis framework's explanation format
   class Explanation < Document
-    def self.pattern
-      '**/explanation_*.md'
+    def self.pattern(config_root = '.')
+      config = Config.load(config_root)
+      path = config['explanations'] || '.'
+      File.join(path, 'explanation_*.md')
     end
 
     def content
@@ -354,28 +362,17 @@ module Diataxis
     end
 
     def collect_entries(doc_type)
-      # Get the configured directory for this doc type
-      search_dir = case doc_type
-                   when HowTo
-                     @config['howtos']
-                   when Tutorial
-                     @config['tutorials']
-                   when ADR
-                     @config['adr']
-                   else
-                     '.'
-                   end || '.'
+      # Get the pattern from the document type using the current directory as config root
+      pattern = doc_type.pattern(@directory)
 
-      # If search_dir is relative, make it relative to the config file location
+      # If pattern is relative, make it relative to the config file location
       config_dir = File.dirname(Config.find_config(@directory) || @directory)
-      search_dir = File.expand_path(search_dir, config_dir)
-
-      # Build the search pattern
-      pattern = File.join(search_dir, '**', doc_type.pattern)
+      search_pattern = File.expand_path(pattern, config_dir)
+      search_dir = File.dirname(search_pattern)
 
       # Search recursively in the configured directory
-      files = Dir.glob(pattern).sort # Sort to maintain ADR order
-      puts "Found #{files.length} files matching #{pattern}"
+      files = Dir.glob(search_pattern).sort # Sort to maintain ADR order
+      puts "Found #{files.length} files matching #{search_pattern}"
 
       # Update filenames before returning
       files.each do |filepath|
@@ -386,7 +383,7 @@ module Diataxis
       end
 
       # Re-glob to get updated filenames
-      files = Dir.glob(pattern).sort
+      files = Dir.glob(search_pattern).sort
 
       readme_dir = File.dirname(File.expand_path(@config['readme'], @directory))
 
