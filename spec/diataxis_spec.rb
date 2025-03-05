@@ -212,6 +212,71 @@ RSpec.describe Diataxis do
     end
   end
 
+  describe 'document path handling' do
+    context 'with documents in multiple repositories' do
+      let(:other_repo_dir) { File.join(test_dir, 'other_repo') }
+      let(:other_docs_paths) do
+        {
+          docs: File.join(other_repo_dir, 'docs'),
+          howto: File.join(other_repo_dir, 'docs/how-to'),
+          adr: File.join(other_repo_dir, 'docs/exp/adr')
+        }
+      end
+
+      before do
+        # Set up other repository with same config structure
+        FileUtils.mkdir_p(other_docs_paths[:docs])
+        FileUtils.mkdir_p(other_docs_paths[:howto])
+        FileUtils.mkdir_p(other_docs_paths[:adr])
+
+        # Create config in other repo
+        other_config = {
+          'readme' => 'docs/README.md',
+          'howtos' => 'docs/how-to',
+          'adr' => 'docs/exp/adr'
+        }
+        File.write(File.join(other_repo_dir, '.diataxis'), JSON.generate(other_config))
+
+        # Create documents in both repositories
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['adr', 'new', 'Main Repo Decision'])
+        end
+
+        Dir.chdir(other_repo_dir) do
+          Diataxis::CLI.run(['adr', 'new', 'Other Repo Decision'])
+        end
+      end
+
+      it 'only includes documents from the current repository in README' do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['update', '.'])
+        end
+
+        readme_content = File.read(docs_paths[:readme])
+
+        # Should include ADR from current repo
+        expect(readme_content).to include('[ADR-0001](exp/adr/0001-main-repo-decision.md)')
+
+        # Should not include ADR from other repo
+        expect(readme_content).not_to include('other-repo-decision.md')
+      end
+
+      it 'respects configured paths when searching for documents' do
+        # Create ADR in non-standard location in current repo
+        FileUtils.mkdir_p(File.join(test_dir, 'wrong/path'))
+        wrong_path_adr = File.join(test_dir, 'wrong/path/0002-misplaced-decision.md')
+        File.write(wrong_path_adr, "# 2. Misplaced Decision\n\nDate: 2025-03-05\n")
+
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['update', '.'])
+        end
+
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).not_to include('misplaced-decision.md')
+      end
+    end
+  end
+
   describe 'README management' do
     context 'with existing README' do
       before do
