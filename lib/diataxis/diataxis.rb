@@ -57,9 +57,17 @@ module Diataxis
     private
 
     def sanitize_filename(title)
-      # Remove any existing 'How to' prefix for the filename
-      title_without_prefix = title.sub(/^How to\s+/i, '')
-      prefix = instance_of?(HowTo) ? 'how_to' : type
+      # Always strip any existing prefixes for consistency
+      title_without_prefix = title.sub(/^(How to|Understanding)\s+/i, '')
+      
+      # Determine the correct prefix based on document type
+      prefix = case self
+              when HowTo then 'how_to'
+              when Explanation then 'understanding'
+              else type
+              end
+      
+      # Create filename with prefix and sanitized title
       "#{prefix}_#{title_without_prefix.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')}.md"
     end
   end
@@ -100,10 +108,7 @@ module Diataxis
 
         List any setup steps, dependencies, or prior knowledge needed before following this guide.
 
-        ## Steps
-
-        **Step 1: [Action]**#{'  '}
-        Explanation of the step with commands or code snippets if applicable.#{'  '}
+        ## Usage
 
         ```bash
         # step 1
@@ -114,17 +119,12 @@ module Diataxis
         # step 3
         ```
 
-        ## Verification
-
-        How to confirm that the how-to was successful. Example output or tests.
-
-        ## Troubleshooting
-
-        Common issues and resolutions.
-
         ## Appendix
 
-        Additional references, sample outputs, or related links.
+        ### Sample usage output
+
+        ```bash
+        ```
       CONTENT
     end
   end
@@ -263,6 +263,11 @@ module Diataxis
         title = title.sub(/^how to /i, '')
         title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
         new_filename = "how_to_#{title_part}.md"
+      elsif current_name.start_with?('understanding_')
+        # Remove Understanding prefix from title if it exists
+        title = title.sub(/^understanding /i, '')
+        title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+        new_filename = "understanding_#{title_part}.md"
       else
         type = current_name.split('_').first
         title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
@@ -284,36 +289,58 @@ module Diataxis
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['explanations'] || '.'
-      File.join(path, 'explanation_*.md')
+      File.join(path, 'understanding_*.md')  # Change from 'explanation_*.md'
     end
 
+    def initialize(title, directory = '.')
+      normalized_title = normalize_title(title)
+      super(normalized_title, directory)
+    end
+
+    protected
+
+    def normalize_title(title)
+      # If title already starts with 'Understanding', use it as is
+      return title if title.downcase.start_with?('understanding')
+      "Understanding #{title}"
+    end
+
+    private
+
+    def sanitize_filename(title)
+      # For explanation docs, we want to strip Understanding prefix and add it back
+      # This ensures consistent filenames regardless of input format
+      base_name = title.sub(/^Understanding\s+/i, '')
+      "understanding_#{base_name.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')}.md"
+    end
+
+    protected
     def content
       <<~CONTENT
         # #{title}
 
-        ## Overview
-
-        A brief introduction to what this explanation covers.
+        ## Purpose
+        This document answers:
+        - Why do we do things this way?
+        - What are the core concepts?
+        - How do the pieces fit together?
 
         ## Background
 
-        Historical context and evolution of the concept/system.
+        Explain the context and fundamental concepts...
 
         ## Key Concepts
 
-        Core ideas and principles that help understand the topic.
+        ### Concept 1
+        Explanation of the first key concept...
 
-        ## Technical Context
+        ### Concept 2
+        Explanation of the second key concept...
 
-        How this fits into the broader technical landscape.
-
-        ## Rationale
-
-        Why things are done this way and what trade-offs were considered.
-
-        ## Related Concepts
-
-        Links to related topics and further reading.
+        ## Related Topics
+        - Link to related concepts
+        - Link to relevant how-tos
+        - Link to reference docs
       CONTENT
     end
   end
