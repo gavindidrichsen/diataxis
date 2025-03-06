@@ -90,12 +90,32 @@ bundle exec dia adr new "Use PostgreSQL Database"
 #### Test Explanation Creation
 
 ```bash
-bundle exec dia explanation new "Why We Use This Architecture"
+# Test basic creation
+bundle exec dia explanation new "Testing in Facts Module"
 
 # Expected:
-# - Creates explanation_why_we_use_this_architecture.md
+# - Creates understanding_testing_in_facts_module.md
+# - Title starts with "Understanding"
 # - Updates README.md with link
-# - Uses correct template with Overview, Background, Key Concepts, etc.
+# - Uses correct template with Purpose, Background, Key Concepts sections
+
+# Test with existing 'Understanding' prefix
+bundle exec dia explanation new "Understanding Configuration Management"
+
+# Expected:
+# - Creates understanding_configuration_management.md (no double prefix)
+# - Keeps "Understanding" prefix in title
+# - Updates README.md with link
+
+# Test title changes
+sed -i '' $'1c\\n# Understanding Advanced Configuration Patterns' docs/explanations/understanding_configuration_management.md
+bundle exec dia update .
+
+# Expected:
+# - Renames file to understanding_advanced_configuration_patterns.md
+# - Updates README.md link to match new title
+# - Preserves 'Understanding' prefix in both filename and title
+# - Maintains correct document structure and content
 ```
 
 ### 3. Document Title Changes
