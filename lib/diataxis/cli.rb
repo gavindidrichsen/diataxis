@@ -52,7 +52,7 @@ module Diataxis
         'howtos' => 'docs/how-to',
         'tutorials' => 'docs/tutorials',
         'explanations' => 'docs/explanations',
-        'adr' => 'docs/explanations/adr'
+        'adr' => 'docs/adr'
       }
       Config.create(directory, config)
     end

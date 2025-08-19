@@ -8,10 +8,11 @@ module Diataxis
   class Config
     CONFIG_FILE = '.diataxis'
     DEFAULT_CONFIG = {
-      'readme' => 'README.md',
-      'howtos' => '.',
-      'tutorials' => '.',
-      'adr' => 'exp/adr'
+      'readme' => 'docs/README.md',
+      'howtos' => 'docs/how-to',
+      'tutorials' => 'docs/tutorials',
+      'explanations' => 'docs/explanations',
+      'adr' => 'docs/adr'
     }.freeze
 
     def self.load(directory = '.')

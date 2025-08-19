@@ -59,14 +59,14 @@ module Diataxis
     def sanitize_filename(title)
       # Always strip any existing prefixes for consistency
       title_without_prefix = title.sub(/^(How to|Understanding)\s+/i, '')
-      
+
       # Determine the correct prefix based on document type
       prefix = case self
-              when HowTo then 'how_to'
-              when Explanation then 'understanding'
-              else type
-              end
-      
+               when HowTo then 'how_to'
+               when Explanation then 'understanding'
+               else type
+               end
+
       # Create filename with prefix and sanitized title
       "#{prefix}_#{title_without_prefix.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')}.md"
     end
@@ -289,7 +289,7 @@ module Diataxis
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['explanations'] || '.'
-      File.join(path, 'understanding_*.md')  # Change from 'explanation_*.md'
+      File.join(path, 'understanding_*.md')
     end
 
     def initialize(title, directory = '.')
@@ -302,6 +302,7 @@ module Diataxis
     def normalize_title(title)
       # If title already starts with 'Understanding', use it as is
       return title if title.downcase.start_with?('understanding')
+
       "Understanding #{title}"
     end
 
@@ -315,32 +316,53 @@ module Diataxis
     end
 
     protected
+
     def content
       <<~CONTENT
         # #{title}
 
-        ## Purpose
-        This document answers:
-        - Why do we do things this way?
-        - What are the core concepts?
-        - How do the pieces fit together?
+        This document explores [TOPIC] following a question-driven investigation that reveals the underlying concepts step by step.
 
-        ## Background
+        ## Question 1: [What is the fundamental question that started this investigation?]
 
-        Explain the context and fundamental concepts...
+        [Brief context about why this question arose or what prompted the investigation.]
 
-        ## Key Concepts
+        **Answer**: [Clear, direct answer to the question]
 
-        ### Concept 1
-        Explanation of the first key concept...
+        [Detailed explanation with evidence, examples, or supporting details]
 
-        ### Concept 2
-        Explanation of the second key concept...
+        ## Question 2: [What was the next logical question that emerged?]
+
+        [Context about why this question became important after learning from Question 1.]
+
+        **Answer**: [Clear, direct answer]
+
+        [Supporting explanation with details, code examples, diagrams, etc.]
+
+        ## Question 3: [What deeper question arose as understanding developed?]
+
+        [Context about the progression of understanding.]
+
+        **Answer**: [Clear, direct answer]
+
+        [Detailed explanation]
+
+        ## [Continue with additional questions as needed...]
+
+        Each question should build naturally on the previous ones, showing the progressive discovery of understanding.
+
+        ## Key Insights Discovered
+
+        1. **[First major insight]**: [Brief explanation]
+        2. **[Second major insight]**: [Brief explanation]
+        3. **[Third major insight]**: [Brief explanation]
+        4. **[Additional insights as needed]**
 
         ## Related Topics
-        - Link to related concepts
-        - Link to relevant how-tos
-        - Link to reference docs
+
+        - [Link to related concepts]
+        - [Link to relevant how-tos]
+        - [Link to reference docs]
       CONTENT
     end
   end
