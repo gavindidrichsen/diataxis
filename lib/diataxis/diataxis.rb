@@ -59,14 +59,14 @@ module Diataxis
     def sanitize_filename(title)
       # Always strip any existing prefixes for consistency
       title_without_prefix = title.sub(/^(How to|Understanding)\s+/i, '')
-      
+
       # Determine the correct prefix based on document type
       prefix = case self
-              when HowTo then 'how_to'
-              when Explanation then 'understanding'
-              else type
-              end
-      
+               when HowTo then 'how_to'
+               when Explanation then 'understanding'
+               else type
+               end
+
       # Create filename with prefix and sanitized title
       "#{prefix}_#{title_without_prefix.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')}.md"
     end
@@ -289,7 +289,7 @@ module Diataxis
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['explanations'] || '.'
-      File.join(path, 'understanding_*.md')  # Change from 'explanation_*.md'
+      File.join(path, 'understanding_*.md')
     end
 
     def initialize(title, directory = '.')
@@ -302,6 +302,7 @@ module Diataxis
     def normalize_title(title)
       # If title already starts with 'Understanding', use it as is
       return title if title.downcase.start_with?('understanding')
+
       "Understanding #{title}"
     end
 
@@ -315,6 +316,7 @@ module Diataxis
     end
 
     protected
+
     def content
       <<~CONTENT
         # #{title}
@@ -352,7 +354,7 @@ module Diataxis
         ## Key Insights Discovered
 
         1. **[First major insight]**: [Brief explanation]
-        2. **[Second major insight]**: [Brief explanation]  
+        2. **[Second major insight]**: [Brief explanation]
         3. **[Third major insight]**: [Brief explanation]
         4. **[Additional insights as needed]**
 
