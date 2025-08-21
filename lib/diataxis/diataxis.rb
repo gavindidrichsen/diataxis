@@ -321,41 +321,58 @@ module Diataxis
       <<~CONTENT
         # #{title}
 
-        This document explores [TOPIC] following a question-driven investigation that reveals the underlying concepts step by step.
+        This document explores [DESCRIBE THE MAIN TOPIC/CONCEPT] following a question-driven investigation that reveals the underlying concepts step by step.
 
         ## Question 1: [What is the fundamental question that started this investigation?]
 
-        [Brief context about why this question arose or what prompted the investigation.]
+        [Brief context about why this question arose or what prompted the investigation. What real-world need or problem led to this question?]
+
+        **How was this investigated?**
+
+        [Describe your research methodology: What did you search for? Where did you look? What tools or techniques did you use? What initial findings led you to dig deeper? Include specific file paths, search terms, or code sections that were key to discovery.]
+
+        [If applicable, describe the breakthrough moment or key insight that led to understanding:]
+
+        [List specific evidence with bullet points if helpful:]
+        - [Specific file/location that revealed key information]
+        - [Code section or configuration that confirmed the behavior]
+        - [Schema or documentation that validated the approach]
 
         **Answer**: [Clear, direct answer to the question]
 
-        [Detailed explanation with evidence, examples, or supporting details]
+        **Details:**
+
+        [Detailed explanation with evidence, examples, or supporting details. Include practical information about how to use what was discovered.]
+
+        **Testing Example:**
+
+        [If applicable, provide a concrete example that readers can try themselves - code snippets, configuration files, commands, etc.]
+
+        ```[language]
+        [example code or configuration]
+        ```
+
+        [Instructions for testing or using the example]
 
         ## Question 2: [What was the next logical question that emerged?]
 
-        [Context about why this question became important after learning from Question 1.]
+        **How was this investigated?**
+
+        [Describe how this question naturally followed from Question 1. What additional research was needed? What connections were made between the first answer and this new question?]
 
         **Answer**: [Clear, direct answer]
 
         [Supporting explanation with details, code examples, diagrams, etc.]
 
-        ## Question 3: [What deeper question arose as understanding developed?]
-
-        [Context about the progression of understanding.]
-
-        **Answer**: [Clear, direct answer]
-
-        [Detailed explanation]
-
         ## [Continue with additional questions as needed...]
 
-        Each question should build naturally on the previous ones, showing the progressive discovery of understanding.
+        [Each question should build naturally on the previous ones, showing the progressive discovery of understanding. Include the investigation methodology for each question.]
 
         ## Key Insights Discovered
 
-        1. **[First major insight]**: [Brief explanation]
-        2. **[Second major insight]**: [Brief explanation]
-        3. **[Third major insight]**: [Brief explanation]
+        1. **[First major insight]**: [Brief explanation of what was learned]
+        2. **[Second major insight]**: [Brief explanation of what was learned]
+        3. **[Third major insight]**: [Brief explanation of what was learned]
         4. **[Additional insights as needed]**
 
         ## Related Topics
