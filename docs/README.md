@@ -27,6 +27,7 @@
 * [ADR-0004](adr/0004-use-linguistic-prefixes-for-document-classification.md) - Use Linguistic Prefixes for Document Classification
 * [ADR-0005](adr/0005-use-purpose-driven-document-templates.md) - Use Purpose-Driven Document Templates
 * [ADR-0006](adr/0006-implement-automated-readme-link-management.md) - Implement Automated README Link Management
+* [ADR-0007](adr/0007-enable-recursive-document-discovery.md) - Enable Recursive Document Discovery
 <!-- adrlogstop -->
 
 ### Explanations
