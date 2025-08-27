@@ -9,6 +9,8 @@ The diataxis gem provides several key features that need testing:
 * Document renaming based on title changes
 * README generation and updates
 * Directory structure maintenance
+* **Subdirectory organization support** - documents can be organized in nested subdirectories
+* **Recursive document discovery** - finds documents at any depth within configured directories
 
 This guide provides a systematic approach to manually test each feature. The test cases are designed to be easily translatable into automated tests.
 
@@ -171,7 +173,85 @@ bundle exec dia tutorial new "Test README Update"
 # - Maintains existing links
 ```
 
-### 5. Error Handling
+### 5. Subdirectory Organization
+
+#### Test Moving Documents to Subdirectories
+
+```bash
+# Create a document first
+bundle exec dia explanation new "Complex System Architecture"
+
+# Verify it's in the README
+cat docs/README.md | grep "Complex System Architecture"
+
+# Create a subdirectory and move the document
+mkdir -p docs/explanations/understanding_complex_system_architecture
+mv docs/explanations/understanding_complex_system_architecture.md \
+   docs/explanations/understanding_complex_system_architecture/understanding_complex_system_architecture.md
+
+# Update and verify the README is updated correctly
+bundle exec dia update .
+
+# Expected:
+# - README link updates to new subdirectory path
+# - Document is not removed from README
+# - Link points to: explanations/understanding_complex_system_architecture/understanding_complex_system_architecture.md
+```
+
+#### Test Creating Documents in Existing Subdirectories
+
+```bash
+# Create subdirectory structure
+mkdir -p docs/how-to/advanced_topics
+
+# Create document normally (will be placed in standard location)
+bundle exec dia howto new "Advanced Configuration"
+
+# Move to subdirectory to test recursive discovery
+mv docs/how-to/how_to_advanced_configuration.md \
+   docs/how-to/advanced_topics/how_to_advanced_configuration.md
+
+# Edit the title to test filename updates in subdirectories
+sed -i '' '1c\
+# How to Master Advanced Configuration' docs/how-to/advanced_topics/how_to_advanced_configuration.md
+
+# Update and verify
+bundle exec dia update .
+
+# Expected:
+# - File is renamed within the subdirectory (not moved to parent)
+# - New filename: how_to_master_advanced_configuration.md
+# - README link updates to reflect new title and location
+# - Path in README: how-to/advanced_topics/how_to_master_advanced_configuration.md
+```
+
+#### Test Mixed Directory Structures
+
+```bash
+# Create documents in both flat and nested structures
+bundle exec dia tutorial new "Basic Tutorial"
+bundle exec dia tutorial new "Advanced Tutorial"
+
+# Create subdirectory for advanced content
+mkdir -p docs/tutorials/advanced
+mv docs/tutorials/tutorial_advanced_tutorial.md \
+   docs/tutorials/advanced/tutorial_advanced_tutorial.md
+
+# Add supporting files to demonstrate organization
+mkdir -p docs/tutorials/advanced/examples
+echo "# Example Code" > docs/tutorials/advanced/examples/sample.md
+
+# Update and verify both are found
+bundle exec dia update .
+
+# Expected:
+# - Both tutorials appear in README
+# - Flat structure tutorial: tutorials/tutorial_basic_tutorial.md
+# - Nested structure tutorial: tutorials/advanced/tutorial_advanced_tutorial.md
+# - Supporting files are ignored (not markdown with correct prefix)
+```
+
+### 6. Error Handling
 
 #### Test Invalid Configuration
 
@@ -208,3 +288,5 @@ After running each test case:
 3. Confirm README updates
 4. Validate directory structure
 5. Check error messages (for error cases)
+6. **Verify subdirectory support**: Ensure documents in subdirectories are discovered and linked correctly
+7. **Confirm path resolution**: Check that relative paths in README links work correctly

@@ -4,6 +4,22 @@ require 'fileutils'
 require 'pathname'
 require_relative 'config'
 
+# Diataxis Documentation Management Gem
+#
+# This module implements the Diátaxis documentation framework, providing automated
+# discovery and README management for documentation files organized by type:
+# tutorials, how-to guides, explanations, and architectural decision records (ADRs).
+#
+# SUBDIRECTORY SUPPORT:
+# The gem supports recursive document discovery using glob patterns with '**',
+# allowing documents to be organized in nested subdirectory structures while
+# maintaining proper path references in the generated README. When documents
+# are moved to subdirectories, their paths are automatically updated rather
+# than being removed from the README.
+#
+# Path resolution is handled through relative path calculation from the README
+# location to each document, preserving the subdirectory structure in the
+# generated links.
 module Diataxis
   # Base document class following Template Method pattern
   class Document
@@ -74,10 +90,14 @@ module Diataxis
 
   # Concrete document types
   class HowTo < Document
+    # Returns a glob pattern for finding how-to documents recursively
+    # The '**' enables subdirectory discovery - documents can be organized
+    # in any subdirectory depth within the configured how-to directory
+    # Example: docs/how-to/how_to_basic.md AND docs/how-to/advanced/how_to_complex.md
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['howtos'] || '.'
-      File.join(path, 'how_to_*.md')
+      File.join(path, '**', 'how_to_*.md')
     end
 
     def initialize(title, directory = '.')
@@ -132,10 +152,13 @@ module Diataxis
   # Tutorial document type for step-by-step learning content
   # Follows the Diataxis framework's tutorial format
   class Tutorial < Document
+    # Returns a glob pattern for finding tutorial documents recursively
+    # Supports subdirectory organization for complex tutorial series
+    # Example: docs/tutorials/tutorial_basics.md AND docs/tutorials/series_one/tutorial_advanced.md
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['tutorials'] || '.'
-      File.join(path, 'tutorial_*.md')
+      File.join(path, '**', 'tutorial_*.md')
     end
 
     protected
@@ -162,10 +185,13 @@ module Diataxis
   # Architecture Decision Record (ADR) document type
   # Captures important architectural decisions and their context
   class ADR < Document
+    # Returns a glob pattern for finding ADR documents recursively
+    # ADRs can be organized in subdirectories by topic, year, or other criteria
+    # Example: docs/adr/0001-decision.md AND docs/adr/2025/0002-new-decision.md
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['adr'] || 'exp/adr'
-      File.join(path, '[0-9][0-9][0-9][0-9]-*.md')
+      File.join(path, '**', '[0-9][0-9][0-9][0-9]-*.md')
     end
 
     protected
@@ -214,30 +240,68 @@ module Diataxis
     end
   end
 
-  # File management
+  # File management with subdirectory support
+  # Handles finding, renaming, and organizing documents across directory structures
   class FileManager
+    # Main entry point for updating filenames across all document types
+    # Processes each document type separately to handle their specific patterns and requirements
     def self.update_filenames(directory, document_types)
       config = Config.load(directory)
       config_dir = File.dirname(Config.find_config(directory) || directory)
 
       document_types.each do |doc_type|
-        doc_dir = doc_type == HowTo ? config['howtos'] : config["#{doc_type.name.split('::').last.downcase}s"]
-        doc_dir = File.expand_path(doc_dir || '.', config_dir)
-
-        # Cache the file list for this document type
-        pattern = File.join(doc_dir, '**', doc_type.pattern)
-        files = Dir.glob(pattern)
-        puts "Found #{files.length} files matching #{pattern}"
-
-        files.each do |filepath|
-          update_filename(filepath, doc_dir)
-        end
-
-        # Store the file list for ReadmeManager to use
-        @cached_files ||= {}
-        @cached_files[doc_type] ||= {}
-        @cached_files[doc_type][directory] = files
+        process_document_type(doc_type, config, config_dir, directory)
       end
+    end
+
+    # Processes a single document type, finding all files and updating them in place
+    # Maintains subdirectory structure - files stay in their original subdirectories
+    def self.process_document_type(doc_type, config, config_dir, directory)
+      doc_dir = get_document_directory(doc_type, config, config_dir)
+      files = find_files_for_document_type(doc_type, directory, config_dir)
+
+      files.each do |filepath|
+        update_file_in_place(filepath, doc_dir)
+      end
+
+      cache_files(doc_type, directory, files)
+    end
+
+    # Gets the configured base directory for a document type
+    # Handles the special case where HowTo uses 'howtos' config key instead of 'howtos'
+    def self.get_document_directory(doc_type, config, config_dir)
+      doc_dir = if doc_type == HowTo
+                  config['howtos']
+                else
+                  config["#{doc_type.name.split('::').last.downcase}s"]
+                end
+      File.expand_path(doc_dir || '.', config_dir)
+    end
+
+    # Uses recursive glob patterns to find all documents of a given type
+    # The pattern includes '**' which enables discovery in subdirectories at any depth
+    def self.find_files_for_document_type(doc_type, directory, config_dir)
+      pattern = doc_type.pattern(directory)
+      search_pattern = File.expand_path(pattern, config_dir)
+      files = Dir.glob(search_pattern)
+      puts "Found #{files.length} files matching #{search_pattern}"
+      files
+    end
+
+    # Updates a file's name in place within its current subdirectory
+    # Critical: preserves the subdirectory structure by calculating the correct target directory
+    def self.update_file_in_place(filepath, doc_dir)
+      # Calculate the relative path from the base document directory to preserve subdirectory structure
+      # Example: /docs/explanations/complex/file.md -> relative_dir = "complex"
+      relative_dir = File.dirname(filepath).sub(doc_dir, '').sub(%r{^/}, '')
+      target_dir = relative_dir.empty? ? doc_dir : File.join(doc_dir, relative_dir)
+      update_filename(filepath, target_dir)
+    end
+
+    def self.cache_files(doc_type, directory, files)
+      @cached_files ||= {}
+      @cached_files[doc_type] ||= {}
+      @cached_files[doc_type][directory] = files
     end
 
     def self.cached_files
@@ -286,10 +350,14 @@ module Diataxis
   # Explanation document type for understanding concepts and background
   # Follows the Diataxis framework's explanation format
   class Explanation < Document
+    # Returns a glob pattern for finding explanation documents recursively
+    # Complex explanations can be organized in dedicated subdirectories with supporting materials
+    # Example: docs/explanations/understanding_simple.md AND
+    #          docs/explanations/understanding_complex_system/understanding_complex_system.md
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['explanations'] || '.'
-      File.join(path, 'understanding_*.md')
+      File.join(path, '**', 'understanding_*.md')
     end
 
     def initialize(title, directory = '.')
@@ -427,44 +495,78 @@ module Diataxis
       entries
     end
 
+    # Main method for collecting document entries with subdirectory support
+    # Finds documents recursively, updates filenames in place, and creates README entries
     def collect_entries(doc_type)
-      # Get the pattern from the document type using the current directory as config root
-      pattern = doc_type.pattern(@directory)
+      search_pattern, base_dir = setup_search_paths(doc_type)
+      files = find_and_update_files(search_pattern, base_dir)
+      create_readme_entries(files, doc_type)
+    end
 
-      # If pattern is relative, make it relative to the config file location
+    # Sets up the search pattern and base directory for recursive document discovery
+    # Handles path resolution relative to the configuration file location
+    def setup_search_paths(doc_type)
+      pattern = doc_type.pattern(@directory)
       config_dir = File.dirname(Config.find_config(@directory) || @directory)
       search_pattern = File.expand_path(pattern, config_dir)
-      search_dir = File.dirname(search_pattern)
 
-      # Search recursively in the configured directory
-      files = Dir.glob(search_pattern).sort # Sort to maintain ADR order
+      doc_dir_config = get_doc_dir_config(doc_type)
+      base_dir = File.expand_path(doc_dir_config || '.', config_dir)
+
+      [search_pattern, base_dir]
+    end
+
+    def get_doc_dir_config(doc_type)
+      case doc_type.name.split('::').last.downcase
+      when 'howto' then @config['howtos']
+      when 'tutorial' then @config['tutorials']
+      when 'explanation' then @config['explanations']
+      when 'adr' then @config['adr']
+      end
+    end
+
+    # Finds files using recursive glob patterns and updates their filenames in place
+    # Preserves subdirectory structure during filename updates
+    def find_and_update_files(search_pattern, base_dir)
+      files = Dir.glob(search_pattern).sort
       puts "Found #{files.length} files matching #{search_pattern}"
 
-      # Update filenames before returning
+      # Update filenames before returning - critical to preserve subdirectory structure
       files.each do |filepath|
-        # Keep files in their original subdirectory
-        relative_dir = File.dirname(filepath).sub(search_dir, '').sub(%r{^/}, '')
-        target_dir = relative_dir.empty? ? search_dir : File.join(search_dir, relative_dir)
+        # Calculate relative path to maintain files in their current subdirectories
+        relative_dir = File.dirname(filepath).sub(base_dir, '').sub(%r{^/}, '')
+        target_dir = relative_dir.empty? ? base_dir : File.join(base_dir, relative_dir)
         FileManager.update_filename(filepath, target_dir)
       end
 
-      # Re-glob to get updated filenames
-      files = Dir.glob(search_pattern).sort
+      # Re-glob to get updated filenames after any renames
+      Dir.glob(search_pattern).sort
+    end
 
+    # Creates README entries with correct relative paths for documents in subdirectories
+    # Calculates proper link paths regardless of document depth
+    def create_readme_entries(files, doc_type)
       readme_dir = File.dirname(File.expand_path(@config['readme'], @directory))
 
       files.map do |file|
         title = File.open(file, &:readline).strip[2..] # Extract title from first line
+        # Calculate relative path from README location to document - works for any depth
         relative_path = Pathname.new(file).relative_path_from(Pathname.new(readme_dir)).to_s
-        if doc_type == ADR
-          # Extract ADR number from filename
-          adr_num = File.basename(file)[0..3]
-          # Remove any existing number prefix from title
-          clean_title = title.sub(/^\d+\. /, '')
-          "* [ADR-#{adr_num}](#{relative_path}) - #{clean_title}"
-        else
-          "* [#{title}](#{relative_path})"
-        end
+        format_entry(title, relative_path, file, doc_type)
+      end
+    end
+
+    # Formats README entries with proper link syntax for each document type
+    # Handles special ADR formatting requirements
+    def format_entry(title, relative_path, file, doc_type)
+      if doc_type == ADR
+        # Extract ADR number from filename
+        adr_num = File.basename(file)[0..3]
+        # Remove any existing number prefix from title
+        clean_title = title.sub(/^\d+\. /, '')
+        "* [ADR-#{adr_num}](#{relative_path}) - #{clean_title}"
+      else
+        "* [#{title}](#{relative_path})"
       end
     end
 
