@@ -145,8 +145,6 @@ RSpec.describe Diataxis do
         expect(readme_content).to include('[ADR-0001]')
       end
     end
-
-
   end
 
   describe 'document title changes' do
