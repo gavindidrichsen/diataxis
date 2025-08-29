@@ -392,6 +392,7 @@ module Diataxis
         ## Purpose
 
         This document answers:
+
         - Why do we do things this way?
         - What are the core concepts?
         - How do the pieces fit together?
