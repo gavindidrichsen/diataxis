@@ -390,6 +390,7 @@ module Diataxis
         # #{title}
 
         ## Purpose
+
         This document answers:
         - Why do we do things this way?
         - What are the core concepts?
@@ -402,12 +403,15 @@ module Diataxis
         ## Key Concepts
 
         ### Concept 1
+
         Explanation of the first key concept...
 
         ### Concept 2
+
         Explanation of the second key concept...
 
         ## Related Topics
+
         - Link to related concepts
         - Link to relevant how-tos
         - Link to reference docs
