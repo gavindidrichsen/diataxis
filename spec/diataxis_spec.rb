@@ -147,119 +147,100 @@ RSpec.describe Diataxis do
     end
 
     context 'creating explanation' do
-      it 'creates explanation file with basic title and understanding prefix' do
-        explanation_path = File.join(docs_paths[:explanation], 'understanding_system_architecture.md')
+      context 'with basic title' do
+        let(:explanation_path) { File.join(docs_paths[:explanation], 'understanding_system_architecture.md') }
 
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+        before do
+          Dir.chdir(test_dir) do
+            Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+          end
         end
 
-        expect(File).to exist(explanation_path)
+        it 'creates explanation file with understanding prefix' do
+          expect(File).to exist(explanation_path)
+        end
+
+        it 'creates explanation with correct template sections' do
+          content = File.read(explanation_path)
+          expected_sections = [
+            '# Understanding System Architecture',
+            '## Purpose',
+            'This document answers:',
+            '- Why do we do things this way?',
+            '- What are the core concepts?',
+            '- How do the pieces fit together?',
+            '## Background',
+            '## Key Concepts',
+            '### Concept 1',
+            '### Concept 2',
+            '## Related Topics'
+          ]
+
+          expected_sections.each do |section|
+            expect(content).to include(section)
+          end
+        end
+
+        it 'updates README with explanation section and link' do
+          readme_content = File.read(docs_paths[:readme])
+          expect(readme_content).to include('[Understanding System Architecture]')
+          expect(readme_content).to include('### Explanations')
+        end
       end
 
-      it 'creates explanation with correct template sections for basic title' do
-        explanation_path = File.join(docs_paths[:explanation], 'understanding_system_architecture.md')
+      context 'with existing Understanding prefix' do
+        let(:explanation_path) { File.join(docs_paths[:explanation], 'understanding_configuration_management.md') }
 
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+        before do
+          Dir.chdir(test_dir) do
+            Diataxis::CLI.run(['explanation', 'new', 'Understanding Configuration Management'])
+          end
         end
 
-        content = File.read(explanation_path)
-        expected_sections = [
-          '# Understanding System Architecture',
-          'This document explores',
-          '## Question 1:',
-          '## Key Insights Discovered',
-          '## Related Topics'
-        ]
-        
-        expected_sections.each do |section|
-          expect(content).to include(section)
+        it 'preserves single Understanding prefix' do
+          content = File.read(explanation_path)
+          expect(content).to include('# Understanding Configuration Management')
+          expect(content).not_to include('# Understanding Understanding')
+        end
+
+        it 'creates correct filename without double prefix' do
+          expect(File).to exist(explanation_path)
+          expect(Dir.glob(File.join(docs_paths[:explanation], 'understanding_understanding_*.md'))).to be_empty
         end
       end
 
-      it 'updates README with explanation section and link for basic title' do
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+      context 'when changing title' do
+        let(:original_path) { File.join(docs_paths[:explanation], 'understanding_system_architecture.md') }
+        let(:new_path) { File.join(docs_paths[:explanation], 'understanding_advanced_system_design.md') }
+
+        before do
+          Dir.chdir(test_dir) do
+            Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+            content = File.read(original_path)
+            new_content = content.sub(/# Understanding.*$/, '# Understanding Advanced System Design')
+            File.write(original_path, new_content)
+            Diataxis::CLI.run(['update', '.'])
+          end
         end
 
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Understanding System Architecture]')
-        expect(readme_content).to include('### Explanations')
-      end
-
-      it 'preserves single Understanding prefix when title already has it' do
-        explanation_path = File.join(docs_paths[:explanation], 'understanding_configuration_management.md')
-
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'Understanding Configuration Management'])
+        it 'renames file preserving Understanding prefix' do
+          expect(File).not_to exist(original_path)
+          expect(File).to exist(new_path)
         end
 
-        content = File.read(explanation_path)
-        expect(content).to include('# Understanding Configuration Management')
-        expect(content).not_to include('# Understanding Understanding')
-      end
-
-      it 'creates correct filename without double prefix for Understanding titles' do
-        explanation_path = File.join(docs_paths[:explanation], 'understanding_configuration_management.md')
-
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'Understanding Configuration Management'])
+        it 'updates README links' do
+          readme_content = File.read(docs_paths[:readme])
+          expect(readme_content).not_to include('[Understanding System Architecture]')
+          expect(readme_content).to include('[Understanding Advanced System Design]')
         end
 
-        expect(File).to exist(explanation_path)
-        expect(Dir.glob(File.join(docs_paths[:explanation], 'understanding_understanding_*.md'))).to be_empty
-      end
-
-      it 'renames file when changing title and preserves Understanding prefix' do
-        original_path = File.join(docs_paths[:explanation], 'understanding_system_architecture.md')
-        new_path = File.join(docs_paths[:explanation], 'understanding_advanced_system_design.md')
-
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
-          content = File.read(original_path)
-          new_content = content.sub(/# Understanding.*$/, '# Understanding Advanced System Design')
-          File.write(original_path, new_content)
-          Diataxis::CLI.run(['update', '.'])
+        it 'maintains correct document structure' do
+          content = File.read(new_path)
+          expect(content).to include('# Understanding Advanced System Design')
+          expect(content).to include('## Purpose')
+          expect(content).to include('## Background')
+          expect(content).to include('## Key Concepts')
         end
-
-        expect(File).not_to exist(original_path)
-        expect(File).to exist(new_path)
-      end
-
-      it 'updates README links when changing title' do
-        original_path = File.join(docs_paths[:explanation], 'understanding_system_architecture.md')
-
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
-          content = File.read(original_path)
-          new_content = content.sub(/# Understanding.*$/, '# Understanding Advanced System Design')
-          File.write(original_path, new_content)
-          Diataxis::CLI.run(['update', '.'])
-        end
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).not_to include('[Understanding System Architecture]')
-        expect(readme_content).to include('[Understanding Advanced System Design]')
-      end
-
-      it 'maintains correct document structure when changing title' do
-        original_path = File.join(docs_paths[:explanation], 'understanding_system_architecture.md')
-        new_path = File.join(docs_paths[:explanation], 'understanding_advanced_system_design.md')
-
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
-          content = File.read(original_path)
-          new_content = content.sub(/# Understanding.*$/, '# Understanding Advanced System Design')
-          File.write(original_path, new_content)
-          Diataxis::CLI.run(['update', '.'])
-        end
-
-        content = File.read(new_path)
-        expect(content).to include('# Understanding Advanced System Design')
-        expect(content).to include('This document explores')
-        expect(content).to include('## Question 1:')
-        expect(content).to include('## Key Insights Discovered')
       end
     end
   end
