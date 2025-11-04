@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'version'
+require_relative 'errors'
 
 module Diataxis
   # Command handling
@@ -41,27 +42,36 @@ module Diataxis
     end
 
     def self.unknown_command(command)
-      puts "Unknown command: #{command}"
-      exit 1
+      raise UsageError.new("Unknown command: #{command}", 1)
     end
 
     def self.usage(exit_code = 1)
-      puts 'Usage: diataxis <command> [arguments]'
-      puts 'Commands:'
-      puts '  --version, -v         - Show version number'
-      puts '  --help, -h            - Show this help message'
-      puts '  init                  - Initialize .diataxis config file'
-      puts '  howto new "Title"     - Create a new how-to guide'
-      puts '  tutorial new "Title"  - Create a new tutorial'
-      puts '  adr new "Title"      - Create a new architectural decision record'
-      puts '  explanation new "Title" - Create a new explanation document'
-      puts '  update <directory>    - Update document filenames and README.md'
-      exit exit_code
+      usage_text = <<~USAGE
+        Usage: diataxis <command> [arguments]
+        Commands:
+          --version, -v         - Show version number
+          --help, -h            - Show this help message
+          init                  - Initialize .diataxis config file
+          howto new "Title"     - Create a new how-to guide
+          tutorial new "Title"  - Create a new tutorial
+          adr new "Title"      - Create a new architectural decision record
+          explanation new "Title" - Create a new explanation document
+          update <directory>    - Update document filenames and README.md
+      USAGE
+
+      raise UsageError.new(usage_text.strip, exit_code) unless exit_code.zero?
+
+      puts usage_text
+      exit 0
     end
 
     def self.handle_init(args)
       directory = args.empty? ? Dir.pwd : File.expand_path(args[0])
-      abort("Error: '#{directory}' is not a valid directory.") unless Dir.exist?(directory)
+      unless Dir.exist?(directory)
+        raise FileSystemError.new("'#{directory}' is not a valid directory.", path: directory,
+                                                                              operation: 'directory_check')
+      end
+
       config = {
         'readme' => 'docs/README.md',
         'howtos' => 'docs/how-to',
@@ -74,9 +84,9 @@ module Diataxis
 
     def self.handle_howto(args)
       if args.length < 2 || args[0] != 'new'
-        puts 'Usage: diataxis howto new "Title of the How-To Guide"'
-        exit 1
+        raise UsageError.new('Usage: diataxis howto new "Title of the How-To Guide"', 1)
       end
+
       directory = Dir.pwd
       title = args[1..].join(' ')
       config = Config.load(directory)
@@ -93,9 +103,9 @@ module Diataxis
 
     def self.handle_tutorial(args)
       if args.length < 2 || args[0] != 'new'
-        puts 'Usage: diataxis tutorial new "Title of the Tutorial"'
-        exit 1
+        raise UsageError.new('Usage: diataxis tutorial new "Title of the Tutorial"', 1)
       end
+
       directory = Dir.pwd
       title = args[1..].join(' ')
       config = Config.load(directory)
@@ -111,10 +121,8 @@ module Diataxis
     end
 
     def self.handle_adr(args)
-      if args.length < 2 || args[0] != 'new'
-        puts 'Usage: diataxis adr new "Title of the ADR"'
-        exit 1
-      end
+      raise UsageError.new('Usage: diataxis adr new "Title of the ADR"', 1) if args.length < 2 || args[0] != 'new'
+
       directory = Dir.pwd
       title = args[1..].join(' ')
       config = Config.load(directory)
@@ -130,13 +138,13 @@ module Diataxis
     end
 
     def self.handle_update(args)
-      if args.empty?
-        puts 'Usage: diataxis update <directory>'
-        exit 1
-      end
+      raise UsageError.new('Usage: diataxis update <directory>', 1) if args.empty?
 
       directory = File.expand_path(args[0])
-      abort("Error: '#{directory}' is not a valid directory.") unless Dir.exist?(directory)
+      unless Dir.exist?(directory)
+        raise FileSystemError.new("'#{directory}' is not a valid directory.", path: directory,
+                                                                              operation: 'directory_check')
+      end
 
       Config.load(directory)
       document_types = [HowTo, Tutorial, Explanation, ADR]
@@ -148,9 +156,9 @@ module Diataxis
 
     def self.handle_explanation(args)
       if args.length < 2 || args[0] != 'new'
-        puts 'Usage: diataxis explanation new "Title of the Explanation"'
-        exit 1
+        raise UsageError.new('Usage: diataxis explanation new "Title of the Explanation"', 1)
       end
+
       directory = Dir.pwd
       title = args[1..].join(' ')
       config = Config.load(directory)

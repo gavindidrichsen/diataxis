@@ -2,6 +2,7 @@
 
 require_relative '../document'
 require_relative '../config'
+require_relative '../errors'
 
 module Diataxis
   # HowTo document type for step-by-step procedural guides
@@ -25,6 +26,10 @@ module Diataxis
     protected
 
     def normalize_title(title)
+      if title.nil? || title.strip.empty?
+        raise DocumentError.new('Title cannot be empty', document_type: 'howto', title: title)
+      end
+
       return title if title.downcase.start_with?('how to')
 
       # Convert imperative statements to 'How to' format

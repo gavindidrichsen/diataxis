@@ -3,4 +3,12 @@
 
 require 'diataxis'
 
-Diataxis::CLI.run(ARGV)
+begin
+  Diataxis::CLI.run(ARGV)
+rescue Diataxis::UsageError => e
+  puts e.usage_message
+  exit e.exit_code
+rescue Diataxis::Error => e
+  puts "Error: #{e.message}"
+  exit 1
+end

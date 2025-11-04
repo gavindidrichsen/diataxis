@@ -25,4 +25,5 @@
 * [ADR-0007](adr/0007-enable-recursive-document-discovery.md) - Enable Recursive Document Discovery
 * [ADR-0008](adr/0008-refactor-document-templates-into-separate-class-files-for-improved-maintainability.md) - Refactor document templates into separate class files for improved maintainability
 * [ADR-0009](adr/0009-hide-readme-sections-when-no-matching-documents-exist.md) - Hide README sections when no matching documents exist
+* [ADR-0010](adr/0010-implement-custom-error-handling-system.md) - Implement Custom Error Handling System
 <!-- adrlogstop -->

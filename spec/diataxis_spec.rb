@@ -439,27 +439,24 @@ RSpec.describe Diataxis do
 
   describe 'CLI help and version' do
     it 'shows usage information when called with no arguments' do
-      expect { Diataxis::CLI.run([]) }.to raise_error(SystemExit)
+      expect { Diataxis::CLI.run([]) }.to raise_error(Diataxis::UsageError) do |error|
+        expect(error.usage_message).to include('Usage: diataxis <command>')
+        expect(error.exit_code).to eq(1)
+      end
     end
 
     it 'includes all document types in help text' do
-      output = capture_stdout do
-        Diataxis::CLI.run([])
-      rescue StandardError
-        nil
-      end
-      expect(output).to include('howto new "Title"')
-      expect(output).to include('tutorial new "Title"')
+      Diataxis::CLI.run([])
+    rescue Diataxis::UsageError => e
+      expect(e.usage_message).to include('howto new "Title"')
+      expect(e.usage_message).to include('tutorial new "Title"')
     end
 
     it 'includes remaining document types in help text' do
-      output = capture_stdout do
-        Diataxis::CLI.run([])
-      rescue StandardError
-        nil
-      end
-      expect(output).to include('adr new "Title"')
-      expect(output).to include('explanation new "Title"')
+      Diataxis::CLI.run([])
+    rescue Diataxis::UsageError => e
+      expect(e.usage_message).to include('adr new "Title"')
+      expect(e.usage_message).to include('explanation new "Title"')
     end
 
     it 'shows version information' do
@@ -479,7 +476,10 @@ RSpec.describe Diataxis do
     context 'with missing arguments' do
       it 'shows usage for howto without title' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(%w[howto new]) }.to raise_error(SystemExit)
+          expect { Diataxis::CLI.run(%w[howto new]) }.to raise_error(Diataxis::UsageError) do |error|
+            expect(error.usage_message).to include('Usage: diataxis howto new')
+            expect(error.exit_code).to eq(1)
+          end
         end
       end
     end
@@ -487,7 +487,10 @@ RSpec.describe Diataxis do
     context 'with unknown commands' do
       it 'shows error for unknown document type' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(%w[unknown new Title]) }.to raise_error(SystemExit)
+          expect { Diataxis::CLI.run(%w[unknown new Title]) }.to raise_error(Diataxis::UsageError) do |error|
+            expect(error.usage_message).to include('Unknown command: unknown')
+            expect(error.exit_code).to eq(1)
+          end
         end
       end
     end
