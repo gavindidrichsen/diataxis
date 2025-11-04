@@ -388,17 +388,17 @@ RSpec.describe Diataxis do
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['howto', 'new', 'Deploy Application'])
           Diataxis::CLI.run(['adr', 'new', 'Use Docker'])
-          # Note: No tutorials or explanations created
+          # NOTE: No tutorials or explanations created
         end
       end
 
       it 'only shows sections with content' do
         readme_content = File.read(docs_paths[:readme])
-        
+
         # Should have these sections
         expect(readme_content).to include('### HowTos')
         expect(readme_content).to include('### Design Decisions')
-        
+
         # Should NOT have empty sections
         expect(readme_content).not_to include('### Tutorials')
         expect(readme_content).not_to include('### Explanations')
@@ -412,15 +412,13 @@ RSpec.describe Diataxis do
       end
     end
 
-
-
     context 'when sections gain content' do
       before do
         # Start with no tutorials
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['howto', 'new', 'Basic Guide'])
         end
-        
+
         initial_readme = File.read(docs_paths[:readme])
         expect(initial_readme).not_to include('### Tutorials')
       end
@@ -440,9 +438,13 @@ RSpec.describe Diataxis do
   describe 'CLI help and version' do
     it 'shows all document types in help text' do
       expect { Diataxis::CLI.run([]) }.to raise_error(SystemExit)
-      
+
       # Capture the help output
-      output = capture_stdout { Diataxis::CLI.run([]) rescue nil }
+      output = capture_stdout do
+        Diataxis::CLI.run([])
+      rescue StandardError
+        nil
+      end
       expect(output).to include('howto new "Title"')
       expect(output).to include('tutorial new "Title"')
       expect(output).to include('adr new "Title"')
@@ -451,8 +453,12 @@ RSpec.describe Diataxis do
 
     it 'shows version information' do
       expect { Diataxis::CLI.run(['--version']) }.to raise_error(SystemExit)
-      
-      output = capture_stdout { Diataxis::CLI.run(['--version']) rescue nil }
+
+      output = capture_stdout do
+        Diataxis::CLI.run(['--version'])
+      rescue StandardError
+        nil
+      end
       expect(output).to include('diataxis version')
       expect(output).to include(Diataxis::VERSION)
     end
@@ -462,17 +468,15 @@ RSpec.describe Diataxis do
     context 'with missing arguments' do
       it 'shows usage for howto without title' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(['howto', 'new']) }.to raise_error(SystemExit)
+          expect { Diataxis::CLI.run(%w[howto new]) }.to raise_error(SystemExit)
         end
       end
-
-
     end
 
     context 'with unknown commands' do
       it 'shows error for unknown document type' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(['unknown', 'new', 'Title']) }.to raise_error(SystemExit)
+          expect { Diataxis::CLI.run(%w[unknown new Title]) }.to raise_error(SystemExit)
         end
       end
     end

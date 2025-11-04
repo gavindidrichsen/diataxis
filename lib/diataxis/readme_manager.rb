@@ -130,14 +130,14 @@ module Diataxis
         section_title = document_type_section(doc_type)
         section_type = section_name.downcase
         entries = @entries[doc_type]
-        
+
         if content.include?("<!-- #{section_type}log -->")
           # Section exists - update or remove it
-          if entries.empty?
-            content = remove_section(content, section_type, section_title)
-          else
-            content = update_section(content, section_type, entries)
-          end
+          content = if entries.empty?
+                      remove_section(content, section_type, section_title)
+                    else
+                      update_section(content, section_type, entries)
+                    end
         elsif !entries.empty?
           # Section doesn't exist but we have content - add it
           content = add_section(content, section_type, entries, section_title)
@@ -176,11 +176,11 @@ module Diataxis
       sections = @document_types.filter_map do |doc_type|
         entries = @entries[doc_type]
         next if entries.empty? # Skip sections without content
-        
+
         section_name = doc_type.name.split('::').last
         section_title = document_type_section(doc_type)
         section_type = section_name.downcase
-        
+
         <<~SECTION
           ### #{section_title}
 
@@ -199,7 +199,7 @@ module Diataxis
 
         ## Appendix
       HEREDOC
-      
+
       # Only add sections if there are any
       content += "\n#{sections}" unless sections.empty?
 

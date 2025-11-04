@@ -26,5 +26,4 @@ require_relative 'readme_manager'
 # location to each document, preserving the subdirectory structure in the
 # generated links.
 module Diataxis
-
 end
