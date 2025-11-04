@@ -13,6 +13,8 @@ module Diataxis
       when '--version', '-v'
         puts "diataxis version #{VERSION}"
         exit 0
+      when '--help', '-h'
+        usage(0)
       when 'init'
         handle_init(args)
       when 'howto'
@@ -31,17 +33,18 @@ module Diataxis
       end
     end
 
-    def self.usage
+    def self.usage(exit_code = 1)
       puts 'Usage: diataxis <command> [arguments]'
       puts 'Commands:'
       puts '  --version, -v         - Show version number'
+      puts '  --help, -h            - Show this help message'
       puts '  init                  - Initialize .diataxis config file'
       puts '  howto new "Title"     - Create a new how-to guide'
       puts '  tutorial new "Title"  - Create a new tutorial'
       puts '  adr new "Title"      - Create a new architectural decision record'
       puts '  explanation new "Title" - Create a new explanation document'
       puts '  update <directory>    - Update document filenames and README.md'
-      exit 1
+      exit exit_code
     end
 
     def self.handle_init(args)
