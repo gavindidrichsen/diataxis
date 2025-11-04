@@ -156,7 +156,8 @@ module Diataxis
 
     def remove_section(content, section_type, section_title)
       # Remove the entire section including the header
-      section_pattern = /### #{Regexp.escape(section_title)}\s*\n\n<!-- #{section_type}log -->.*?<!-- #{section_type}logstop -->\n*/m
+      escaped_title = Regexp.escape(section_title)
+      section_pattern = /### #{escaped_title}\s*\n\n<!-- #{section_type}log -->.*?<!-- #{section_type}logstop -->\n*/m
       content.gsub(section_pattern, '')
     end
 

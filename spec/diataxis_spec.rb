@@ -392,14 +392,14 @@ RSpec.describe Diataxis do
         end
       end
 
-      it 'only shows sections with content' do
+      it 'shows sections with content' do
         readme_content = File.read(docs_paths[:readme])
-
-        # Should have these sections
         expect(readme_content).to include('### HowTos')
         expect(readme_content).to include('### Design Decisions')
+      end
 
-        # Should NOT have empty sections
+      it 'hides sections without content' do
+        readme_content = File.read(docs_paths[:readme])
         expect(readme_content).not_to include('### Tutorials')
         expect(readme_content).not_to include('### Explanations')
         expect(readme_content).not_to include('### Checklists')
@@ -418,12 +418,14 @@ RSpec.describe Diataxis do
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['howto', 'new', 'Basic Guide'])
         end
-
-        initial_readme = File.read(docs_paths[:readme])
-        expect(initial_readme).not_to include('### Tutorials')
       end
 
       it 'adds sections when documents are created' do
+        # Verify no tutorials section initially
+        initial_readme = File.read(docs_paths[:readme])
+        expect(initial_readme).not_to include('### Tutorials')
+
+        # Add a tutorial
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['tutorial', 'new', 'Getting Started'])
         end
@@ -436,10 +438,11 @@ RSpec.describe Diataxis do
   end
 
   describe 'CLI help and version' do
-    it 'shows all document types in help text' do
+    it 'shows usage information when called with no arguments' do
       expect { Diataxis::CLI.run([]) }.to raise_error(SystemExit)
+    end
 
-      # Capture the help output
+    it 'includes all document types in help text' do
       output = capture_stdout do
         Diataxis::CLI.run([])
       rescue StandardError
@@ -447,6 +450,14 @@ RSpec.describe Diataxis do
       end
       expect(output).to include('howto new "Title"')
       expect(output).to include('tutorial new "Title"')
+    end
+
+    it 'includes remaining document types in help text' do
+      output = capture_stdout do
+        Diataxis::CLI.run([])
+      rescue StandardError
+        nil
+      end
       expect(output).to include('adr new "Title"')
       expect(output).to include('explanation new "Title"')
     end

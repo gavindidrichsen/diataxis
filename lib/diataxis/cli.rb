@@ -9,10 +9,13 @@ module Diataxis
       return usage if args.empty?
 
       command = args.shift
+      handle_command(command, args)
+    end
+
+    def self.handle_command(command, args)
       case command
       when '--version', '-v'
-        puts "diataxis version #{VERSION}"
-        exit 0
+        show_version
       when '--help', '-h'
         usage(0)
       when 'init'
@@ -28,9 +31,18 @@ module Diataxis
       when 'update'
         handle_update(args)
       else
-        puts "Unknown command: #{command}"
-        exit 1
+        unknown_command(command)
       end
+    end
+
+    def self.show_version
+      puts "diataxis version #{VERSION}"
+      exit 0
+    end
+
+    def self.unknown_command(command)
+      puts "Unknown command: #{command}"
+      exit 1
     end
 
     def self.usage(exit_code = 1)

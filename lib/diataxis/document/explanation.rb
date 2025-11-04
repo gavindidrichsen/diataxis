@@ -4,6 +4,8 @@ require_relative '../document'
 require_relative '../config'
 
 module Diataxis
+  # Explanation document type for understanding concepts and background
+  # Follows the Diataxis framework's explanation format for conceptual documentation
   class Explanation < Document
     # Returns a glob pattern for finding explanation documents recursively
     # Complex explanations can be organized in dedicated subdirectories with supporting materials

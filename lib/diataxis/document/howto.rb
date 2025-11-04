@@ -4,6 +4,8 @@ require_relative '../document'
 require_relative '../config'
 
 module Diataxis
+  # HowTo document type for step-by-step procedural guides
+  # Follows the Diataxis framework's how-to format for goal-oriented documentation
   class HowTo < Document
     # Returns a glob pattern for finding how-to documents recursively
     # The '**' enables subdirectory discovery - documents can be organized
