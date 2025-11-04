@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 require 'bundler/gem_tasks'
-require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new(:spec)
+# Override the default :spec task to prevent double execution
+desc 'Run RSpec test suite'
+task :spec do
+  require 'rspec/core'
+  RSpec::Core::Runner.run(['spec'])
+end
 
 task default: :spec

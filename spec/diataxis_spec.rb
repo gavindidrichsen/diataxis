@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'fileutils'
 require 'json'
+require 'stringio'
 
 RSpec.describe Diataxis do
   let(:test_dir) { File.join(File.expand_path('..', File.dirname(__FILE__)), 'tmp', 'test') }
@@ -379,5 +380,130 @@ RSpec.describe Diataxis do
       expect(Dir).to exist(docs_paths[:docs])
       expect(Dir).to exist(docs_paths[:howto])
     end
+  end
+
+  describe 'dynamic README section management' do
+    context 'with mixed document types' do
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['howto', 'new', 'Deploy Application'])
+          Diataxis::CLI.run(['adr', 'new', 'Use Docker'])
+          # NOTE: No tutorials or explanations created
+        end
+      end
+
+      it 'shows sections with content' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('### HowTos')
+        expect(readme_content).to include('### Design Decisions')
+      end
+
+      it 'hides sections without content' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).not_to include('### Tutorials')
+        expect(readme_content).not_to include('### Explanations')
+        expect(readme_content).not_to include('### Checklists')
+      end
+
+      it 'maintains proper document links in visible sections' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[How to deploy Application]')
+        expect(readme_content).to include('[ADR-0001]')
+      end
+    end
+
+    context 'when sections gain content' do
+      before do
+        # Start with no tutorials
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['howto', 'new', 'Basic Guide'])
+        end
+      end
+
+      it 'adds sections when documents are created' do
+        # Verify no tutorials section initially
+        initial_readme = File.read(docs_paths[:readme])
+        expect(initial_readme).not_to include('### Tutorials')
+
+        # Add a tutorial
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['tutorial', 'new', 'Getting Started'])
+        end
+
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('### Tutorials')
+        expect(readme_content).to include('[Getting Started]')
+      end
+    end
+  end
+
+  describe 'CLI help and version' do
+    it 'shows usage information when called with no arguments' do
+      expect { Diataxis::CLI.run([]) }.to raise_error(Diataxis::UsageError) do |error|
+        expect(error.usage_message).to include('Usage: diataxis <command>')
+        expect(error.exit_code).to eq(1)
+      end
+    end
+
+    it 'includes all document types in help text' do
+      Diataxis::CLI.run([])
+    rescue Diataxis::UsageError => e
+      expect(e.usage_message).to include('howto new "Title"')
+      expect(e.usage_message).to include('tutorial new "Title"')
+    end
+
+    it 'includes remaining document types in help text' do
+      Diataxis::CLI.run([])
+    rescue Diataxis::UsageError => e
+      expect(e.usage_message).to include('adr new "Title"')
+      expect(e.usage_message).to include('explanation new "Title"')
+    end
+
+    it 'shows version information' do
+      expect { Diataxis::CLI.run(['--version']) }.to raise_error(SystemExit)
+
+      output = capture_stdout do
+        Diataxis::CLI.run(['--version'])
+      rescue StandardError
+        nil
+      end
+      expect(output).to include('diataxis version')
+      expect(output).to include(Diataxis::VERSION)
+    end
+  end
+
+  describe 'error handling' do
+    context 'with missing arguments' do
+      it 'shows usage for howto without title' do
+        Dir.chdir(test_dir) do
+          expect { Diataxis::CLI.run(%w[howto new]) }.to raise_error(Diataxis::UsageError) do |error|
+            expect(error.usage_message).to include('Usage: diataxis howto new')
+            expect(error.exit_code).to eq(1)
+          end
+        end
+      end
+    end
+
+    context 'with unknown commands' do
+      it 'shows error for unknown document type' do
+        Dir.chdir(test_dir) do
+          expect { Diataxis::CLI.run(%w[unknown new Title]) }.to raise_error(Diataxis::UsageError) do |error|
+            expect(error.usage_message).to include('Unknown command: unknown')
+            expect(error.exit_code).to eq(1)
+          end
+        end
+      end
+    end
+  end
+
+  private
+
+  def capture_stdout
+    original_stdout = $stdout
+    $stdout = StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = original_stdout
   end
 end

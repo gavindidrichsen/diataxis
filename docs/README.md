@@ -9,14 +9,9 @@
 ### HowTos
 
 <!-- howtolog -->
+* [How to add a new document template](how-to/how_to_add_a_new_document_template.md)
 * [How to manually test all diataxis features](how-to/how_to_manually_test_all_diataxis_features.md)
 <!-- howtologstop -->
-
-### Tutorials
-
-<!-- tutoriallog -->
-
-<!-- tutoriallogstop -->
 
 ### Design Decisions
 
@@ -28,10 +23,7 @@
 * [ADR-0005](adr/0005-use-purpose-driven-document-templates.md) - Use Purpose-Driven Document Templates
 * [ADR-0006](adr/0006-implement-automated-readme-link-management.md) - Implement Automated README Link Management
 * [ADR-0007](adr/0007-enable-recursive-document-discovery.md) - Enable Recursive Document Discovery
+* [ADR-0008](adr/0008-refactor-document-templates-into-separate-class-files-for-improved-maintainability.md) - Refactor document templates into separate class files for improved maintainability
+* [ADR-0009](adr/0009-hide-readme-sections-when-no-matching-documents-exist.md) - Hide README sections when no matching documents exist
+* [ADR-0010](adr/0010-implement-custom-error-handling-system.md) - Implement Custom Error Handling System
 <!-- adrlogstop -->
-
-### Explanations
-
-<!-- explanationlog -->
-
-<!-- explanationlogstop -->
