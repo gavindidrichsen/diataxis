@@ -54,10 +54,10 @@ module Diataxis
       end
 
       private_class_method def self.validate_directory!(directory)
-        unless Dir.exist?(directory)
-          raise FileSystemError.new("'#{directory}' is not a valid directory.", 
-                                    path: directory, operation: 'directory_check')
-        end
+        return if Dir.exist?(directory)
+
+        raise FileSystemError.new("'#{directory}' is not a valid directory.",
+                                  path: directory, operation: 'directory_check')
       end
 
       private_class_method def self.validate_document_args!(args, command_name)

@@ -22,7 +22,7 @@ module Diataxis
 
       def self.route(command, args)
         action = COMMAND_MAP[command]
-        
+
         case action
         when :version
           UsageDisplay.show_version

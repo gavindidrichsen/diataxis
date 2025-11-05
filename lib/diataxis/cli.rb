@@ -5,8 +5,10 @@ require_relative 'cli/command_router'
 require_relative 'cli/usage_display'
 
 module Diataxis
+  # Command Line Interface module for the Diataxis documentation framework
+  # Handles parsing and routing of CLI commands to appropriate handlers
   module CLI
-    # Main CLI entry point - delegates to specialized handlers
+    # main CLI entry point
     def self.run(args)
       return UsageDisplay.show_usage if args.empty?
 

@@ -96,10 +96,8 @@ module Diataxis
     # find which document type should handle this file based on filename patterns
     def self.find_document_type_for_file(filepath)
       filename = File.basename(filepath)
-      
+
       DOCUMENT_TYPES.find { |doc_type| doc_type.matches_filename_pattern?(filename) }
     end
-
-
   end
 end

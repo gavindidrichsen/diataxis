@@ -19,7 +19,7 @@ module Diataxis
     end
 
     # Generate filename from title for existing files
-    def self.generate_filename_from_title(title, current_name = nil)
+    def self.generate_filename_from_title(title)
       clean_title = title.sub(/^how to /i, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
       "how_to_#{slug}.md"

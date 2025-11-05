@@ -16,13 +16,31 @@ module Diataxis
       File.join(path, '**', '[0-9][0-9][0-9][0-9]-*.md')
     end
 
-    # Generate filename from title for existing files
-    def self.generate_filename_from_title(title, current_name = nil)
-      # Extract ADR number from current filename if available
-      adr_num = current_name&.match(/^(\d{4})-/)&.[](1) || '0000'
+    # Override entire filename generation for ADR-specific logic
+    def self.generate_filename_from_existing(filepath)
+      first_line = File.open(filepath, &:readline).strip
+      return nil unless first_line.start_with?('# ')
+
+      title = first_line[2..] # Remove the "# " prefix
+      current_name = File.basename(filepath)
+
+      # ADR-specific: Extract and preserve the ADR number
+      adr_num = current_name.match(/^(\d{4})-/)&.[](1) || '0000'
       clean_title = title.sub(/^\d+\. /, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
-      "#{adr_num}-#{slug}.md"
+      new_filename = "#{adr_num}-#{slug}.md"
+
+      return nil if current_name == new_filename
+
+      new_filename
+    end
+
+    # Standard filename generation for new ADRs (not renaming existing ones)
+    def self.generate_filename_from_title(title)
+      clean_title = title.sub(/^\d+\. /, '')
+      slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
+      # For new ADRs, number will be assigned in generate_filename method
+      "0000-#{slug}.md"
     end
 
     # Check if filename matches ADR pattern
