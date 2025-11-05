@@ -50,4 +50,15 @@ module Diataxis
       super(message)
     end
   end
+
+  # Raised when template loading or processing fails
+  class TemplateError < Error
+    attr_reader :template_name, :search_paths
+
+    def initialize(message, template_name: nil, search_paths: nil)
+      @template_name = template_name
+      @search_paths = search_paths
+      super(message)
+    end
+  end
 end

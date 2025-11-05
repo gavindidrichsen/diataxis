@@ -3,6 +3,7 @@
 require_relative '../document'
 require_relative '../config'
 require_relative '../errors'
+require_relative '../template_loader'
 
 module Diataxis
   # HowTo document type for step-by-step procedural guides
@@ -80,35 +81,7 @@ module Diataxis
     end
 
     def content
-      <<~CONTENT
-        # #{title}
-
-        ## Description
-
-        A brief overview of what this guide helps the reader achieve.
-
-        ## Prerequisites
-
-        List any setup steps, dependencies, or prior knowledge needed before following this guide.
-
-        ## Usage
-
-        ```bash
-        # step 1
-        some-command --option value
-
-        # step 2
-
-        # step 3
-        ```
-
-        ## Appendix
-
-        ### Sample usage output
-
-        ```bash
-        ```
-      CONTENT
+      TemplateLoader.load_template(self.class, title)
     end
   end
 end

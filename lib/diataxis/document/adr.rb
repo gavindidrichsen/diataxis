@@ -2,6 +2,7 @@
 
 require_relative '../document'
 require_relative '../config'
+require_relative '../template_loader'
 
 module Diataxis
   # Architecture Decision Record (ADR) document type
@@ -84,28 +85,8 @@ module Diataxis
     end
 
     def content
-      date = Time.now.strftime('%Y-%m-%d')
-      <<~CONTENT
-        # #{next_number}. #{title}
-
-        Date: #{date}
-
-        ## Status
-
-        Proposed
-
-        ## Context
-
-        What is the issue that we're seeing that is motivating this decision or change?
-
-        ## Decision
-
-        What is the change that we're proposing and/or doing?
-
-        ## Consequences
-
-        What becomes easier or more difficult to do because of this change?
-      CONTENT
+      formatted_number = format('%04d', next_number)
+      TemplateLoader.load_template(self.class, title, adr_number: formatted_number, status: 'Proposed')
     end
 
     private

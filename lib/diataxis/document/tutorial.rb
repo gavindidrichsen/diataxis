@@ -2,6 +2,7 @@
 
 require_relative '../document'
 require_relative '../config'
+require_relative '../template_loader'
 
 module Diataxis
   # Tutorial document type for step-by-step learning content
@@ -63,21 +64,7 @@ module Diataxis
     protected
 
     def content
-      <<~CONTENT
-        # #{title}
-
-        ## Learning Objectives
-
-        What the reader will learn from this tutorial.
-
-        ## Prerequisites
-
-        What the reader needs to know or have installed before starting.
-
-        ## Tutorial
-
-        Step-by-step instructions...
-      CONTENT
+      TemplateLoader.load_template(self.class, title)
     end
   end
 end

@@ -2,6 +2,7 @@
 
 require_relative '../document'
 require_relative '../config'
+require_relative '../template_loader'
 
 module Diataxis
   # Explanation document type for understanding concepts and background
@@ -88,41 +89,7 @@ module Diataxis
     protected
 
     def content
-      <<~CONTENT
-        # #{title}
-
-        ## Purpose
-
-        This document answers:
-
-        - Why do we do things this way?
-        - What are the core concepts?
-        - How do the pieces fit together?
-
-        ## Background
-
-        Explain the context and fundamental concepts...
-
-        ## Key Concepts
-
-        ### Concept 1
-
-        Explanation of the first key concept...
-
-        **Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
-
-        ### Concept 2
-
-        Explanation of the second key concept...
-
-        **Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
-
-        ## Related Topics
-
-        - Link to related concepts
-        - Link to relevant how-tos
-        - Link to reference docs
-      CONTENT
+      TemplateLoader.load_template(self.class, title)
     end
   end
 end

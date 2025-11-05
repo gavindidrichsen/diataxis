@@ -143,7 +143,7 @@ RSpec.describe Diataxis do
         expect(File).to exist(adr_path)
 
         content = File.read(adr_path)
-        expect(content).to include('# 1. Use PostgreSQL Database')
+        expect(content).to include('# 0001. Use PostgreSQL Database')
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[ADR-0001]')
