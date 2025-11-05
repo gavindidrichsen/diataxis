@@ -7,7 +7,6 @@ require_relative 'config'
 module Diataxis
   # Base document class following Template Method pattern
   class Document
-    
     attr_reader :title, :filename
 
     def initialize(title, directory = '.')

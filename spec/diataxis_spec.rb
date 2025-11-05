@@ -22,7 +22,7 @@ RSpec.describe Diataxis do
   before do
     # Reset logger state for clean test environment
     Diataxis::Log.reset!
-    
+
     # Create clean test directory
     FileUtils.rm_rf(test_dir)
     FileUtils.mkdir_p(test_dir)
