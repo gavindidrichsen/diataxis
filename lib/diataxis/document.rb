@@ -40,6 +40,34 @@ module Diataxis
       raise NotImplementedError, "#{name} must implement pattern"
     end
 
+    # Interface for filename management - each document type can override
+    def self.generate_filename_from_existing(filepath)
+      first_line = File.open(filepath, &:readline).strip
+      return nil unless first_line.start_with?('# ')
+
+      title = first_line[2..] # Remove the "# " prefix
+      current_name = File.basename(filepath)
+      
+      # Default implementation - subclasses can override for specific logic
+      new_filename = generate_filename_from_title(title, current_name)
+      return nil if File.basename(filepath) == new_filename
+      
+      new_filename
+    end
+
+    # Generate filename from title - each document type implements its own logic
+    def self.generate_filename_from_title(title, current_name = nil)
+      # Default implementation - subclasses should override
+      slug = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+      "#{name.split('::').last.downcase}_#{slug}.md"
+    end
+
+    # Check if a filename matches this document type's pattern
+    def self.matches_filename_pattern?(filename)
+      # Default implementation - subclasses can override
+      filename.start_with?("#{name.split('::').last.downcase}_") && filename.end_with?('.md')
+    end
+
     protected
 
     def type

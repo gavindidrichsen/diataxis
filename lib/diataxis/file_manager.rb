@@ -2,11 +2,16 @@
 
 require_relative 'config'
 require_relative 'document/howto'
+require_relative 'document/tutorial'
+require_relative 'document/explanation'
+require_relative 'document/adr'
 
 module Diataxis
   # File management with subdirectory support
   # Handles finding, renaming, and organizing documents across directory structures
   class FileManager
+    # Registry of all document types for filename generation
+    DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR].freeze
     # Main entry point for updating filenames across all document types
     # Processes each document type separately to handle their specific patterns and requirements
     def self.update_filenames(directory, document_types)
@@ -73,41 +78,28 @@ module Diataxis
     end
 
     def self.update_filename(filepath, directory)
-      first_line = File.open(filepath, &:readline).strip
-      return unless first_line.start_with?('# ')
+      # find the $document_type that can handle this file
+      document_type = find_document_type_for_file(filepath)
+      return unless document_type
 
-      title = first_line[2..] # Remove the "# " prefix
-      current_name = File.basename(filepath)
-
-      # Handle ADR files differently
-      if current_name.match?(/^\d{4}-.*\.md$/)
-        # Keep the existing ADR number
-        adr_num = current_name[0..3]
-        # Remove the number prefix from title
-        title = title.sub(/^\d+\. /, '')
-        new_filename = "#{adr_num}-#{title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')}.md"
-      elsif current_name.start_with?('how_to_')
-        # Remove how_to_ prefix from title if it exists
-        title = title.sub(/^how to /i, '')
-        title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
-        new_filename = "how_to_#{title_part}.md"
-      elsif current_name.start_with?('understanding_')
-        # Remove Understanding prefix from title if it exists
-        title = title.sub(/^understanding /i, '')
-        title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
-        new_filename = "understanding_#{title_part}.md"
-      else
-        type = current_name.split('_').first
-        title_part = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
-        new_filename = "#{type}_#{title_part}.md"
-      end
+      # generate the new filename for this $document type
+      new_filename = document_type.generate_filename_from_existing(filepath)
+      return unless new_filename
 
       new_filepath = File.join(directory, new_filename)
-
-      return unless File.basename(filepath) != new_filename
+      return if File.basename(filepath) == new_filename
 
       FileUtils.mv(filepath, new_filepath)
       Diataxis.logger.info "Renamed: #{filepath} -> #{new_filepath}"
     end
+
+    # find which document type should handle this file based on filename patterns
+    def self.find_document_type_for_file(filepath)
+      filename = File.basename(filepath)
+      
+      DOCUMENT_TYPES.find { |doc_type| doc_type.matches_filename_pattern?(filename) }
+    end
+
+
   end
 end

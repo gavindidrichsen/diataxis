@@ -17,6 +17,18 @@ module Diataxis
       File.join(path, '**', 'understanding_*.md')
     end
 
+    # Generate filename from title for existing files
+    def self.generate_filename_from_title(title, current_name = nil)
+      clean_title = title.sub(/^understanding /i, '')
+      slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+      "understanding_#{slug}.md"
+    end
+
+    # Check if filename matches Explanation pattern
+    def self.matches_filename_pattern?(filename)
+      filename.match?(/^understanding_.*\.md$/)
+    end
+
     def initialize(title, directory = '.')
       normalized_title = normalize_title(title)
       super(normalized_title, directory)

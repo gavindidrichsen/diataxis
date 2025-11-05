@@ -16,6 +16,20 @@ module Diataxis
       File.join(path, '**', '[0-9][0-9][0-9][0-9]-*.md')
     end
 
+    # Generate filename from title for existing files
+    def self.generate_filename_from_title(title, current_name = nil)
+      # Extract ADR number from current filename if available
+      adr_num = current_name&.match(/^(\d{4})-/)&.[](1) || '0000'
+      clean_title = title.sub(/^\d+\. /, '')
+      slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
+      "#{adr_num}-#{slug}.md"
+    end
+
+    # Check if filename matches ADR pattern
+    def self.matches_filename_pattern?(filename)
+      filename.match?(/^\d{4}-.*\.md$/)
+    end
+
     protected
 
     def generate_filename

@@ -16,6 +16,17 @@ module Diataxis
       File.join(path, '**', 'tutorial_*.md')
     end
 
+    # Generate filename from title for existing files
+    def self.generate_filename_from_title(title, current_name = nil)
+      slug = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+      "tutorial_#{slug}.md"
+    end
+
+    # Check if filename matches Tutorial pattern
+    def self.matches_filename_pattern?(filename)
+      filename.match?(/^tutorial_.*\.md$/)
+    end
+
     protected
 
     def content
