@@ -8,27 +8,48 @@ module Diataxis
   # HowTo document type for step-by-step procedural guides
   # Follows the Diataxis framework's how-to format for goal-oriented documentation
   class HowTo < Document
-    # Returns a glob pattern for finding how-to documents recursively
-    # The '**' enables subdirectory discovery - documents can be organized
-    # in any subdirectory depth within the configured how-to directory
-    # Example: docs/how-to/how_to_basic.md AND docs/how-to/advanced/how_to_complex.md
+    # === DocumentInterface Implementation ===
+
+    implements :pattern
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['howtos'] || '.'
       File.join(path, '**', 'how_to_*.md')
     end
 
-    # Generate filename from title for existing files
-    def self.generate_filename_from_title(title)
+    implements :generate_filename_from_file
+    def self.generate_filename_from_file(filepath)
+      # Extract title from file content
+      first_line = File.open(filepath, &:readline).strip
+      return nil unless first_line.start_with?('# ')
+
+      title = first_line[2..] # Remove the "# " prefix
       clean_title = title.sub(/^how to /i, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
       "how_to_#{slug}.md"
     end
 
-    # Check if filename matches HowTo pattern
+    implements :matches_filename_pattern?
     def self.matches_filename_pattern?(filename)
       filename.match?(/^how_to_.*\.md$/)
     end
+
+    implements :readme_section_title
+    def self.readme_section_title
+      'How-To Guides'
+    end
+
+    implements :config_key
+    def self.config_key
+      'howtos'
+    end
+
+    implements :format_readme_entry
+    def self.format_readme_entry(title, relative_path, _filepath)
+      "* [#{title}](#{relative_path})"
+    end
+
+    # === End DocumentInterface Implementation ===
 
     def initialize(title, directory = '.')
       normalized_title = normalize_title(title)

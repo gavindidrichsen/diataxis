@@ -62,7 +62,7 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 
 ## Appendix
 
-### HowTos
+### How-To Guides
 
 <!-- howtolog -->
 * [How to add a new document template](how-to/how_to_add_a_new_document_template.md)

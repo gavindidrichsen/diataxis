@@ -368,7 +368,7 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('# ')
-        expect(readme_content).to include('### HowTos')
+        expect(readme_content).to include('### How-To Guides')
         expect(readme_content).to include('<!-- howtolog -->')
       end
     end
@@ -397,7 +397,7 @@ RSpec.describe Diataxis do
 
       it 'shows sections with content' do
         readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('### HowTos')
+        expect(readme_content).to include('### How-To Guides')
         expect(readme_content).to include('### Design Decisions')
       end
 

@@ -26,12 +26,7 @@ module Diataxis
     end
 
     def document_type_section(doc_type)
-      case doc_type.name.split('::').last
-      when 'ADR'
-        'Design Decisions'
-      else
-        "#{doc_type.name.split('::').last}s"
-      end
+      doc_type.readme_section_title
     end
 
     private
@@ -70,12 +65,7 @@ module Diataxis
     end
 
     def get_doc_dir_config(doc_type)
-      case doc_type.name.split('::').last.downcase
-      when 'howto' then @config['howtos']
-      when 'tutorial' then @config['tutorials']
-      when 'explanation' then @config['explanations']
-      when 'adr' then @config['adr']
-      end
+      @config[doc_type.config_key]
     end
 
     # Finds files using recursive glob patterns and updates their filenames in place
@@ -109,18 +99,10 @@ module Diataxis
       end
     end
 
-    # Formats README entries with proper link syntax for each document type
-    # Handles special ADR formatting requirements
+    # Formats README entries using document type's specific formatting
+    # Delegates to each document type's format_readme_entry method
     def format_entry(title, relative_path, file, doc_type)
-      if doc_type == ADR
-        # Extract ADR number from filename
-        adr_num = File.basename(file)[0..3]
-        # Remove any existing number prefix from title
-        clean_title = title.sub(/^\d+\. /, '')
-        "* [ADR-#{adr_num}](#{relative_path}) - #{clean_title}"
-      else
-        "* [#{title}](#{relative_path})"
-      end
+      doc_type.format_readme_entry(title, relative_path, file)
     end
 
     def update_existing_readme

@@ -10,43 +10,56 @@ module Diataxis
     # Returns a glob pattern for finding ADR documents recursively
     # ADRs can be organized in subdirectories by topic, year, or other criteria
     # Example: docs/adr/0001-decision.md AND docs/adr/2025/0002-new-decision.md
+    # === DocumentInterface Implementation ===
+
+    implements :pattern
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['adr'] || 'exp/adr'
       File.join(path, '**', '[0-9][0-9][0-9][0-9]-*.md')
     end
 
-    # Override entire filename generation for ADR-specific logic
-    def self.generate_filename_from_existing(filepath)
+    implements :generate_filename_from_file
+    def self.generate_filename_from_file(filepath)
+      # ADR-specific: Extract title and preserve ADR numbering
       first_line = File.open(filepath, &:readline).strip
       return nil unless first_line.start_with?('# ')
 
       title = first_line[2..] # Remove the "# " prefix
       current_name = File.basename(filepath)
 
-      # ADR-specific: Extract and preserve the ADR number
+      # Extract and preserve the ADR number from existing filename
       adr_num = current_name.match(/^(\d{4})-/)&.[](1) || '0000'
       clean_title = title.sub(/^\d+\. /, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
-      new_filename = "#{adr_num}-#{slug}.md"
-
-      return nil if current_name == new_filename
-
-      new_filename
+      "#{adr_num}-#{slug}.md"
     end
 
-    # Standard filename generation for new ADRs (not renaming existing ones)
-    def self.generate_filename_from_title(title)
-      clean_title = title.sub(/^\d+\. /, '')
-      slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
-      # For new ADRs, number will be assigned in generate_filename method
-      "0000-#{slug}.md"
-    end
-
-    # Check if filename matches ADR pattern
+    implements :matches_filename_pattern?
     def self.matches_filename_pattern?(filename)
       filename.match?(/^\d{4}-.*\.md$/)
     end
+
+    implements :readme_section_title
+    def self.readme_section_title
+      'Design Decisions'
+    end
+
+    implements :config_key
+    def self.config_key
+      'adr'
+    end
+
+    implements :format_readme_entry
+    def self.format_readme_entry(title, relative_path, filepath)
+      # Extract ADR number from filename
+      adr_num = File.basename(filepath)[0..3]
+      # Remove any existing number prefix from title
+      clean_title = title.sub(/^\d+\. /, '')
+      "* [ADR-#{adr_num}](#{relative_path}) - #{clean_title}"
+    end
+
+    # === End DocumentInterface Implementation ===
 
     protected
 
