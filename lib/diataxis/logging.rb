@@ -36,14 +36,13 @@ module Diataxis
     end
 
     def self.determine_log_level
-      # Priority 1: Explicitly set level (via CLI flags)
+      # Priority 1: Explicitly set level (via level= method from CLI flags)
       return @explicit_level if @explicit_level
 
       # Priority 2: Environment variable
       if ENV['DIATAXIS_LOG_LEVEL']
         case ENV['DIATAXIS_LOG_LEVEL'].upcase
         when 'DEBUG' then Logger::DEBUG
-        when 'INFO' then Logger::INFO
         when 'WARN' then Logger::WARN
         when 'ERROR' then Logger::ERROR
         when 'FATAL' then Logger::FATAL
@@ -58,9 +57,9 @@ module Diataxis
       end
     end
 
-    def self.set_level(level)
-      @explicit_level = level
-      @logger&.level = level
+    def self.level=(new_level)
+      @explicit_level = new_level
+      @logger&.level = new_level
     end
 
     # Reset logger (useful for testing)
