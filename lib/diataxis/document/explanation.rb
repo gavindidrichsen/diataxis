@@ -2,6 +2,7 @@
 
 require_relative '../document'
 require_relative '../config'
+require_relative '../template_loader'
 
 module Diataxis
   # Explanation document type for understanding concepts and background
@@ -11,11 +12,56 @@ module Diataxis
     # Complex explanations can be organized in dedicated subdirectories with supporting materials
     # Example: docs/explanations/understanding_simple.md AND
     #          docs/explanations/understanding_complex_system/understanding_complex_system.md
+    # === DocumentInterface Implementation ===
+
+    implements :pattern
     def self.pattern(config_root = '.')
       config = Config.load(config_root)
       path = config['explanations'] || '.'
       File.join(path, '**', 'understanding_*.md')
     end
+
+    implements :generate_filename_from_file
+    def self.generate_filename_from_file(filepath)
+      # Extract title from file content
+      first_line = File.open(filepath, &:readline).strip
+      return nil unless first_line.start_with?('# ')
+
+      title = first_line[2..] # Remove the "# " prefix
+      clean_title = title.sub(/^understanding /i, '')
+      slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
+      "understanding_#{slug}.md"
+    end
+
+    implements :matches_filename_pattern?
+    def self.matches_filename_pattern?(filename)
+      filename.match?(/^understanding_.*\.md$/)
+    end
+
+    implements :readme_section_title
+    def self.readme_section_title
+      'Explanations'
+    end
+
+    implements :config_key
+    def self.config_key
+      'explanations'
+    end
+
+    implements :format_readme_entry
+    def self.format_readme_entry(title, relative_path, _filepath)
+      "* [#{title}](#{relative_path})"
+    end
+
+    implements :find_files
+    def self.find_files(config_root = '.')
+      search_pattern = File.expand_path(pattern(config_root), config_root)
+      files = Dir.glob(search_pattern).sort
+      Diataxis.logger.info "Found #{files.length} #{name.split('::').last} files matching #{search_pattern}"
+      files
+    end
+
+    # === End DocumentInterface Implementation ===
 
     def initialize(title, directory = '.')
       normalized_title = normalize_title(title)
@@ -43,41 +89,7 @@ module Diataxis
     protected
 
     def content
-      <<~CONTENT
-        # #{title}
-
-        ## Purpose
-
-        This document answers:
-
-        - Why do we do things this way?
-        - What are the core concepts?
-        - How do the pieces fit together?
-
-        ## Background
-
-        Explain the context and fundamental concepts...
-
-        ## Key Concepts
-
-        ### Concept 1
-
-        Explanation of the first key concept...
-
-        **Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
-
-        ### Concept 2
-
-        Explanation of the second key concept...
-
-        **Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
-
-        ## Related Topics
-
-        - Link to related concepts
-        - Link to relevant how-tos
-        - Link to reference docs
-      CONTENT
+      TemplateLoader.load_template(self.class, title)
     end
   end
 end

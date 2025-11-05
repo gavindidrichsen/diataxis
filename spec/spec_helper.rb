@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Set log level before loading diataxis to ensure it's picked up
+# Allow override via environment variable for debugging
+ENV['DIATAXIS_LOG_LEVEL'] ||= 'WARN'
+
 require 'diataxis'
 
 RSpec.configure do |config|
@@ -11,5 +15,10 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  # Clean up after tests
+  config.after(:suite) do
+    ENV.delete('DIATAXIS_LOG_LEVEL')
   end
 end

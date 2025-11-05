@@ -25,6 +25,9 @@ Gem::Specification.new do |spec|
         f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor Gemfile])
     end
   end
+
+  # Ensure templates are included in the gem (best practice location)
+  spec.files += Dir['templates/*.md']
   spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']

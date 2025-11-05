@@ -20,6 +20,9 @@ RSpec.describe Diataxis do
   let(:config_path) { File.join(test_dir, '.diataxis') }
 
   before do
+    # Reset logger state for clean test environment
+    Diataxis::Log.reset!
+
     # Create clean test directory
     FileUtils.rm_rf(test_dir)
     FileUtils.mkdir_p(test_dir)
@@ -140,7 +143,7 @@ RSpec.describe Diataxis do
         expect(File).to exist(adr_path)
 
         content = File.read(adr_path)
-        expect(content).to include('# 1. Use PostgreSQL Database')
+        expect(content).to include('# 0001. Use PostgreSQL Database')
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[ADR-0001]')
@@ -365,7 +368,7 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('# ')
-        expect(readme_content).to include('### HowTos')
+        expect(readme_content).to include('### How-To Guides')
         expect(readme_content).to include('<!-- howtolog -->')
       end
     end
@@ -394,7 +397,7 @@ RSpec.describe Diataxis do
 
       it 'shows sections with content' do
         readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('### HowTos')
+        expect(readme_content).to include('### How-To Guides')
         expect(readme_content).to include('### Design Decisions')
       end
 
@@ -440,7 +443,7 @@ RSpec.describe Diataxis do
   describe 'CLI help and version' do
     it 'shows usage information when called with no arguments' do
       expect { Diataxis::CLI.run([]) }.to raise_error(Diataxis::UsageError) do |error|
-        expect(error.usage_message).to include('Usage: diataxis <command>')
+        expect(error.usage_message).to include('Usage: diataxis [options] <command>')
         expect(error.exit_code).to eq(1)
       end
     end

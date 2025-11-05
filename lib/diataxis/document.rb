@@ -3,10 +3,14 @@
 require 'fileutils'
 require 'pathname'
 require_relative 'config'
+require_relative 'document_interface'
 
 module Diataxis
   # Base document class following Template Method pattern
+  # Includes DocumentInterface to enforce implementation contracts
   class Document
+    include DocumentInterface
+
     attr_reader :title, :filename
 
     def initialize(title, directory = '.')
@@ -33,11 +37,17 @@ module Diataxis
 
     def create
       File.write(@filename, content)
-      puts "Created new #{type}: #{@filename}"
+      Diataxis.logger.info "Created new #{type}: #{@filename}"
     end
 
-    def self.pattern
-      raise NotImplementedError, "#{name} must implement pattern"
+    # Template method for filename generation from existing files
+    # Delegates to each document type's implementation
+    def self.generate_filename_from_existing(filepath)
+      current_name = File.basename(filepath)
+      new_filename = generate_filename_from_file(filepath)
+      return nil if current_name == new_filename
+
+      new_filename
     end
 
     protected
