@@ -26,4 +26,8 @@ require_relative 'readme_manager'
 # location to each document, preserving the subdirectory structure in the
 # generated links.
 module Diataxis
+  # Provide logger access at the module level following best practices
+  def self.logger
+    Log.instance
+  end
 end

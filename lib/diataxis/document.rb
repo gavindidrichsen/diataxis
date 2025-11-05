@@ -7,6 +7,7 @@ require_relative 'config'
 module Diataxis
   # Base document class following Template Method pattern
   class Document
+    
     attr_reader :title, :filename
 
     def initialize(title, directory = '.')
@@ -33,7 +34,7 @@ module Diataxis
 
     def create
       File.write(@filename, content)
-      puts "Created new #{type}: #{@filename}"
+      Diataxis.logger.info "Created new #{type}: #{@filename}"
     end
 
     def self.pattern

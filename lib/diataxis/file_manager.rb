@@ -48,7 +48,7 @@ module Diataxis
       pattern = doc_type.pattern(directory)
       search_pattern = File.expand_path(pattern, config_dir)
       files = Dir.glob(search_pattern)
-      puts "Found #{files.length} files matching #{search_pattern}"
+      Diataxis.logger.info "Found #{files.length} files matching #{search_pattern}"
       files
     end
 
@@ -107,7 +107,7 @@ module Diataxis
       return unless File.basename(filepath) != new_filename
 
       FileUtils.mv(filepath, new_filepath)
-      puts "Renamed: #{filepath} -> #{new_filepath}"
+      Diataxis.logger.info "Renamed: #{filepath} -> #{new_filepath}"
     end
   end
 end

@@ -20,6 +20,9 @@ RSpec.describe Diataxis do
   let(:config_path) { File.join(test_dir, '.diataxis') }
 
   before do
+    # Reset logger state for clean test environment
+    Diataxis::Log.reset!
+    
     # Create clean test directory
     FileUtils.rm_rf(test_dir)
     FileUtils.mkdir_p(test_dir)
@@ -440,7 +443,7 @@ RSpec.describe Diataxis do
   describe 'CLI help and version' do
     it 'shows usage information when called with no arguments' do
       expect { Diataxis::CLI.run([]) }.to raise_error(Diataxis::UsageError) do |error|
-        expect(error.usage_message).to include('Usage: diataxis <command>')
+        expect(error.usage_message).to include('Usage: diataxis [options] <command>')
         expect(error.exit_code).to eq(1)
       end
     end

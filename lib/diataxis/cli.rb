@@ -9,8 +9,32 @@ module Diataxis
     def self.run(args)
       return usage if args.empty?
 
+      # Handle global flags first
+      handle_global_flags(args)
+      
       command = args.shift
       handle_command(command, args)
+    end
+    
+    def self.handle_global_flags(args)
+      # Extract and process global flags before main command
+      args.delete_if do |arg|
+        case arg
+        when '--verbose', '-V'
+          Diataxis::Log.set_level(Logger::DEBUG)
+          logger.debug("Verbose mode enabled")
+          true
+        when '--quiet', '-q'
+          Diataxis::Log.set_level(Logger::WARN)
+          true
+        else
+          false
+        end
+      end
+    end
+
+    def self.logger
+      Diataxis.logger
     end
 
     def self.handle_command(command, args)
@@ -47,16 +71,25 @@ module Diataxis
 
     def self.usage(exit_code = 1)
       usage_text = <<~USAGE
-        Usage: diataxis <command> [arguments]
-        Commands:
+        Usage: diataxis [options] <command> [arguments]
+        
+        Global Options:
+          --verbose, -V         - Enable verbose output (debug level)
+          --quiet, -q           - Suppress informational output (warnings only)
           --version, -v         - Show version number
           --help, -h            - Show this help message
+        
+        Commands:
           init                  - Initialize .diataxis config file
           howto new "Title"     - Create a new how-to guide
           tutorial new "Title"  - Create a new tutorial
           adr new "Title"      - Create a new architectural decision record
           explanation new "Title" - Create a new explanation document
           update <directory>    - Update document filenames and README.md
+          
+        Environment Variables:
+          DIATAXIS_LOG_LEVEL    - Set log level (DEBUG, INFO, WARN, ERROR, FATAL)
+          DIATAXIS_QUIET        - Set to 'true' to suppress output
       USAGE
 
       raise UsageError.new(usage_text.strip, exit_code) unless exit_code.zero?
@@ -67,6 +100,8 @@ module Diataxis
 
     def self.handle_init(args)
       directory = args.empty? ? Dir.pwd : File.expand_path(args[0])
+      logger.debug("Initializing Diataxis config in directory: #{directory}")
+      
       unless Dir.exist?(directory)
         raise FileSystemError.new("'#{directory}' is not a valid directory.", path: directory,
                                                                               operation: 'directory_check')

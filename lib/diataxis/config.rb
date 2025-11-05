@@ -27,7 +27,7 @@ module Diataxis
     def self.create(directory = '.', config = DEFAULT_CONFIG)
       config_path = File.join(directory, CONFIG_FILE)
       File.write(config_path, "#{JSON.pretty_generate(config)}\n")
-      puts "Created #{config_path} with default configuration"
+      Diataxis.logger.info "Created #{config_path} with default configuration"
     end
 
     def self.find_config(start_dir)

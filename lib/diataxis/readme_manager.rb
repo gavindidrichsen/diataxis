@@ -82,7 +82,7 @@ module Diataxis
     # Preserves subdirectory structure during filename updates
     def find_and_update_files(search_pattern, base_dir)
       files = Dir.glob(search_pattern).sort
-      puts "Found #{files.length} files matching #{search_pattern}"
+      Diataxis.logger.info "Found #{files.length} files matching #{search_pattern}"
 
       # Update filenames before returning - critical to preserve subdirectory structure
       files.each do |filepath|
@@ -130,14 +130,14 @@ module Diataxis
         section_title = document_type_section(doc_type)
         section_type = section_name.downcase
         entries = @entries[doc_type]
-
+        
         if content.include?("<!-- #{section_type}log -->")
           # Section exists - update or remove it
-          content = if entries.empty?
-                      remove_section(content, section_type, section_title)
-                    else
-                      update_section(content, section_type, entries)
-                    end
+          if entries.empty?
+            content = remove_section(content, section_type, section_title)
+          else
+            content = update_section(content, section_type, entries)
+          end
         elsif !entries.empty?
           # Section doesn't exist but we have content - add it
           content = add_section(content, section_type, entries, section_title)
@@ -156,8 +156,7 @@ module Diataxis
 
     def remove_section(content, section_type, section_title)
       # Remove the entire section including the header
-      escaped_title = Regexp.escape(section_title)
-      section_pattern = /### #{escaped_title}\s*\n\n<!-- #{section_type}log -->.*?<!-- #{section_type}logstop -->\n*/m
+      section_pattern = /### #{Regexp.escape(section_title)}\s*\n\n<!-- #{section_type}log -->.*?<!-- #{section_type}logstop -->\n*/m
       content.gsub(section_pattern, '')
     end
 
@@ -177,11 +176,11 @@ module Diataxis
       sections = @document_types.filter_map do |doc_type|
         entries = @entries[doc_type]
         next if entries.empty? # Skip sections without content
-
+        
         section_name = doc_type.name.split('::').last
         section_title = document_type_section(doc_type)
         section_type = section_name.downcase
-
+        
         <<~SECTION
           ### #{section_title}
 
@@ -200,7 +199,7 @@ module Diataxis
 
         ## Appendix
       HEREDOC
-
+      
       # Only add sections if there are any
       content += "\n#{sections}" unless sections.empty?
 
@@ -208,7 +207,7 @@ module Diataxis
       content = "#{content.rstrip}\n"
 
       File.write(readme_path, content)
-      puts "Created new README.md in #{@directory}"
+      Diataxis.logger.info "Created new README.md in #{@directory}"
     end
   end
 end
