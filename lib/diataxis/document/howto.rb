@@ -49,6 +49,14 @@ module Diataxis
       "* [#{title}](#{relative_path})"
     end
 
+    implements :find_files
+    def self.find_files(config_root = '.')
+      search_pattern = File.expand_path(pattern(config_root), config_root)
+      files = Dir.glob(search_pattern).sort
+      Diataxis.logger.info "Found #{files.length} #{name.split('::').last} files matching #{search_pattern}"
+      files
+    end
+
     # === End DocumentInterface Implementation ===
 
     def initialize(title, directory = '.')

@@ -63,6 +63,14 @@ module Diataxis
       def format_readme_entry(title, relative_path, filepath)
         raise NotImplementedError, "#{name} must implement .format_readme_entry(title, relative_path, filepath)"
       end
+
+      # Interface method: MUST be implemented by including classes
+      # Finds all files of this document type using recursive search
+      # @param config_root [String] Root directory for configuration
+      # @return [Array<String>] Sorted array of file paths
+      def find_files(config_root = '.')
+        raise NotImplementedError, "#{name} must implement .find_files(config_root)"
+      end
     end
   end
 end

@@ -46,44 +46,33 @@ module Diataxis
     # Main method for collecting document entries with subdirectory support
     # Finds documents recursively, updates filenames in place, and creates README entries
     def collect_entries(doc_type)
-      search_pattern, base_dir = setup_search_paths(doc_type)
-      files = find_and_update_files(search_pattern, base_dir)
+      base_dir = get_base_directory(doc_type)
+      files = find_and_update_files(doc_type, base_dir)
       create_readme_entries(files, doc_type)
     end
 
-    # Sets up the search pattern and base directory for recursive document discovery
-    # Handles path resolution relative to the configuration file location
-    def setup_search_paths(doc_type)
-      pattern = doc_type.pattern(@directory)
+    # Gets the configured base directory for a document type
+    def get_base_directory(doc_type)
       config_dir = File.dirname(Config.find_config(@directory) || @directory)
-      search_pattern = File.expand_path(pattern, config_dir)
-
-      doc_dir_config = get_doc_dir_config(doc_type)
-      base_dir = File.expand_path(doc_dir_config || '.', config_dir)
-
-      [search_pattern, base_dir]
+      doc_dir_config = @config[doc_type.config_key]
+      File.expand_path(doc_dir_config || '.', config_dir)
     end
 
-    def get_doc_dir_config(doc_type)
-      @config[doc_type.config_key]
-    end
-
-    # Finds files using recursive glob patterns and updates their filenames in place
+    # Finds files using document type's find_files method and updates their filenames in place
     # Preserves subdirectory structure during filename updates
-    def find_and_update_files(search_pattern, base_dir)
-      files = Dir.glob(search_pattern).sort
-      Diataxis.logger.info "Found #{files.length} files matching #{search_pattern}"
+    def find_and_update_files(doc_type, base_dir)
+      files = doc_type.find_files(@directory)
 
-      # Update filenames before returning - critical to preserve subdirectory structure
-      files.each do |filepath|
+      # Update filenames and collect the final paths (whether renamed or not)
+      updated_files = files.map do |filepath|
         # Calculate relative path to maintain files in their current subdirectories
         relative_dir = File.dirname(filepath).sub(base_dir, '').sub(%r{^/}, '')
         target_dir = relative_dir.empty? ? base_dir : File.join(base_dir, relative_dir)
         FileManager.update_filename(filepath, target_dir)
       end
 
-      # Re-glob to get updated filenames after any renames
-      Dir.glob(search_pattern).sort
+      # Return the updated file paths (already sorted from the original find_files call)
+      updated_files.sort
     end
 
     # Creates README entries with correct relative paths for documents in subdirectories

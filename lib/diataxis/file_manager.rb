@@ -37,24 +37,16 @@ module Diataxis
     end
 
     # Gets the configured base directory for a document type
-    # Handles the special case where HowTo uses 'howtos' config key instead of 'howtos'
+    # Uses the document type's config_key method to eliminate hardcoded configuration mapping
     def self.get_document_directory(doc_type, config, config_dir)
-      doc_dir = if doc_type == HowTo
-                  config['howtos']
-                else
-                  config["#{doc_type.name.split('::').last.downcase}s"]
-                end
+      doc_dir = config[doc_type.config_key]
       File.expand_path(doc_dir || '.', config_dir)
     end
 
-    # Uses recursive glob patterns to find all documents of a given type
-    # The pattern includes '**' which enables discovery in subdirectories at any depth
-    def self.find_files_for_document_type(doc_type, directory, config_dir)
-      pattern = doc_type.pattern(directory)
-      search_pattern = File.expand_path(pattern, config_dir)
-      files = Dir.glob(search_pattern)
-      Diataxis.logger.info "Found #{files.length} files matching #{search_pattern}"
-      files
+    # Delegates file discovery to document type's own find_files method
+    # Each document type knows how to find its own files
+    def self.find_files_for_document_type(doc_type, directory, _config_dir)
+      doc_type.find_files(directory)
     end
 
     # Updates a file's name in place within its current subdirectory
@@ -80,17 +72,18 @@ module Diataxis
     def self.update_filename(filepath, directory)
       # find the $document_type that can handle this file
       document_type = find_document_type_for_file(filepath)
-      return unless document_type
+      return filepath unless document_type
 
       # generate the new filename for this $document type
       new_filename = document_type.generate_filename_from_existing(filepath)
-      return unless new_filename
+      return filepath unless new_filename
 
       new_filepath = File.join(directory, new_filename)
-      return if File.basename(filepath) == new_filename
+      return filepath if File.basename(filepath) == new_filename
 
       FileUtils.mv(filepath, new_filepath)
       Diataxis.logger.info "Renamed: #{filepath} -> #{new_filepath}"
+      new_filepath
     end
 
     # find which document type should handle this file based on filename patterns
