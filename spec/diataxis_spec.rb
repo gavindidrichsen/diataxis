@@ -10,10 +10,11 @@ RSpec.describe Diataxis do
   let(:docs_paths) do
     {
       docs: File.join(test_dir, 'docs'),
-      howto: File.join(test_dir, 'docs/how-to'),
+      howto: File.join(test_dir, 'docs/how-tos'),
       tutorial: File.join(test_dir, 'docs/tutorials'),
-      adr: File.join(test_dir, 'docs/exp/adr'),
+      adr: File.join(test_dir, 'docs/references/adr'),
       explanation: File.join(test_dir, 'docs/explanations'),
+      handover: File.join(test_dir, 'docs/references/handovers'),
       readme: File.join(test_dir, 'docs/README.md')
     }
   end
@@ -30,10 +31,11 @@ RSpec.describe Diataxis do
     # Set up default configuration
     config = {
       'readme' => 'docs/README.md',
-      'howtos' => 'docs/how-to',
+      'howtos' => 'docs/how-tos',
       'tutorials' => 'docs/tutorials',
       'explanations' => 'docs/explanations',
-      'adr' => 'docs/exp/adr'
+      'adr' => 'docs/references/adr',
+      'handovers' => 'docs/references/handovers'
     }
     FileUtils.mkdir_p(File.dirname(config_path))
     File.write(config_path, JSON.generate(config))
@@ -99,7 +101,7 @@ RSpec.describe Diataxis do
   end
 
   describe 'document creation' do
-    context 'creating how-to' do
+    context 'creating how-tos' do
       it 'creates how-to with correct template and updates README' do
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['howto', 'new', 'Configure System'])
@@ -147,6 +149,34 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[ADR-0001]')
+      end
+    end
+
+    context 'creating handover' do
+      let(:handover_path) { File.join(docs_paths[:handover], 'handover_windows_long_path_issue.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['handover', 'new', 'Windows Long Path Issue'])
+        end
+      end
+
+      it 'creates handover file with correct filename' do
+        expect(File).to exist(handover_path)
+      end
+
+      it 'creates handover with correct template structure' do
+        content = File.read(handover_path)
+        expect(content).to include('# Windows Long Path Issue')
+        expect(content).to include('## Problem Summary')
+        expect(content).to include('## What Do We Know')
+        expect(content).to include('## What We Think')
+      end
+
+      it 'updates README with handover link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Windows Long Path Issue]')
+        expect(readme_content).to include('### Handovers')
       end
     end
   end
@@ -284,7 +314,7 @@ RSpec.describe Diataxis do
         {
           docs: File.join(other_repo_dir, 'docs'),
           howto: File.join(other_repo_dir, 'docs/how-to'),
-          adr: File.join(other_repo_dir, 'docs/exp/adr')
+          adr: File.join(other_repo_dir, 'docs/references/adr')
         }
       end
 
@@ -298,7 +328,7 @@ RSpec.describe Diataxis do
         other_config = {
           'readme' => 'docs/README.md',
           'howtos' => 'docs/how-to',
-          'adr' => 'docs/exp/adr'
+          'adr' => 'docs/references/adr'
         }
         File.write(File.join(other_repo_dir, '.diataxis'), JSON.generate(other_config))
 
@@ -320,7 +350,7 @@ RSpec.describe Diataxis do
         readme_content = File.read(docs_paths[:readme])
 
         # Should include ADR from current repo
-        expect(readme_content).to include('[ADR-0001](exp/adr/0001-main-repo-decision.md)')
+        expect(readme_content).to include('[ADR-0001](references/adr/0001-main-repo-decision.md)')
 
         # Should not include ADR from other repo
         expect(readme_content).not_to include('other-repo-decision.md')
@@ -405,7 +435,7 @@ RSpec.describe Diataxis do
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).not_to include('### Tutorials')
         expect(readme_content).not_to include('### Explanations')
-        expect(readme_content).not_to include('### Checklists')
+        expect(readme_content).not_to include('### Handovers')
       end
 
       it 'maintains proper document links in visible sections' do
@@ -460,6 +490,7 @@ RSpec.describe Diataxis do
     rescue Diataxis::UsageError => e
       expect(e.usage_message).to include('adr new "Title"')
       expect(e.usage_message).to include('explanation new "Title"')
+      expect(e.usage_message).to include('handover new "Title"')
     end
 
     it 'shows version information' do

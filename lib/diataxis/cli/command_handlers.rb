@@ -40,6 +40,11 @@ module Diataxis
         create_document_with_readme_update(args, Explanation, 'explanations', [HowTo, Tutorial, Explanation])
       end
 
+      def self.handle_handover(args)
+        validate_document_args!(args, 'handover')
+        create_document_with_readme_update(args, Handover, 'handovers', [HowTo, Tutorial, Explanation, Handover])
+      end
+
       def self.handle_update(args)
         raise UsageError.new('Usage: diataxis update <directory>', 1) if args.empty?
 
@@ -47,7 +52,7 @@ module Diataxis
         validate_directory!(directory)
 
         Config.load(directory)
-        document_types = [HowTo, Tutorial, Explanation, ADR]
+        document_types = [HowTo, Tutorial, Explanation, ADR, Handover]
 
         readme_manager = ReadmeManager.new(directory, document_types)
         readme_manager.update
@@ -83,10 +88,11 @@ module Diataxis
       private_class_method def self.default_config
         {
           'readme' => 'docs/README.md',
-          'howtos' => 'docs/how-to',
+          'howtos' => 'docs/how-tos',
           'tutorials' => 'docs/tutorials',
           'explanations' => 'docs/explanations',
-          'adr' => 'docs/adr'
+          'adr' => 'docs/references/adr',
+          'handovers' => 'docs/references/handovers'
         }
       end
     end

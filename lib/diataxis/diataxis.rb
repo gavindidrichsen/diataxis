@@ -6,6 +6,7 @@ require_relative 'document/howto'
 require_relative 'document/explanation'
 require_relative 'document/tutorial'
 require_relative 'document/adr'
+require_relative 'document/handover'
 require_relative 'file_manager'
 require_relative 'readme_manager'
 
