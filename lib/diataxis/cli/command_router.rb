@@ -17,31 +17,40 @@ module Diataxis
         'tutorial' => :tutorial,
         'adr' => :adr,
         'explanation' => :explanation,
+        'handover' => :handover,
         'update' => :update
       }.freeze
 
       def self.route(command, args)
         action = COMMAND_MAP[command]
 
+        if action.nil?
+          UsageDisplay.show_unknown_command_error(command)
+        else
+          execute_action(action, args)
+        end
+      end
+
+      private_class_method def self.execute_action(action, args)
         case action
         when :version
           UsageDisplay.show_version
         when :help
           UsageDisplay.show_usage(0)
-        when :init
-          CommandHandlers.handle_init(args)
-        when :howto
-          CommandHandlers.handle_howto(args)
-        when :tutorial
-          CommandHandlers.handle_tutorial(args)
-        when :adr
-          CommandHandlers.handle_adr(args)
-        when :explanation
-          CommandHandlers.handle_explanation(args)
-        when :update
-          CommandHandlers.handle_update(args)
         else
-          UsageDisplay.show_unknown_command_error(command)
+          execute_command_handler(action, args)
+        end
+      end
+
+      private_class_method def self.execute_command_handler(action, args)
+        case action
+        when :init then CommandHandlers.handle_init(args)
+        when :howto then CommandHandlers.handle_howto(args)
+        when :tutorial then CommandHandlers.handle_tutorial(args)
+        when :adr then CommandHandlers.handle_adr(args)
+        when :explanation then CommandHandlers.handle_explanation(args)
+        when :handover then CommandHandlers.handle_handover(args)
+        when :update then CommandHandlers.handle_update(args)
         end
       end
     end

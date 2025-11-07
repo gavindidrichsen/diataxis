@@ -9,10 +9,11 @@ module Diataxis
     CONFIG_FILE = '.diataxis'
     DEFAULT_CONFIG = {
       'readme' => 'docs/README.md',
-      'howtos' => 'docs/how-to',
+      'howtos' => 'docs/how-tos',
       'tutorials' => 'docs/tutorials',
       'explanations' => 'docs/explanations',
-      'adr' => 'docs/adr'
+      'adr' => 'docs/references/adr',
+      'handovers' => 'docs/references/handovers'
     }.freeze
 
     def self.load(directory = '.')

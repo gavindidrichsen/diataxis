@@ -29,22 +29,23 @@ module Diataxis
           Usage: diataxis [options] <command> [arguments]
 
           Global Options:
-            --verbose, -V         - Enable verbose output (debug level)
-            --quiet, -q           - Suppress informational output (warnings only)
-            --version, -v         - Show version number
-            --help, -h            - Show this help message
+            --verbose, -V             - Enable verbose output (debug level)
+            --quiet, -q               - Suppress informational output (warnings only)
+            --version, -v             - Show version number
+            --help, -h                - Show this help message
 
           Commands:
-            init                  - Initialize .diataxis config file
-            howto new "Title"     - Create a new how-to guide
-            tutorial new "Title"  - Create a new tutorial
-            adr new "Title"      - Create a new architectural decision record
-            explanation new "Title" - Create a new explanation document
-            update <directory>    - Update document filenames and README.md
+            init                      - Initialize .diataxis config file
+            howto new "Title"         - Create a new how-to guide
+            tutorial new "Title"      - Create a new tutorial
+            adr new "Title"           - Create a new architectural decision record
+            explanation new "Title"   - Create a new explanation document
+            handover new "Title"      - Create a new handover document
+            update <directory>        - Update document filenames and README.md
           #{'  '}
           Environment Variables:
-            DIATAXIS_LOG_LEVEL    - Set log level (DEBUG, INFO, WARN, ERROR, FATAL)
-            DIATAXIS_QUIET        - Set to 'true' to suppress output
+            DIATAXIS_LOG_LEVEL        - Set log level (DEBUG, INFO, WARN, ERROR, FATAL)
+            DIATAXIS_QUIET            - Set to 'true' to suppress output
         USAGE
       end
     end

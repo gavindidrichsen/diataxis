@@ -179,10 +179,102 @@ Add the require statement for your new class:
 require_relative 'diataxis/document/checklist'  # Add this line
 ```
 
-### Step 6: Test the implementation
+### Step 6: Update the help text
+
+Add the new command to the CLI help output in `lib/diataxis/cli/usage_display.rb`:
+
+```ruby
+# In the build_usage_text method, add to the Commands section:
+Commands:
+  init                  - Initialize .diataxis config file
+  howto new "Title"     - Create a new how-to guide
+  tutorial new "Title"  - Create a new tutorial
+  adr new "Title"      - Create a new architectural decision record
+  explanation new "Title" - Create a new explanation document
+  checklist new "Title" - Create a new checklist document  # Add this line
+  update <directory>    - Update document filenames and README.md
+```
+
+### Step 7: Add tests for the new document type
+
+Update the test suite in `spec/diataxis_spec.rb` to include your new document type:
+
+**7a. Update test configuration:**
+
+```ruby
+# In the before block, add to the config hash:
+config = {
+  'readme' => 'docs/README.md',
+  'howtos' => 'docs/how-to', 
+  'tutorials' => 'docs/tutorials',
+  'explanations' => 'docs/explanations',
+  'adr' => 'docs/exp/adr',
+  'checklists' => 'docs/checklists'  # Add this line
+}
+```
+
+**7b. Add test paths:**
+
+```ruby
+# In the docs_paths let block:
+let(:docs_paths) do
+  {
+    docs: File.join(test_dir, 'docs'),
+    howto: File.join(test_dir, 'docs/how-to'),
+    # ... existing paths ...
+    checklist: File.join(test_dir, 'docs/checklists'),  # Add this line
+    readme: File.join(test_dir, 'docs/README.md')
+  }
+end
+```
+
+**7c. Add document creation test:**
+
+```ruby
+context 'creating checklist' do
+  it 'creates checklist with correct template and updates README' do
+    Dir.chdir(test_dir) do
+      Diataxis::CLI.run(['checklist', 'new', 'Deployment Checklist'])
+    end
+
+    checklist_path = File.join(docs_paths[:checklist], 'checklist_deployment_checklist.md')
+    expect(File).to exist(checklist_path)
+
+    content = File.read(checklist_path)
+    expect(content).to include('# Deployment Checklist')
+    expect(content).to include('## Purpose') 
+    expect(content).to include('## Checklist Items')
+
+    readme_content = File.read(docs_paths[:readme])
+    expect(readme_content).to include('[Deployment Checklist]')
+    expect(readme_content).to include('### Checklists')
+  end
+end
+```
+
+**7d. Update help text test:**
+
+```ruby
+# Add to the help text test:
+it 'includes remaining document types in help text' do
+  Diataxis::CLI.run([])
+rescue Diataxis::UsageError => e
+  expect(e.usage_message).to include('adr new "Title"')
+  expect(e.usage_message).to include('explanation new "Title"')
+  expect(e.usage_message).to include('checklist new "Title"')  # Add this line
+end
+```
+
+### Step 8: Test the implementation
 
 ```bash
-# Initialize config if not already done
+# Run the test suite to verify integration
+bundle exec rspec
+
+# Verify help shows the new command
+bundle exec dia --help
+
+# Initialize config if not already done  
 bundle exec dia init
 
 # Test creating a new document
