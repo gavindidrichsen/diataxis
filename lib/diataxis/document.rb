@@ -74,6 +74,7 @@ module Diataxis
       prefix = case self.class.name.split('::').last
                when 'HowTo' then 'how_to'
                when 'Explanation' then 'understanding'
+               when 'FiveWhyAnalysis' then '5why'
                else type
                end
 

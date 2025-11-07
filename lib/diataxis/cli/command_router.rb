@@ -18,6 +18,7 @@ module Diataxis
         'adr' => :adr,
         'explanation' => :explanation,
         'handover' => :handover,
+        '5why' => :five_why,
         'update' => :update
       }.freeze
 
@@ -50,6 +51,7 @@ module Diataxis
         when :adr then CommandHandlers.handle_adr(args)
         when :explanation then CommandHandlers.handle_explanation(args)
         when :handover then CommandHandlers.handle_handover(args)
+        when :five_why then CommandHandlers.handle_five_why(args)
         when :update then CommandHandlers.handle_update(args)
         end
       end
