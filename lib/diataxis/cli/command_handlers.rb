@@ -47,7 +47,8 @@ module Diataxis
 
       def self.handle_five_why(args)
         validate_document_args!(args, '5why')
-        create_document_with_readme_update(args, FiveWhyAnalysis, 'five_why_analyses', [HowTo, Tutorial, Explanation, Handover, FiveWhyAnalysis])
+        create_document_with_readme_update(args, FiveWhyAnalysis, 'five_why_analyses',
+                                           [HowTo, Tutorial, Explanation, Handover, FiveWhyAnalysis])
       end
 
       def self.handle_update(args)
