@@ -5,13 +5,15 @@ require_relative 'document/howto'
 require_relative 'document/tutorial'
 require_relative 'document/explanation'
 require_relative 'document/adr'
+require_relative 'document/handover'
+require_relative 'document/five_why_analysis'
 
 module Diataxis
   # File management with subdirectory support
   # Handles finding, renaming, and organizing documents across directory structures
   class FileManager
     # Registry of all document types for filename generation
-    DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR].freeze
+    DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis].freeze
     # Main entry point for updating filenames across all document types
     # Processes each document type separately to handle their specific patterns and requirements
     def self.update_filenames(directory, document_types)
@@ -69,9 +71,9 @@ module Diataxis
       @cached_files || {}
     end
 
-    def self.update_filename(filepath, directory)
-      # find the $document_type that can handle this file
-      document_type = find_document_type_for_file(filepath)
+    def self.update_filename(filepath, directory, document_type = nil)
+      # Use provided document_type or find it based on filename pattern
+      document_type ||= find_document_type_for_file(filepath)
       return filepath unless document_type
 
       # generate the new filename for this $document type

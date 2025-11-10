@@ -170,7 +170,23 @@ end
 document_types = [HowTo, Tutorial, Explanation, ADR, Checklist]  # Add Checklist
 ```
 
-### Step 5: Update the main diataxis.rb file
+### Step 5: Register the document type in FileManager
+
+Add the new document type to the `DOCUMENT_TYPES` registry in `lib/diataxis/file_manager.rb`:
+
+```ruby
+# lib/diataxis/file_manager.rb
+
+# Add the require statement at the top:
+require_relative 'document/checklist'
+
+# Update the DOCUMENT_TYPES constant:
+DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis, Checklist].freeze
+```
+
+**Important**: This step is critical for filename renaming to work. Without adding your document type to this registry, the `dia update .` command won't be able to rename files of your new document type.
+
+### Step 6: Update the main diataxis.rb file
 
 Add the require statement for your new class:
 
@@ -179,7 +195,7 @@ Add the require statement for your new class:
 require_relative 'diataxis/document/checklist'  # Add this line
 ```
 
-### Step 6: Update the help text
+### Step 7: Update the help text
 
 Add the new command to the CLI help output in `lib/diataxis/cli/usage_display.rb`:
 
@@ -195,7 +211,7 @@ Commands:
   update <directory>    - Update document filenames and README.md
 ```
 
-### Step 7: Add tests for the new document type
+### Step 8: Add tests for the new document type
 
 Update the test suite in `spec/diataxis_spec.rb` to include your new document type:
 
@@ -265,7 +281,7 @@ rescue Diataxis::UsageError => e
 end
 ```
 
-### Step 8: Test the implementation
+### Step 9: Test the implementation
 
 ```bash
 # Run the test suite to verify integration
