@@ -68,7 +68,7 @@ module Diataxis
         # Calculate relative path to maintain files in their current subdirectories
         relative_dir = File.dirname(filepath).sub(base_dir, '').sub(%r{^/}, '')
         target_dir = relative_dir.empty? ? base_dir : File.join(base_dir, relative_dir)
-        FileManager.update_filename(filepath, target_dir)
+        FileManager.update_filename(filepath, target_dir, doc_type)
       end
 
       # Return the updated file paths (already sorted from the original find_files call)
