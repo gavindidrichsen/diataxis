@@ -8,6 +8,7 @@ require_relative 'document/tutorial'
 require_relative 'document/adr'
 require_relative 'document/handover'
 require_relative 'document/five_why_analysis'
+require_relative 'document/note'
 require_relative 'file_manager'
 require_relative 'readme_manager'
 

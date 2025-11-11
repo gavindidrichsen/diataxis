@@ -15,6 +15,7 @@ RSpec.describe Diataxis do
       adr: File.join(test_dir, 'docs/references/adr'),
       explanation: File.join(test_dir, 'docs/explanations'),
       handover: File.join(test_dir, 'docs/references/handovers'),
+      note: File.join(test_dir, 'docs/references/notes'),
       readme: File.join(test_dir, 'docs/README.md')
     }
   end
@@ -35,7 +36,8 @@ RSpec.describe Diataxis do
       'tutorials' => 'docs/tutorials',
       'explanations' => 'docs/explanations',
       'adr' => 'docs/references/adr',
-      'handovers' => 'docs/references/handovers'
+      'handovers' => 'docs/references/handovers',
+      'notes' => 'docs/references/notes'
     }
     FileUtils.mkdir_p(File.dirname(config_path))
     File.write(config_path, JSON.generate(config))
@@ -177,6 +179,37 @@ RSpec.describe Diataxis do
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[Windows Long Path Issue]')
         expect(readme_content).to include('### Handovers')
+      end
+    end
+
+    context 'creating note' do
+      let(:note_path) { File.join(docs_paths[:note], 'note_git_branch_commands.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['note', 'new', 'Git Branch Commands'])
+        end
+      end
+
+      it 'creates note file with correct filename' do
+        expect(File).to exist(note_path)
+      end
+
+      it 'creates note with correct template structure' do
+        content = File.read(note_path)
+        aggregate_failures do
+          expect(content).to include('# Git Branch Commands')
+          expect(content).to include('## KEYPOINTS')
+          expect(content).to include('## SUMMARY')
+          expect(content).to include('## TASKS')
+          expect(content).to include('## BACKGROUND')
+        end
+      end
+
+      it 'updates README with note link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Git Branch Commands]')
+        expect(readme_content).to include('### Notes')
       end
     end
   end
@@ -491,6 +524,7 @@ RSpec.describe Diataxis do
       expect(e.usage_message).to include('adr new "Title"')
       expect(e.usage_message).to include('explanation new "Title"')
       expect(e.usage_message).to include('handover new "Title"')
+      expect(e.usage_message).to include('note new "Title"')
     end
 
     it 'shows version information' do

@@ -215,7 +215,7 @@ Commands:
 
 Update the test suite in `spec/diataxis_spec.rb` to include your new document type:
 
-**7a. Update test configuration:**
+**8a. Update test configuration:**
 
 ```ruby
 # In the before block, add to the config hash:
@@ -229,7 +229,7 @@ config = {
 }
 ```
 
-**7b. Add test paths:**
+**8b. Add test paths:**
 
 ```ruby
 # In the docs_paths let block:
@@ -244,7 +244,7 @@ let(:docs_paths) do
 end
 ```
 
-**7c. Add document creation test:**
+**8c. Add document creation test:**
 
 ```ruby
 context 'creating checklist' do
@@ -257,9 +257,11 @@ context 'creating checklist' do
     expect(File).to exist(checklist_path)
 
     content = File.read(checklist_path)
-    expect(content).to include('# Deployment Checklist')
-    expect(content).to include('## Purpose') 
-    expect(content).to include('## Checklist Items')
+    aggregate_failures do
+      expect(content).to include('# Deployment Checklist')
+      expect(content).to include('## Purpose') 
+      expect(content).to include('## Checklist Items')
+    end
 
     readme_content = File.read(docs_paths[:readme])
     expect(readme_content).to include('[Deployment Checklist]')
@@ -268,7 +270,9 @@ context 'creating checklist' do
 end
 ```
 
-**7d. Update help text test:**
+**Note:** Use `aggregate_failures` when checking multiple template sections to avoid RuboCop's `RSpec/MultipleExpectations` warning (limit is 4 expectations per test).
+
+**8d. Update help text test:**
 
 ```ruby
 # Add to the help text test:
