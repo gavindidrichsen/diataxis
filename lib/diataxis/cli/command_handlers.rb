@@ -51,6 +51,12 @@ module Diataxis
                                            [HowTo, Tutorial, Explanation, Handover, FiveWhyAnalysis])
       end
 
+      def self.handle_note(args)
+        validate_document_args!(args, 'note')
+        create_document_with_readme_update(args, Note, 'notes',
+                                           [HowTo, Tutorial, Explanation, Handover, FiveWhyAnalysis, Note])
+      end
+
       def self.handle_update(args)
         raise UsageError.new('Usage: diataxis update <directory>', 1) if args.empty?
 
@@ -58,7 +64,7 @@ module Diataxis
         validate_directory!(directory)
 
         Config.load(directory)
-        document_types = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis]
+        document_types = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis, Note]
 
         readme_manager = ReadmeManager.new(directory, document_types)
         readme_manager.update
@@ -99,7 +105,8 @@ module Diataxis
           'explanations' => 'docs/explanations',
           'adr' => 'docs/references/adr',
           'handovers' => 'docs/references/handovers',
-          'five_why_analyses' => 'docs/references/five_why_analyses'
+          'five_why_analyses' => 'docs/references/five_why_analyses',
+          'notes' => 'docs/references/notes'
         }
       end
     end

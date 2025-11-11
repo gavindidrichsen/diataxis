@@ -7,13 +7,14 @@ require_relative 'document/explanation'
 require_relative 'document/adr'
 require_relative 'document/handover'
 require_relative 'document/five_why_analysis'
+require_relative 'document/note'
 
 module Diataxis
   # File management with subdirectory support
   # Handles finding, renaming, and organizing documents across directory structures
   class FileManager
     # Registry of all document types for filename generation
-    DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis].freeze
+    DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis, Note].freeze
     # Main entry point for updating filenames across all document types
     # Processes each document type separately to handle their specific patterns and requirements
     def self.update_filenames(directory, document_types)

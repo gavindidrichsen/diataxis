@@ -42,6 +42,7 @@ module Diataxis
             explanation new "Title"   - Create a new explanation document
             handover new "Title"      - Create a new handover document
             5why new "Title"          - Create a new five why analysis document
+            note new "Title"          - Create a new note document
             update <directory>        - Update document filenames and README.md
           #{'  '}
           Environment Variables:
