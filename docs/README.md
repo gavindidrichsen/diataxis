@@ -68,6 +68,7 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 * [How to add a new document template](how-tos/how_to_add_a_new_document_template.md)
 * [How to add or amend log statements](how-tos/how_to_add_or_amend_log_statements.md)
 * [How to manually test all diataxis features](how-tos/how_to_manually_test_all_diataxis_features.md)
+* [How to run cram tests](how-tos/how_to_run_cram_tests.md)
 <!-- howtologstop -->
 
 ### Explanations
@@ -93,8 +94,3 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 * [ADR-0012](references/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
 <!-- adrlogstop -->
 
-### Handovers
-
-<!-- handoverlog -->
-* [plop](references/handovers/handover_plop.md)
-<!-- handoverlogstop -->
