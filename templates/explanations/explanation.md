@@ -28,6 +28,14 @@ Explain the second key concept...
 
 ## Related Topics
 
-- Link to related concepts
+For the following information make sure to add a URL link with location.  For example, if the reference is a git URL then include the full URL plus line numbers; if a website document then point to the appropriate document; if simply a reference to another local markdown document, then point to it locally:
+
+- Link to related concepts.
 - Link to relevant how-tos
 - Link to reference docs
+
+- [PDK Configuration Reference](../pdk_reference.md#pdk-set-config-command)
+- [Customizing Module Configuration](../customizing_module_config.md)
+- [PDK Convert Command](../pdk_reference.md#pdk-convert-command)
+- [Template URI Resolution Code](https://github.com/puppetlabs/pdk/blob/main/lib/pdk/util/template_uri.rb)
+
