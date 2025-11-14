@@ -18,13 +18,13 @@ Explain the context and fundamental concepts...
 
 Explain the first key concept...
 
-**Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
+**Code Location** (if relevant): Link to the specific line numbers of the source code ith GitHub HTTPS URLs
 
 ### Concept 2
 
 Explain the second the second key concept...
 
-**Code Location** (if relevant): Link to source code with GitHub HTTPS URLs
+**Code Location** (if relevant): Link to the specific line numbers of the source code ith GitHub HTTPS URLs
 
 ## Related Topics
 
