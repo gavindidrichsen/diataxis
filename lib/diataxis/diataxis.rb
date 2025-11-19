@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'config'
+require_relative 'markdown_utils'
 require_relative 'document'
 require_relative 'document/howto'
 require_relative 'document/explanation'
