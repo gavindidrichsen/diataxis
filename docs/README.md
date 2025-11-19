@@ -1,5 +1,23 @@
 # diataxis
 
+## Outstanding Tasks
+
+- [ ] Fix the title summary in README.md.  If a sub-document contains metadata header with tags, then the title does not get pulled out correctly.  Make sure to look for the single title header.  For example, the following is causing this error:
+
+```markdown
+---
+aliases:
+  - "Understanding BOLT-109 Windows LongPath Issue"
+tags:
+  - _bolt-109-dsc-windows-longpath-issue
+---
+
+# Fixing nkf Compilation Issue on Windows with Ruby 3.2.5
+
+...
+...
+```
+
 ## Description
 
 ## Usage
@@ -67,13 +85,16 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 <!-- howtolog -->
 * [How to add a new document template](how-tos/how_to_add_a_new_document_template.md)
 * [How to add or amend log statements](how-tos/how_to_add_or_amend_log_statements.md)
+* [How to debug Cucumber tests](how-tos/how_to_debug_cucumber_tests.md)
 * [How to manually test all diataxis features](how-tos/how_to_manually_test_all_diataxis_features.md)
 * [How to run cram tests](how-tos/how_to_run_cram_tests.md)
+* [How to write Cucumber scenarios](how-tos/how_to_write_cucumber_scenarios.md)
 <!-- howtologstop -->
 
 ### Explanations
 
 <!-- explanationlog -->
+* [Understanding Cucumber and Aruba testing architecture](explanations/understanding_cucumber_and_aruba_testing_architecture.md)
 * [Understanding the design of the logging system](explanations/understanding_the_design_of_the_logging_system.md)
 <!-- explanationlogstop -->
 
@@ -94,3 +115,9 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 * [ADR-0012](references/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
 <!-- adrlogstop -->
 
+
+### Tutorials
+
+<!-- tutoriallog -->
+* [Getting Started with Cucumber Testing](tutorials/tutorial_getting_started_with_cucumber_testing.md)
+<!-- tutoriallogstop -->
