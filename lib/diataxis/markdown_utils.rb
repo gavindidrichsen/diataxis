@@ -22,11 +22,14 @@ module Diataxis
           end
 
           # Skip lines while inside front matter
-          next if in_front_matter || front_matter_count == 1
+          next if in_front_matter
+
+          # Skip if we've only seen one delimiter (still waiting for closing delimiter)
+          next if front_matter_count == 1
 
           # Found the title heading
           if stripped_line.start_with?('# ')
-            return stripped_line[2..] # Remove "# " prefix
+            return stripped_line[2..].strip # Remove "# " prefix and strip whitespace
           end
 
           # Skip empty lines
