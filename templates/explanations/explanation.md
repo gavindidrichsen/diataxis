@@ -38,4 +38,3 @@ For the following information make sure to add a URL link with location.  For ex
 - [Customizing Module Configuration](../customizing_module_config.md)
 - [PDK Convert Command](../pdk_reference.md#pdk-convert-command)
 - [Template URI Resolution Code](https://github.com/puppetlabs/pdk/blob/main/lib/pdk/util/template_uri.rb)
-
