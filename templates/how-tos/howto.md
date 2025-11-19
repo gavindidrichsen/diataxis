@@ -33,6 +33,13 @@ some-command --option value
 ```bash
 ```
 
+### Related Resources
+
+When referencing code or documentation:
+- **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+- **Docs**: Link to official documentation: [Ruby Logger Documentation](https://ruby-doc.org/stdlib/libdoc/logger/rdoc/Logger.html)
+- **Local**: Link to local docs: [Related How-to](../how_to_other_guide.md)
+
 ### Troubleshooting: Common Issue Name
 
 If you encounter [specific error or situation]:
