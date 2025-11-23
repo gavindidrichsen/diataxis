@@ -25,9 +25,7 @@ module Diataxis
 
           if in_html_comment
             # Check if this line closes the HTML comment
-            if stripped_line.include?('-->')
-              in_html_comment = false
-            end
+            in_html_comment = false if stripped_line.include?('-->')
             next
           end
 
