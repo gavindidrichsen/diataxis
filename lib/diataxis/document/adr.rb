@@ -22,15 +22,14 @@ module Diataxis
 
     implements :generate_filename_from_file
     def self.generate_filename_from_file(filepath)
-      # ADR-specific: Extract title and preserve ADR numbering
-      first_line = File.open(filepath, &:readline).strip
-      return nil unless first_line.start_with?('# ')
+      # Extract title from file content, skipping YAML front matter
+      title = MarkdownUtils.extract_title(filepath)
+      return nil if title.nil?
 
-      title = first_line[2..] # Remove the "# " prefix
       current_name = File.basename(filepath)
 
       # Extract and preserve the ADR number from existing filename
-      adr_num = current_name.match(/^(\d{4})-/)&.[](1) || '0000'
+      adr_num = current_name[0..3]
       clean_title = title.sub(/^\d+\. /, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^-|-$/, '')
       "#{adr_num}-#{slug}.md"

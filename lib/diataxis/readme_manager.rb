@@ -81,11 +81,13 @@ module Diataxis
       readme_dir = File.dirname(File.expand_path(@config['readme'], @directory))
 
       files.map do |file|
-        title = File.open(file, &:readline).strip[2..] # Extract title from first line
+        title = MarkdownUtils.extract_title(file) # Extract title, skipping YAML front matter
+        next if title.nil? # Skip files without valid titles
+
         # Calculate relative path from README location to document - works for any depth
         relative_path = Pathname.new(file).relative_path_from(Pathname.new(readme_dir)).to_s
         format_entry(title, relative_path, file, doc_type)
-      end
+      end.compact # Remove nil entries from files without titles
     end
 
     # Formats README entries using document type's specific formatting

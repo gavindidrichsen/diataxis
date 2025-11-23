@@ -23,11 +23,10 @@ module Diataxis
 
     implements :generate_filename_from_file
     def self.generate_filename_from_file(filepath)
-      # Extract title from file content
-      first_line = File.open(filepath, &:readline).strip
-      return nil unless first_line.start_with?('# ')
+      # Extract title from file content, skipping YAML front matter
+      title = MarkdownUtils.extract_title(filepath)
+      return nil if title.nil?
 
-      title = first_line[2..] # Remove the "# " prefix
       clean_title = title.sub(/^understanding /i, '')
       slug = clean_title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
       "understanding_#{slug}.md"

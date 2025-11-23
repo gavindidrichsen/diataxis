@@ -54,6 +54,15 @@ dia update .
 
 For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
 
+## Testing
+
+This project uses:
+
+* **RSpec** for unit testing
+* **Cucumber with Aruba** for BDD/CLI integration testing
+
+For detailed information on using Cucumber with Aruba, see [Cucumber & Aruba Cheatsheet](../../../tools/@cheatsheets/cucumber.md).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

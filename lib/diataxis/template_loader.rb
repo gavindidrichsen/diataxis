@@ -29,16 +29,36 @@ module Diataxis
     end
 
     # Finds template file using gem's built-in templates only
-    # Templates are stored in templates/ directory at gem root (best practice)
+    # Templates are stored in templates/ directory at gem root following Diataxis structure
     # @param document_class [Class] The document class requesting the template
     # @return [String] Path to template file
     def self.find_template_file(document_class)
-      template_filename = "#{document_class.name.split('::').last.downcase}.md"
+      class_name = document_class.name.split('::').last
+      template_filename = "#{class_name.downcase}.md"
 
-      # Use gem's built-in template (gem_root/templates/)
+      # Map document classes to their Diataxis category subdirectories
+      category = case class_name
+                 when 'HowTo'
+                   'how-tos'
+                 when 'Tutorial'
+                   'tutorials'
+                 when 'Explanation'
+                   'explanations'
+                 when 'ADR', 'Handover', 'FiveWhyAnalysis', 'Note'
+                   'references'
+                 else
+                   # Fallback to root templates directory
+                   ''
+                 end
+
+      # Use gem's built-in template (gem_root/templates/{category}/)
       # From lib/diataxis/template_loader.rb, go up to gem root
       gem_root = File.expand_path('../..', __dir__)
-      gem_template = File.join(gem_root, 'templates', template_filename)
+      gem_template = if category.empty?
+                       File.join(gem_root, 'templates', template_filename)
+                     else
+                       File.join(gem_root, 'templates', category, template_filename)
+                     end
 
       return gem_template if File.exist?(gem_template)
 

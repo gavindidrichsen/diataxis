@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "diataxis",
+			"path": "."
+		},
+		{
+			"name": "development",
+			"path": "../../../.."
+		},
+		{
+			"name": "@cheatsheets",
+			"path": "../../../../tools/@cheatsheets"
+		}
+	],
+  "settings": {}
+}
