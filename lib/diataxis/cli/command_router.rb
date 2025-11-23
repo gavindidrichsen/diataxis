@@ -20,6 +20,7 @@ module Diataxis
         'handover' => :handover,
         '5why' => :five_why,
         'note' => :note,
+        'project' => :project,
         'update' => :update
       }.freeze
 
@@ -42,6 +43,7 @@ module Diataxis
         handover: ->(args) { CommandHandlers.handle_handover(args) },
         five_why: ->(args) { CommandHandlers.handle_five_why(args) },
         note: ->(args) { CommandHandlers.handle_note(args) },
+        project: ->(args) { CommandHandlers.handle_project(args) },
         update: ->(args) { CommandHandlers.handle_update(args) }
       }.freeze
 

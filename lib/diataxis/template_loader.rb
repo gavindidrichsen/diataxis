@@ -44,7 +44,7 @@ module Diataxis
                    'tutorials'
                  when 'Explanation'
                    'explanations'
-                 when 'ADR', 'Handover', 'FiveWhyAnalysis', 'Note'
+                 when 'ADR', 'Handover', 'FiveWhyAnalysis', 'Note', 'Project'
                    'references'
                  else
                    # Fallback to root templates directory
