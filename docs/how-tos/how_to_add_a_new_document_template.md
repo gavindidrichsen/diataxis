@@ -82,10 +82,10 @@ module Diataxis
 
     implements :generate_filename_from_file
     def self.generate_filename_from_file(filepath)
-      first_line = File.open(filepath, &:readline).strip
-      return nil unless first_line.start_with?('# ')
+      # Extract title from file content, skipping YAML front matter and HTML comments
+      title = MarkdownUtils.extract_title(filepath)
+      return nil if title.nil?
 
-      title = first_line[2..]
       slug = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
       "checklist_#{slug}.md"
     end
@@ -143,9 +143,12 @@ COMMAND_MAP = {
   'update' => :update
 }.freeze
 
-# Add to the case statement:
-when :checklist
-  CommandHandlers.handle_checklist(args)
+# Add to HANDLER_MAP hash:
+HANDLER_MAP = {
+  # ... existing entries ...
+  checklist: ->(args) { CommandHandlers.handle_checklist(args) },  # Add this line
+  update: ->(args) { CommandHandlers.handle_update(args) }
+}.freeze
 ```
 
 **4b. Add handler method (`lib/diataxis/cli/command_handlers.rb`):**
@@ -170,32 +173,16 @@ end
 document_types = [HowTo, Tutorial, Explanation, ADR, Checklist]  # Add Checklist
 ```
 
-### Step 5: Register the document type in FileManager
-
-Add the new document type to the `DOCUMENT_TYPES` registry in `lib/diataxis/file_manager.rb`:
-
-```ruby
-# lib/diataxis/file_manager.rb
-
-# Add the require statement at the top:
-require_relative 'document/checklist'
-
-# Update the DOCUMENT_TYPES constant:
-DOCUMENT_TYPES = [HowTo, Tutorial, Explanation, ADR, Handover, FiveWhyAnalysis, Checklist].freeze
-```
-
-**Important**: This step is critical for filename renaming to work. Without adding your document type to this registry, the `dia update .` command won't be able to rename files of your new document type.
-
-### Step 6: Update the main diataxis.rb file
+### Step 5: Update the main diataxis.rb file
 
 Add the require statement for your new class:
 
 ```ruby
-# lib/diataxis.rb
-require_relative 'diataxis/document/checklist'  # Add this line
+# lib/diataxis/diataxis.rb
+require_relative 'document/checklist'  # Add this line
 ```
 
-### Step 7: Update the help text
+### Step 6: Update the help text
 
 Add the new command to the CLI help output in `lib/diataxis/cli/usage_display.rb`:
 
@@ -211,11 +198,11 @@ Commands:
   update <directory>    - Update document filenames and README.md
 ```
 
-### Step 8: Add tests for the new document type
+### Step 7: Add tests for the new document type
 
 Update the test suite in `spec/diataxis_spec.rb` to include your new document type:
 
-**8a. Update test configuration:**
+**7a. Update test configuration:**
 
 ```ruby
 # In the before block, add to the config hash:
@@ -229,7 +216,7 @@ config = {
 }
 ```
 
-**8b. Add test paths:**
+**7b. Add test paths:**
 
 ```ruby
 # In the docs_paths let block:
@@ -244,7 +231,7 @@ let(:docs_paths) do
 end
 ```
 
-**8c. Add document creation test:**
+**7c. Add document creation test:**
 
 ```ruby
 context 'creating checklist' do
@@ -272,7 +259,7 @@ end
 
 **Note:** Use `aggregate_failures` when checking multiple template sections to avoid RuboCop's `RSpec/MultipleExpectations` warning (limit is 4 expectations per test).
 
-**8d. Update help text test:**
+**7d. Update help text test:**
 
 ```ruby
 # Add to the help text test:
@@ -285,7 +272,7 @@ rescue Diataxis::UsageError => e
 end
 ```
 
-### Step 9: Test the implementation
+### Step 8: Test the implementation
 
 ```bash
 # Run the test suite to verify integration

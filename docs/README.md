@@ -85,16 +85,12 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 <!-- howtolog -->
 * [How to add a new document template](how-tos/how_to_add_a_new_document_template.md)
 * [How to add or amend log statements](how-tos/how_to_add_or_amend_log_statements.md)
-* [How to debug Cucumber tests](how-tos/how_to_debug_cucumber_tests.md)
 * [How to manually test all diataxis features](how-tos/how_to_manually_test_all_diataxis_features.md)
-* [How to run cram tests](how-tos/how_to_run_cram_tests.md)
-* [How to write Cucumber scenarios](how-tos/how_to_write_cucumber_scenarios.md)
 <!-- howtologstop -->
 
 ### Explanations
 
 <!-- explanationlog -->
-* [Understanding Cucumber and Aruba testing architecture](explanations/understanding_cucumber_and_aruba_testing_architecture.md)
 * [Understanding the design of the logging system](explanations/understanding_the_design_of_the_logging_system.md)
 <!-- explanationlogstop -->
 
@@ -116,8 +112,3 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 <!-- adrlogstop -->
 
 
-### Tutorials
-
-<!-- tutoriallog -->
-* [Getting Started with Cucumber Testing](tutorials/tutorial_getting_started_with_cucumber_testing.md)
-<!-- tutoriallogstop -->
