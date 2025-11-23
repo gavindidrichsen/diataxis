@@ -6,5 +6,6 @@
   "adr": "docs/references/adr",
   "handovers": "docs/references/handovers",
   "five_why_analyses": "docs/references/five_why_analyses",
-  "notes": "docs/references/notes"
+  "notes": "docs/references/notes",
+  "projects": "docs/references/projects"
 }
