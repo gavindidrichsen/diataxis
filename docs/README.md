@@ -112,3 +112,10 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 <!-- adrlogstop -->
 
 
+
+### Projects
+
+<!-- projectlog -->
+* [Project: Create common style guidelines for each template](references/projects/project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](references/projects/project_error_handle_new_document_failures.md)
+<!-- projectlogstop -->

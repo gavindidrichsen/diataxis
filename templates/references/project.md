@@ -37,14 +37,14 @@ Core Principles:
 
 # Project: {{title}}
 
-## Outstanding Tasks
-
-These are my most pressing **Next Actions**:
-
 **@urgent** tasks:
 
 - [ ] Task 1
 - [ ] Task 2
+
+## Context
+
+What is the issue that we're seeing that is motivating this decision or change?
 
 ## Other Lists
 
