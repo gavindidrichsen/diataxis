@@ -33,8 +33,3 @@ For the following information make sure to add a URL link with location.  For ex
 - Link to related concepts.
 - Link to relevant how-tos
 - Link to reference docs
-
-- [PDK Configuration Reference](../pdk_reference.md#pdk-set-config-command)
-- [Customizing Module Configuration](../customizing_module_config.md)
-- [PDK Convert Command](../pdk_reference.md#pdk-convert-command)
-- [Template URI Resolution Code](https://github.com/puppetlabs/pdk/blob/main/lib/pdk/util/template_uri.rb)
