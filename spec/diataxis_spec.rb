@@ -32,19 +32,8 @@ RSpec.describe Diataxis do
     FileUtils.mkdir_p(test_dir)
 
     # Set up default configuration
-    config = {
-      'readme' => 'README.md',
-      'howtos' => 'docs',
-      'tutorials' => 'docs',
-      'explanations' => 'docs',
-      'adr' => 'docs/adr',
-      'handovers' => 'docs',
-      'five_why_analyses' => 'docs',
-      'notes' => 'docs',
-      'projects' => 'docs'
-    }
     FileUtils.mkdir_p(File.dirname(config_path))
-    File.write(config_path, JSON.generate(config))
+    File.write(config_path, JSON.generate(Diataxis::Config::DEFAULT_CONFIG))
   end
 
   after do

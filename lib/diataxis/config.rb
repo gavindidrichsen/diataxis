@@ -8,15 +8,9 @@ module Diataxis
   class Config
     CONFIG_FILE = '.diataxis'
     DEFAULT_CONFIG = {
+      'default' => 'docs',
       'readme' => 'README.md',
-      'howtos' => 'docs',
-      'tutorials' => 'docs',
-      'explanations' => 'docs',
-      'adr' => 'docs/adr',
-      'handovers' => 'docs',
-      'five_why_analyses' => 'docs',
-      'notes' => 'docs',
-      'projects' => 'docs'
+      'adr' => 'docs/adr'
     }.freeze
 
     def self.load(directory = '.')
@@ -43,6 +37,11 @@ module Diataxis
         current_dir = File.dirname(current_dir)
       end
       nil
+    end
+
+    # Get path for a document type, falling back to 'default' if not specified
+    def self.path_for(config, type_key, fallback = '.')
+      config[type_key] || config['default'] || fallback
     end
   end
 end
