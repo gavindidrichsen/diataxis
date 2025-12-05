@@ -93,6 +93,27 @@ RSpec.describe Diataxis do
         end
       end
     end
+
+    context 'without configuration file' do
+      before do
+        # Remove the config file that was created in the before block
+        FileUtils.rm_f(config_path)
+      end
+
+      it 'fails with helpful error message when creating a document' do
+        Dir.chdir(test_dir) do
+          expect { Diataxis::CLI.run(['project', 'new', 'Test Project']) }
+            .to raise_error(Diataxis::ConfigurationError, /No \.diataxis configuration file found/)
+        end
+      end
+
+      it 'suggests running dia init in error message' do
+        Dir.chdir(test_dir) do
+          expect { Diataxis::CLI.run(['howto', 'new', 'Test']) }
+            .to raise_error(Diataxis::ConfigurationError, /Please run 'dia init'/)
+        end
+      end
+    end
   end
 
   describe 'document creation' do

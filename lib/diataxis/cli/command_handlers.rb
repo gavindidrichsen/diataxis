@@ -89,8 +89,21 @@ module Diataxis
         raise UsageError.new("Usage: diataxis #{command_name} new \"Title of the #{command_name.capitalize}\"", 1)
       end
 
+      private_class_method def self.ensure_config_exists!(directory)
+        config_path = File.join(directory, Config::CONFIG_FILE)
+        return if File.exist?(config_path)
+
+        raise ConfigurationError.new(
+          "No .diataxis configuration file found in #{directory}.\n" \
+          "Please run 'dia init' to create a configuration file.",
+          config_path: config_path
+        )
+      end
+
       private_class_method def self.create_document_with_readme_update(args, document_class, config_key, readme_types)
         directory = Dir.pwd
+        ensure_config_exists!(directory)
+        
         title = args[1..].join(' ')
 
         path = Config.path_for(config_key)
