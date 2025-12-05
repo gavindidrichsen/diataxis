@@ -10,7 +10,8 @@ module Diataxis
     DEFAULT_CONFIG = {
       'default' => 'docs',
       'readme' => 'README.md',
-      'adr' => 'docs/adr'
+      'adr' => 'docs/adr',
+      'projects': 'docs/gtd'
     }.freeze
 
     def self.load(directory = '.')
