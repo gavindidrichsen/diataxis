@@ -103,7 +103,7 @@ module Diataxis
       private_class_method def self.create_document_with_readme_update(args, document_class, config_key, readme_types)
         directory = Dir.pwd
         ensure_config_exists!(directory)
-        
+
         title = args[1..].join(' ')
 
         path = Config.path_for(config_key)

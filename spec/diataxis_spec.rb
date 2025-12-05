@@ -109,7 +109,7 @@ RSpec.describe Diataxis do
 
       it 'suggests running dia init in error message' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(['howto', 'new', 'Test']) }
+          expect { Diataxis::CLI.run(%w[howto new Test]) }
             .to raise_error(Diataxis::ConfigurationError, /Please run 'dia init'/)
         end
       end
