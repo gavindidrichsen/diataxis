@@ -11,7 +11,7 @@ module Diataxis
       'default' => 'docs',
       'readme' => 'README.md',
       'adr' => 'docs/adr',
-      'projects': 'docs/gtd'
+      'projects' => 'docs/_gtd'
     }.freeze
 
     def self.load(directory = '.')
