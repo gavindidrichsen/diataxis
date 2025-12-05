@@ -109,6 +109,8 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 * [ADR-0010](references/adr/0010-implement-custom-error-handling-system.md) - Implement Custom Error Handling System
 * [ADR-0011](references/adr/0011-implement-centralized-logging-system-with-ruby-logger.md) - Implement centralized logging system with Ruby Logger
 * [ADR-0012](references/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
+* [ADR-0013](references/adr/0013-set-default-directory-for-all-templates.md) - Set default directory for all templates
+* [ADR-0014](references/adr/0014-set-default-directory-for-all-templates.md) - Set default directory for all templates
 <!-- adrlogstop -->
 
 
@@ -118,4 +120,5 @@ DIATAXIS_LOG_LEVEL=DEBUG bundle exec rspec
 <!-- projectlog -->
 * [Project: Create common style guidelines for each template](references/projects/project_create_common_style_guidelines_for_each_template.md)
 * [Project: Error handle new document failures](references/projects/project_error_handle_new_document_failures.md)
+* [Project: Only templates that need an override should set one otherwise use default](references/projects/project_only_templates_that_need_an_override_should_set_one_otherwise_use_default.md)
 <!-- projectlogstop -->

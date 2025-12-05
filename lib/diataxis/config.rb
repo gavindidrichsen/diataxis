@@ -16,7 +16,8 @@ module Diataxis
     def self.load(directory = '.')
       config_path = find_config(directory)
       if config_path
-        JSON.parse(File.read(config_path))
+        user_config = JSON.parse(File.read(config_path))
+        DEFAULT_CONFIG.merge(user_config)
       else
         DEFAULT_CONFIG
       end
@@ -39,9 +40,11 @@ module Diataxis
       nil
     end
 
-    # Get path for a document type, falling back to 'default' if not specified
-    def self.path_for(config, type_key, fallback = '.')
-      config[type_key] || config['default'] || fallback
+    # Get path for a document type
+    # Precedence: config[type_key] (includes .diataxis overrides) > config['default']
+    def self.path_for(type_key)
+      config = load
+      config[type_key] || config['default']
     end
   end
 end

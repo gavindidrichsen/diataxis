@@ -92,9 +92,8 @@ module Diataxis
       private_class_method def self.create_document_with_readme_update(args, document_class, config_key, readme_types)
         directory = Dir.pwd
         title = args[1..].join(' ')
-        config = Config.load(directory)
 
-        path = Config.path_for(config, config_key, '.')
+        path = Config.path_for(config_key)
         document_dir = File.join(directory, path)
         FileUtils.mkdir_p(document_dir)
 

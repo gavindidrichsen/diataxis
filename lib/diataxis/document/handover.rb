@@ -13,9 +13,8 @@ module Diataxis
     # === DocumentInterface Implementation ===
 
     implements :pattern
-    def self.pattern(config_root = '.')
-      config = Config.load(config_root)
-      path = config['handovers'] || 'docs/handovers'
+    def self.pattern(_config_root = '.')
+      path = Config.path_for('handovers')
       File.join(path, '**', 'handover_*.md')
     end
 

@@ -75,8 +75,7 @@ module Diataxis
     
     implements :pattern
     def self.pattern(config_root = '.')
-      config = Config.load(config_root)
-      path = config['checklists'] || 'docs/checklists'
+      path = Config.path_for('checklists')
       File.join(path, '**', 'checklist_*.md')
     end
 
@@ -160,18 +159,23 @@ def self.handle_checklist(args)
 end
 ```
 
-**4c. Update default config and document types list:**
+**4c. Update Config::DEFAULT_CONFIG and document types list:**
+
+Below is the default document structure.  All document types except for `adr` and `readme` will be placed beneathe the `default` directory:
 
 ```ruby
-# In default_config method:
-{
-  # ... existing config ...
-  'checklists' => 'docs/checklists'  # Add this line
-}
+# In lib/diataxis/config.rb, add to DEFAULT_CONFIG:
+DEFAULT_CONFIG = {
+  'default' => 'docs',
+  'readme' => 'README.md',
+  'adr' => 'docs/adr',
+}.freeze
 
-# In handle_update method:
+# In lib/diataxis/cli/command_handlers.rb handle_update method:
 document_types = [HowTo, Tutorial, Explanation, ADR, Checklist]  # Add Checklist
 ```
+
+If, however, you want all `checklists` by default to go to a different directory, then you can either make this customzation by hand in the `.diataxis` or more permanently in this `DEFAULT_CONFIG`.  Favour intermittent changes in the `.diataxis`.  If, on the other hand, you find yourself always placing a new document in another specific directory, then consider updating the default `DEFAULT_CONFIG`
 
 ### Step 5: Update the main diataxis.rb file
 

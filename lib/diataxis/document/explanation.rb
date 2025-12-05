@@ -15,9 +15,8 @@ module Diataxis
     # === DocumentInterface Implementation ===
 
     implements :pattern
-    def self.pattern(config_root = '.')
-      config = Config.load(config_root)
-      path = config['explanations'] || '.'
+    def self.pattern(_config_root = '.')
+      path = Config.path_for('explanations')
       File.join(path, '**', 'understanding_*.md')
     end
 
