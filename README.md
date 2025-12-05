@@ -95,3 +95,46 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the Diataxis project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/gavindidrichsen/diataxis/blob/main/CODE_OF_CONDUCT.md).
+
+## Appendix
+
+### How-To Guides
+
+<!-- howtolog -->
+* [How to add a new document template](docs/how_to_add_a_new_document_template.md)
+* [How to add or amend log statements](docs/how_to_add_or_amend_log_statements.md)
+* [How to manually test all diataxis features](docs/how_to_manually_test_all_diataxis_features.md)
+<!-- howtologstop -->
+
+### Explanations
+
+<!-- explanationlog -->
+* [Understanding the design of the logging system](docs/understanding_the_design_of_the_logging_system.md)
+<!-- explanationlogstop -->
+
+### Projects
+
+<!-- projectlog -->
+* [Project: Create common style guidelines for each template](docs/project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](docs/project_error_handle_new_document_failures.md)
+* [Project: Only templates that need an override should set one otherwise use default](docs/project_only_templates_that_need_an_override_should_set_one_otherwise_use_default.md)
+<!-- projectlogstop -->
+
+### Design Decisions
+
+<!-- adrlog -->
+* [ADR-0001](docs/adr/0001-adopt-diataxis-documentation-framework.md) - Adopt Diataxis Documentation Framework
+* [ADR-0002](docs/adr/0002-use-configuration-file-for-document-paths.md) - Use Configuration File for Document Paths
+* [ADR-0003](docs/adr/0003-auto-generate-readme-with-document-links.md) - Auto-Generate README with Document Links
+* [ADR-0004](docs/adr/0004-use-linguistic-prefixes-for-document-classification.md) - Use Linguistic Prefixes for Document Classification
+* [ADR-0005](docs/adr/0005-use-purpose-driven-document-templates.md) - Use Purpose-Driven Document Templates
+* [ADR-0006](docs/adr/0006-implement-automated-readme-link-management.md) - Implement Automated README Link Management
+* [ADR-0007](docs/adr/0007-enable-recursive-document-discovery.md) - Enable Recursive Document Discovery
+* [ADR-0008](docs/adr/0008-refactor-document-templates-into-separate-class-files-for-improved-maintainability.md) - Refactor document templates into separate class files for improved maintainability
+* [ADR-0009](docs/adr/0009-hide-readme-sections-when-no-matching-documents-exist.md) - Hide README sections when no matching documents exist
+* [ADR-0010](docs/adr/0010-implement-custom-error-handling-system.md) - Implement Custom Error Handling System
+* [ADR-0011](docs/adr/0011-implement-centralized-logging-system-with-ruby-logger.md) - Implement centralized logging system with Ruby Logger
+* [ADR-0012](docs/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
+* [ADR-0013](docs/adr/0013-set-default-directory-for-all-templates.md) - Set default directory for all templates
+* [ADR-0014](docs/adr/0014-underscore-the-gtd-directory-for-project-files-so-they-always-live-at-the-top.md) - Underscore the gtd directory for project files so they always live at the top
+<!-- adrlogstop -->

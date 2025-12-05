@@ -92,9 +92,9 @@ module Diataxis
       private_class_method def self.create_document_with_readme_update(args, document_class, config_key, readme_types)
         directory = Dir.pwd
         title = args[1..].join(' ')
-        config = Config.load(directory)
 
-        document_dir = File.join(directory, config[config_key])
+        path = Config.path_for(config_key)
+        document_dir = File.join(directory, path)
         FileUtils.mkdir_p(document_dir)
 
         document_class.new(title, document_dir).create
@@ -104,17 +104,7 @@ module Diataxis
       end
 
       private_class_method def self.default_config
-        {
-          'readme' => 'docs/README.md',
-          'howtos' => 'docs/how-tos',
-          'tutorials' => 'docs/tutorials',
-          'explanations' => 'docs/explanations',
-          'adr' => 'docs/references/adr',
-          'handovers' => 'docs/references/handovers',
-          'five_why_analyses' => 'docs/references/five_why_analyses',
-          'notes' => 'docs/references/notes',
-          'projects' => 'docs/references/projects'
-        }
+        Config::DEFAULT_CONFIG
       end
     end
   end

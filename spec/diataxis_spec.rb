@@ -10,13 +10,15 @@ RSpec.describe Diataxis do
   let(:docs_paths) do
     {
       docs: File.join(test_dir, 'docs'),
-      howto: File.join(test_dir, 'docs/how-tos'),
-      tutorial: File.join(test_dir, 'docs/tutorials'),
-      adr: File.join(test_dir, 'docs/references/adr'),
-      explanation: File.join(test_dir, 'docs/explanations'),
-      handover: File.join(test_dir, 'docs/references/handovers'),
-      note: File.join(test_dir, 'docs/references/notes'),
-      readme: File.join(test_dir, 'docs/README.md')
+      howto: File.join(test_dir, 'docs'),
+      tutorial: File.join(test_dir, 'docs'),
+      adr: File.join(test_dir, 'docs/adr'),
+      explanation: File.join(test_dir, 'docs'),
+      handover: File.join(test_dir, 'docs'),
+      note: File.join(test_dir, 'docs'),
+      five_why: File.join(test_dir, 'docs'),
+      project: File.join(test_dir, 'docs'),
+      readme: File.join(test_dir, 'README.md')
     }
   end
   let(:config_path) { File.join(test_dir, '.diataxis') }
@@ -30,17 +32,8 @@ RSpec.describe Diataxis do
     FileUtils.mkdir_p(test_dir)
 
     # Set up default configuration
-    config = {
-      'readme' => 'docs/README.md',
-      'howtos' => 'docs/how-tos',
-      'tutorials' => 'docs/tutorials',
-      'explanations' => 'docs/explanations',
-      'adr' => 'docs/references/adr',
-      'handovers' => 'docs/references/handovers',
-      'notes' => 'docs/references/notes'
-    }
     FileUtils.mkdir_p(File.dirname(config_path))
-    File.write(config_path, JSON.generate(config))
+    File.write(config_path, JSON.generate(Diataxis::Config::DEFAULT_CONFIG))
   end
 
   after do
@@ -383,7 +376,7 @@ RSpec.describe Diataxis do
         readme_content = File.read(docs_paths[:readme])
 
         # Should include ADR from current repo
-        expect(readme_content).to include('[ADR-0001](references/adr/0001-main-repo-decision.md)')
+        expect(readme_content).to include('[ADR-0001](docs/adr/0001-main-repo-decision.md)')
 
         # Should not include ADR from other repo
         expect(readme_content).not_to include('other-repo-decision.md')

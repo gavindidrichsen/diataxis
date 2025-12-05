@@ -1,10 +1,6 @@
 {
-  "readme": "docs/README.md",
-  "howtos": "docs/how-tos",
-  "tutorials": "docs/tutorials",
-  "explanations": "docs/explanations",
-  "adr": "docs/references/adr",
-  "handovers": "docs/references/handovers",
-  "five_why_analyses": "docs/references/five_why_analyses",
-  "notes": "docs/references/notes"
+  "default": "docs",
+  "readme": "README.md",
+  "adr": "docs/adr",
+  "projects": "docs/gtd"
 }
