@@ -7,11 +7,12 @@ module Diataxis
   # Handles reading and writing configuration settings from .diataxis file
   class Config
     CONFIG_FILE = '.diataxis'
+    DEFAULT_DOCS_ROOT = 'docs'
     DEFAULT_CONFIG = {
-      'default' => 'docs',
+      'default' => DEFAULT_DOCS_ROOT,
       'readme' => 'README.md',
-      'adr' => 'docs/adr',
-      'projects' => 'docs/_gtd'
+      'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
+      'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd"
     }.freeze
 
     def self.load(directory = '.')

@@ -11,9 +11,9 @@ module Diataxis
     # === DocumentInterface Implementation ===
 
     implements :pattern
-    def self.pattern(_config_root = '.')
-      path = Config.path_for('notes')
-      File.join(path, '**', 'note_*.md')
+    def self.pattern(config_root = '.')
+      default_dir = Config.path_for('default')
+      File.join(config_root, default_dir, '**', 'note_*.md')
     end
 
     implements :generate_filename_from_file
