@@ -1,0 +1,136 @@
+diff --git a/lib/diataxis/document/adr.rb b/lib/diataxis/document/adr.rb
+index 7c66e6d..354e5bf 100644
+--- a/lib/diataxis/document/adr.rb
++++ b/lib/diataxis/document/adr.rb
+@@ -14,9 +14,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('adr')
+-      File.join(path, '**', '[0-9][0-9][0-9][0-9]-*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', '[0-9][0-9][0-9][0-9]-*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/explanation.rb b/lib/diataxis/document/explanation.rb
+index 32f38c3..6d0235b 100644
+--- a/lib/diataxis/document/explanation.rb
++++ b/lib/diataxis/document/explanation.rb
+@@ -15,9 +15,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('explanations')
+-      File.join(path, '**', 'understanding_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'understanding_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/five_why_analysis.rb b/lib/diataxis/document/five_why_analysis.rb
+index 7a8f9d1..9808738 100644
+--- a/lib/diataxis/document/five_why_analysis.rb
++++ b/lib/diataxis/document/five_why_analysis.rb
+@@ -13,9 +13,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('five_why_analyses')
+-      File.join(path, '**', '5_why_analysis_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', '5_why_analysis_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/handover.rb b/lib/diataxis/document/handover.rb
+index 25a6db8..1195c3a 100644
+--- a/lib/diataxis/document/handover.rb
++++ b/lib/diataxis/document/handover.rb
+@@ -13,9 +13,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('handovers')
+-      File.join(path, '**', 'handover_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'handover_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/howto.rb b/lib/diataxis/document/howto.rb
+index cbeb755..04656bf 100644
+--- a/lib/diataxis/document/howto.rb
++++ b/lib/diataxis/document/howto.rb
+@@ -12,9 +12,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('howtos')
+-      File.join(path, '**', 'how_to_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'how_to_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/note.rb b/lib/diataxis/document/note.rb
+index 975bc24..da51491 100644
+--- a/lib/diataxis/document/note.rb
++++ b/lib/diataxis/document/note.rb
+@@ -11,9 +11,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('notes')
+-      File.join(path, '**', 'note_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'note_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/project.rb b/lib/diataxis/document/project.rb
+index ce4945a..ff082d6 100644
+--- a/lib/diataxis/document/project.rb
++++ b/lib/diataxis/document/project.rb
+@@ -11,9 +11,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('projects')
+-      File.join(path, '**', 'project_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'project_*.md')
+     end
+ 
+     implements :generate_filename_from_file
+diff --git a/lib/diataxis/document/tutorial.rb b/lib/diataxis/document/tutorial.rb
+index 6512837..352b958 100644
+--- a/lib/diataxis/document/tutorial.rb
++++ b/lib/diataxis/document/tutorial.rb
+@@ -14,9 +14,9 @@ module Diataxis
+     # === DocumentInterface Implementation ===
+ 
+     implements :pattern
+-    def self.pattern(_config_root = '.')
+-      path = Config.path_for('tutorials')
+-      File.join(path, '**', 'tutorial_*.md')
++    def self.pattern(config_root = '.')
++      default_dir = Config.path_for('default')
++      File.join(config_root, default_dir, '**', 'tutorial_*.md')
+     end
+ 
+     implements :generate_filename_from_file

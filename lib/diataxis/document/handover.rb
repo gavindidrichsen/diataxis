@@ -13,9 +13,9 @@ module Diataxis
     # === DocumentInterface Implementation ===
 
     implements :pattern
-    def self.pattern(_config_root = '.')
-      path = Config.path_for('handovers')
-      File.join(path, '**', 'handover_*.md')
+    def self.pattern(config_root = '.')
+      default_dir = Config.path_for('default')
+      File.join(config_root, default_dir, '**', 'handover_*.md')
     end
 
     implements :generate_filename_from_file
