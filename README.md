@@ -95,3 +95,27 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the Diataxis project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/gavindidrichsen/diataxis/blob/main/CODE_OF_CONDUCT.md).
+
+## Appendix
+
+### How-To Guides
+
+<!-- howtolog -->
+* [How to add a new document template](docs/how_to_add_a_new_document_template.md)
+* [How to add or amend log statements](docs/how_to_add_or_amend_log_statements.md)
+* [How to manually test all diataxis features](docs/how_to_manually_test_all_diataxis_features.md)
+<!-- howtologstop -->
+
+### Explanations
+
+<!-- explanationlog -->
+* [Understanding the design of the logging system](docs/understanding_the_design_of_the_logging_system.md)
+<!-- explanationlogstop -->
+
+### Projects
+
+<!-- projectlog -->
+* [Project: Create common style guidelines for each template](docs/project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](docs/project_error_handle_new_document_failures.md)
+* [Project: Only templates that need an override should set one otherwise use default](docs/project_only_templates_that_need_an_override_should_set_one_otherwise_use_default.md)
+<!-- projectlogstop -->
