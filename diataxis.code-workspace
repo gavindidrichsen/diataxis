@@ -1,17 +1,30 @@
 {
-	"folders": [
-		{
-			"name": "diataxis",
-			"path": "."
-		},
-		{
-			"name": "development",
-			"path": "../../../.."
-		},
-		{
-			"name": "@cheatsheets",
-			"path": "../../../../tools/@cheatsheets"
-		}
-	],
-  "settings": {}
+  "folders": [
+    {
+      "name": "diataxis",
+      "path": "."
+    },
+    {
+      "name": "rules",
+      "path": "/Users/gavin.didrichsen/@REFERENCES/github/app/development/tools/artificial_intelligence/rules"
+    },
+    {
+      "name": "@troubleshooting",
+      "path": "/Users/gavin.didrichsen/@REFERENCES/github/app/development/tools/@troubleshooting"
+    },
+    {
+      "name": "@investigations",
+      "path": "/Users/gavin.didrichsen/@REFERENCES/github/app/development/tools/puppet/@investigations"
+    },
+    {
+      "name": "development",
+      "path": "../../../.."
+    },
+    {
+      "name": "@cheatsheets",
+      "path": "../../../../tools/@cheatsheets"
+    }
+  ],
+  "settings": {
+  }
 }

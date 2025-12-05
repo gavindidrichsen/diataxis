@@ -115,9 +115,9 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 ### Projects
 
 <!-- projectlog -->
-* [Project: Create common style guidelines for each template](docs/project_create_common_style_guidelines_for_each_template.md)
-* [Project: Error handle new document failures](docs/project_error_handle_new_document_failures.md)
-* [Project: Only templates that need an override should set one otherwise use default](docs/project_only_templates_that_need_an_override_should_set_one_otherwise_use_default.md)
+* [Project: Create common style guidelines for each template](docs/gtd/project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](docs/gtd/project_error_handle_new_document_failures.md)
+* [Project: Fix dia commands to work from within sub-directories](docs/gtd/project_fix_dia_commands_to_work_from_within_sub_directories.md)
 <!-- projectlogstop -->
 
 ### Design Decisions
