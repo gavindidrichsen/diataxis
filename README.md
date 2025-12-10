@@ -117,6 +117,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 <!-- projectlog -->
 * [Project: Create common style guidelines for each template](docs/_gtd/project_create_common_style_guidelines_for_each_template.md)
 * [Project: Error handle new document failures](docs/_gtd/project_error_handle_new_document_failures.md)
+* [Project: Fix broken search for 5why docs](docs/_gtd/project_fix_broken_search_for_5why_docs.md)
 * [Project: Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
 <!-- projectlogstop -->
 
