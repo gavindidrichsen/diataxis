@@ -15,7 +15,7 @@ module Diataxis
     implements :pattern
     def self.pattern(config_root = '.')
       default_dir = Config.path_for('default')
-      File.join(config_root, default_dir, '**', '5_why_analysis_*.md')
+      File.join(config_root, default_dir, '**', '5why_*.md')
     end
 
     implements :generate_filename_from_file
