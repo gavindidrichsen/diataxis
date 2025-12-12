@@ -29,11 +29,10 @@ Before running any tests, configure diataxis to use test_docs instead of docs:
 # Update .diataxis to use test_docs for all paths
 cat > .diataxis << 'EOF'
 {
+  "default": "test_docs",
   "readme": "test_docs/README.md",
-  "howtos": "test_docs/how-to",
-  "tutorials": "test_docs/tutorials",
-  "explanations": "test_docs/explanations",
-  "adr": "test_docs/adr"
+  "adr": "test_docs/adr",
+  "projects": "test_docs/_gtd"
 }
 EOF
 
@@ -53,7 +52,7 @@ bundle exec dia howto new "Configure System"
 # Verify document creation: Uses correct template and filename normalization  
 
 # Verify custom configuration: Creates test_docs/how-to/how_to_configure_system.md (not docs/)
-ls test_docs/how-to/how_to_configure_system.md
+ls test_docs/how_to_configure_system.md
 
 # Verify README content
 # ✅ README generation: Creates new README.md with standard structure
@@ -99,7 +98,7 @@ find test_docs -type f
 ```bash
 # Test title changes and filename synchronization
 sed -i '' '1c\
-# Understanding Advanced System Design' test_docs/explanations/understanding_system_architecture.md
+# Understanding Advanced System Design' test_docs/understanding_system_architecture.md
 
 bundle exec dia update .
 
@@ -118,7 +117,7 @@ cat test_docs/README.md | grep "Advanced System Design"
 
 ```bash
 # Test section removal by deleting all tutorials
-rm test_docs/tutorials/tutorial_getting_started.md
+rm test_docs/tutorial_getting_started.md
 bundle exec dia update .
 
 # Expected:
@@ -135,7 +134,7 @@ cat test_docs/README.md
 ```bash
 # Test moving documents to subdirectories
 mkdir -p test_docs/explanations/advanced
-mv test_docs/explanations/understanding_advanced_system_design.md \
+mv test_docs/understanding_advanced_system_design.md \
    test_docs/explanations/advanced/understanding_advanced_system_design.md
 
 bundle exec dia update .
