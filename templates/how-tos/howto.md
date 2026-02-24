@@ -37,12 +37,21 @@
   - and any important caveat/assumption.
 - Never fabricate APIs or behavior; if code cannot be verified, explicitly state that and omit the sample.
 
+**File Setup Formatting Rule (required for how-to steps):**
+- Do not use heredoc-style file creation commands such as `cat > file <<'EOF'` in instructional steps.
+- For each file, present setup as:
+  - `Create <path/filename>` (short purpose sentence), then
+  - one fenced code block containing the file contents.
+- Include the filename as the first line in the code block (for example, `# hosts.yaml`).
+- Keep command blocks for executable commands only (for example, directory setup, `bundle install`, and test execution).
+
 **Final Compliance Check (required before finishing):**
 - Heading structure unchanged.
 - Placeholder text removed.
 - Purpose questions are document-specific.
 - Related Topics links are all concrete and valid.
 - Each code reference includes both a link and an explanatory code sample.
+- File setup instructions use “Create <file>” + code block format (no `cat > ...` heredoc flow).
 -->
 
 # {{title}}
