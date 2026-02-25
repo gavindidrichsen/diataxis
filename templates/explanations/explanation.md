@@ -23,9 +23,10 @@
 - **Local**: Link to local docs with relative paths.
 
 **Code Evidence Requirement (required when code is referenced):**
-- For each major concept, include BOTH:
-  - A source link to real code (with line numbers), and
-  - A short “Code Sample” block that clarifies intent.
+- Each major concept section must begin with a concise summary title (3-7 words) as the section heading.
+- For each major concept,
+  - Create a summary title for the concept
+  - include BOTH A source link to real code (with line numbers), and A short “Code Sample” block that clarifies intent.
 - The “Code Sample” may be:
   - A minimal real excerpt, or
   - A simplified pseudocode version with brief comments.
