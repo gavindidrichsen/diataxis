@@ -2,14 +2,13 @@
 **Style Guidelines (Strict):**
 
 - Treat this document as a template to be filled, not redesigned.
-- Keep the existing section order and heading levels exactly as written.
-- Do not add, remove, or rename sections unless explicitly requested.
 - Replace placeholder text completely; do not leave generic filler.
 - Keep wording concise, specific, and scoped to this document’s topic.
 - Use bulleted lists with `-` instead of numbered lists for easy reordering.
 - Create headings without numbers (e.g., `### Install Package` not `### Step 1: Install Package`).
 - Keep headings descriptive so steps can be rearranged without renumbering.
 - Key concept headings must be concise, descriptive titles (3-7 words).
+- Placeholder headings such as `### Concept 1` and `### Concept 2` must be replaced with topic-specific titles before completion.
 - Use `####` subheadings for troubleshooting subsections instead of bold text with numbers.
 
 **Purpose Section Requirement:**
