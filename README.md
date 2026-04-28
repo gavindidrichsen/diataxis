@@ -103,6 +103,8 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 <!-- howtolog -->
 * [How to add a new document template](docs/how_to_add_a_new_document_template.md)
 * [How to add or amend log statements](docs/how_to_add_or_amend_log_statements.md)
+* [How to github action troubleshoot a single failing action --dir /Users/gavin.didrichsen/@REFERENCES/github/app/development/tools/puppet/repositories/puppetlabs/bolt-private](docs/how_to_github_action_troubleshoot_a_single_failing_action_dir_users_gavin_didrichsen_references_github_app_development_tools_puppet_repositories_puppetlabs_bolt_private.md)
+* [How to --help](docs/how_to_help.md)
 * [How to manually test all diataxis features](docs/how_to_manually_test_all_diataxis_features.md)
 <!-- howtologstop -->
 

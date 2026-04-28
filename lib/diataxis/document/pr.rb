@@ -4,14 +4,13 @@ require_relative '../document'
 require_relative '../template_loader'
 
 module Diataxis
-  class Explanation < Document
+  class PR < Document
     register_type(
-      command: 'explanation',
-      prefix: 'understanding',
+      command: 'pr',
+      prefix: 'pr',
       category: 'explanations',
       config_key: 'explanations',
-      readme_section: 'Explanations',
-      title_prefix: 'Understanding'
+      readme_section: 'Pull Requests'
     )
   end
 end
