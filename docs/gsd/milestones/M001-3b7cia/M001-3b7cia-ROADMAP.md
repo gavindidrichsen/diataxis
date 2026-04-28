@@ -14,7 +14,7 @@
 
 ## Slices
 
-- [ ] **S01: Common metadata template injection** `risk:medium` `depends:[]`
+- [ ] **S01: S01** `risk:medium` `depends:[]`
   > After this: dia new explanation renders with metadata sourced from common.metadata file instead of hardcoded block in the template
 
 - [ ] **S02: Registry DSL and template method pattern** `risk:high` `depends:[S01]`

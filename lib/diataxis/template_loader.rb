@@ -9,6 +9,16 @@ module Diataxis
       template_path = find_template_file(document_class)
       content = File.read(template_path)
 
+      if content.include?('{{common.metadata}}')
+        common_path = File.join(File.expand_path('../..', __dir__), 'templates', 'common.metadata')
+        unless File.exist?(common_path)
+          raise TemplateError.new("Common metadata file not found: templates/common.metadata",
+                                  search_paths: [common_path])
+        end
+
+        content = content.gsub('{{common.metadata}}', File.read(common_path).chomp)
+      end
+
       content = content.gsub('{{title}}', title)
                        .gsub('{{date}}', Time.now.strftime('%Y-%m-%d'))
 

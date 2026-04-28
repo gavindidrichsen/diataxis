@@ -37,7 +37,7 @@ Not provided.
 
 ## Tasks
 
-- [ ] **T01: Create common.metadata file, extend TemplateLoader, and fix gemspec** `est:30m`
+- [x] **T01: Create common.metadata file, extend TemplateLoader, and fix gemspec** `est:30m`
   ## Description
 
 Create the `templates/common.metadata` file with the 6 universal formatting rule bullets, extend `TemplateLoader.load_template()` to resolve the `{{common.metadata}}` placeholder, and ensure the gemspec includes the new file.
