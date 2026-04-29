@@ -103,6 +103,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 <!-- howtolog -->
 * [How to add a new document template](docs/how_to_add_a_new_document_template.md)
 * [How to add or amend log statements](docs/how_to_add_or_amend_log_statements.md)
+* [How to add or reorder slices in a GSD milestone mid-flight](docs/how_to_add_or_reorder_slices_in_a_gsd_milestone_mid_flight.md)
 * [How to manually test all diataxis features](docs/how_to_manually_test_all_diataxis_features.md)
 <!-- howtologstop -->
 
@@ -115,12 +116,12 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 ### Projects
 
 <!-- projectlog -->
-* [Project: Create common style guidelines for each template](docs/_gtd/project_project_create_common_style_guidelines_for_each_template.md)
-* [Project: Creating a GitHub Project Board Template and Copy Workflow Using gh CLI](docs/_gtd/project_project_creating_a_github_project_board_template_and_copy_workflow_using_gh_cli.md)
-* [Project: Error handle new document failures](docs/_gtd/project_project_error_handle_new_document_failures.md)
-* [Project: Fix broken search for 5why docs](docs/_gtd/project_project_fix_broken_search_for_5why_docs.md)
-* [Project: Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
-* [Project: Fixing the dia update filename-doubling bug when titles already contain the document-type prefix](docs/_gtd/project_project_fixing_the_dia_update_filename_doubling_bug_when_titles_already_contain_the_document_type_prefix.md)
+* [Project: Create common style guidelines for each template](docs/_gtd/project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](docs/_gtd/project_error_handle_new_document_failures.md)
+* [Project: Fix broken search for 5why docs](docs/_gtd/project_fix_broken_search_for_5why_docs.md)
+* [Project: Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
+* [Project: Fix GSD slice insertion and reordering to keep markdown and database aligned](docs/_gtd/project_fix_gsd_slice_insertion_and_reordering_to_keep_markdown_and_database_aligned.md)
+* [Project: Fixing the dia update filename-doubling bug when titles already contain the document-type prefix](docs/_gtd/project_fixing_the_dia_update_filename_doubling_bug_when_titles_already_contain_the_document_type_prefix.md)
 <!-- projectlogstop -->
 
 ### Design Decisions

@@ -1,0 +1,6 @@
+# S02: Registry DSL and template method pattern — UAT
+
+**Milestone:** M001-3b7cia
+**Written:** 2026-04-29T20:01:55.906Z
+
+## S02 UAT: Registry DSL and template method pattern\n\n### Functional Checks\n\n- [ ] `dia new explanation "Test Topic"` creates a file with correct metadata and title\n- [ ] `dia new adr "Use widget pattern"` creates an auto-numbered ADR file (e.g. 0015-use-widget-pattern.md)\n- [ ] `dia new howto "configure logging"` creates a file titled "How to configure logging"\n- [ ] `dia new tutorial "Getting started"` creates a tutorial file\n- [ ] `dia new handover "Server Migration"` creates a handover file\n- [ ] `dia new 5why "Production outage"` creates a 5-why analysis file\n- [ ] `dia new note "Design meeting notes"` creates a note file\n- [ ] `dia new project "New feature"` creates a project file\n- [ ] `dia new pr "Add caching"` creates a PR file\n- [ ] `dia update .` correctly renames files without doubling prefixes\n- [ ] `dia readme` generates README with all section types\n\n### Structural Checks\n\n- [ ] Only adr.rb and howto.rb remain in lib/diataxis/document/\n- [ ] document_types.rb registers all 9 types via configure block\n- [ ] Adding a new simple type requires only a register call in document_types.rb and a .md template file

@@ -17,17 +17,17 @@
 - [x] **S01: S01** `risk:medium` `depends:[]`
   > After this: dia new explanation renders with metadata sourced from common.metadata file instead of hardcoded block in the template
 
-- [ ] **S02: S02** `risk:high` `depends:[]`
+- [x] **S02: S02** `risk:high` `depends:[]`
   > After this: Shell class files eliminated; dia new adr still auto-numbers; dia new howto still normalizes titles; adding a type requires only register call + .md file
 
-- [ ] **S03: Cleanup, tests, and SOLID audit** `risk:low` `depends:[S02]`
+- [ ] **S04: Cleanup, tests, and SOLID audit** `risk:low` `depends:[S03]`
   > After this: All existing tests pass, test suite simplified, dead code removed, no SOLID violations
 
-- [ ] **S04: Output consistency polish and collaborative review** `risk:low` `depends:[S03]`
+- [ ] **S05: Output consistency polish and collaborative review** `risk:low` `depends:[S04]`
   > After this: Generated sample documents reviewed and approved; consistent code evidence style, link formatting, and structural patterns across all types
 
-- [ ] **S05: Documentation update** `risk:low` `depends:[S04]`
-  > After this: All help documentation reflects the new simplified template process — how_to_add_a_new_document_template.md rewritten, manual test doc and README updated
+- [ ] **S03: Fix dia update filename-doubling bug when slug starts with prefix** `risk:medium` `depends:[S02]`
+  > After this: dia update . on a directory with files like project_fixing_foo.md no longer renames them to project_project_fixing_foo.md; regression tests cover all 9 document types
 
 ## Boundary Map
 
