@@ -10,7 +10,9 @@ module Diataxis
       prefix: 'note',
       category: 'references',
       config_key: 'notes',
-      readme_section: 'Notes'
+      readme_section: 'Notes',
+      template: 'note',
+      section_tag: 'note'
     )
   end
 end

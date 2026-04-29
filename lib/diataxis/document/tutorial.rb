@@ -10,7 +10,9 @@ module Diataxis
       prefix: 'tutorial',
       category: 'tutorials',
       config_key: 'tutorials',
-      readme_section: 'Tutorials'
+      readme_section: 'Tutorials',
+      template: 'tutorial',
+      section_tag: 'tutorial'
     )
   end
 end

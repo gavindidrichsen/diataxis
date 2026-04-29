@@ -245,7 +245,7 @@ The `DocumentRegistry.configure` method accepts a block, clears existing registr
   - Files: `lib/diataxis/document.rb`, `lib/diataxis/template_loader.rb`, `lib/diataxis/readme_manager.rb`, `lib/diataxis/document_types.rb`
   - Verify: bundle exec rspec && bundle exec cucumber && test -f lib/diataxis/document_types.rb && ruby -e "require_relative 'lib/diataxis/document_types'"
 
-- [ ] **T03: Migrate ADR and HowTo custom behavior to template method hooks and fix ADR pattern bug** `est:45m`
+- [x] **T03: Migrate ADR and HowTo custom behavior to template method hooks and fix ADR pattern bug** `est:45m`
   ---
 estimated_steps: 5
 estimated_files: 3

@@ -10,7 +10,9 @@ module Diataxis
       prefix: 'handover',
       category: 'references',
       config_key: 'handovers',
-      readme_section: 'Handovers'
+      readme_section: 'Handovers',
+      template: 'handover',
+      section_tag: 'handover'
     )
   end
 end

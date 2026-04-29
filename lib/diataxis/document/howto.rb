@@ -12,7 +12,9 @@ module Diataxis
       category: 'how-tos',
       config_key: 'howtos',
       readme_section: 'How-To Guides',
-      title_prefix: 'How to'
+      title_prefix: 'How to',
+      template: 'howto',
+      section_tag: 'howto'
     )
 
     def initialize(title, directory = '.')

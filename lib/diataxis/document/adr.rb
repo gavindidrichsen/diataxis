@@ -11,12 +11,15 @@ module Diataxis
       category: 'references',
       config_key: 'adr',
       readme_section: 'Design Decisions',
-      slug_separator: '-'
+      slug_separator: '-',
+      template: 'adr',
+      section_tag: 'adr'
     )
 
     def self.pattern(config_root = '.')
-      default_dir = Config.path_for('default')
-      File.join(config_root, default_dir, '**', '[0-9][0-9][0-9][0-9]-*.md')
+      config = Config.load(config_root)
+      adr_dir = config[type_config[:config_key]] || config['default']
+      File.join(config_root, adr_dir, '**', '[0-9][0-9][0-9][0-9]-*.md')
     end
 
     def self.generate_filename_from_file(filepath)

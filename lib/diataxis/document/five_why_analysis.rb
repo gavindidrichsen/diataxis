@@ -10,7 +10,9 @@ module Diataxis
       prefix: '5why',
       category: 'references',
       config_key: 'five_why_analyses',
-      readme_section: 'Five Why Analyses'
+      readme_section: 'Five Why Analyses',
+      template: 'fivewhyanalysis',
+      section_tag: 'fivewhyanalysis'
     )
   end
 end

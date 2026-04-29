@@ -10,7 +10,9 @@ module Diataxis
       prefix: 'pr',
       category: 'explanations',
       config_key: 'explanations',
-      readme_section: 'Pull Requests'
+      readme_section: 'Pull Requests',
+      template: 'pr',
+      section_tag: 'pr'
     )
   end
 end

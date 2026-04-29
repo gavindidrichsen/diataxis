@@ -10,7 +10,9 @@ module Diataxis
       prefix: 'project',
       category: 'references',
       config_key: 'projects',
-      readme_section: 'Projects'
+      readme_section: 'Projects',
+      template: 'project',
+      section_tag: 'project'
     )
   end
 end

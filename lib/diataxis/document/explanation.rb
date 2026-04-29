@@ -11,7 +11,9 @@ module Diataxis
       category: 'explanations',
       config_key: 'explanations',
       readme_section: 'Explanations',
-      title_prefix: 'Understanding'
+      title_prefix: 'Understanding',
+      template: 'explanation',
+      section_tag: 'explanation'
     )
   end
 end
