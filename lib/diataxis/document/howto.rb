@@ -8,11 +8,10 @@ module Diataxis
   class HowTo < Document
     register_type(
       command: 'howto',
-      prefix: 'how_to',
-      category: 'how-tos',
+      prefix: 'howto',
+      category: 'howto',
       config_key: 'howtos',
       readme_section: 'How-To Guides',
-      title_prefix: 'How to',
       template: 'howto',
       section_tag: 'howto'
     )

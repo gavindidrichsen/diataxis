@@ -12,14 +12,13 @@ module Diataxis
     class << self
       attr_reader :type_config
 
-      def register_type(command:, prefix:, category:, config_key:, readme_section:, title_prefix: nil, slug_separator: '_', template: nil, section_tag: nil)
+      def register_type(command:, prefix:, category:, config_key:, readme_section:, slug_separator: '_', template: nil, section_tag: nil, **_ignored)
         @type_config = {
           command: command,
           prefix: prefix,
           category: category,
           config_key: config_key,
           readme_section: readme_section,
-          title_prefix: title_prefix,
           slug_separator: slug_separator,
           template: template,
           section_tag: section_tag
@@ -37,16 +36,9 @@ module Diataxis
         title = MarkdownUtils.extract_title(filepath)
         return nil if title.nil?
 
-        clean_title = if type_config[:title_prefix]
-                        title.sub(/^#{Regexp.escape(type_config[:title_prefix])}\s+/i, '')
-                      else
-                        title
-                      end
         sep = type_config[:slug_separator]
-        slug = clean_title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-        prefix = type_config[:prefix]
-        slug = slug.sub(/^#{Regexp.escape(prefix)}#{Regexp.escape(sep)}/, '') if slug.start_with?("#{prefix}#{sep}")
-        "#{prefix}#{sep}#{slug}.md"
+        slug = title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
+        "#{type_config[:prefix]}#{sep}#{slug}.md"
       end
 
       def generate_filename_from_existing(filepath)
@@ -82,7 +74,7 @@ module Diataxis
     end
 
     def initialize(title, directory = '.')
-      @title = customize_title(apply_title_prefix(title))
+      @title = customize_title(title)
       @directory = get_configured_directory(directory)
       @filename = File.join(@directory, generate_filename)
       custom = customize_filename(@title, @directory)
@@ -98,15 +90,6 @@ module Diataxis
 
     def type
       self.class.type_config[:command]
-    end
-
-    def apply_title_prefix(title)
-      prefix = self.class.type_config[:title_prefix]
-      return title unless prefix
-
-      return title if title.downcase.start_with?(prefix.downcase)
-
-      "#{prefix} #{title}"
     end
 
     def customize_title(title)
@@ -128,15 +111,8 @@ module Diataxis
     def generate_filename
       cfg = self.class.type_config
       sep = cfg[:slug_separator]
-      base = if cfg[:title_prefix]
-               @title.sub(/^#{Regexp.escape(cfg[:title_prefix])}\s+/i, '')
-             else
-               @title
-             end
-      slug = base.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-      prefix = cfg[:prefix]
-      slug = slug.sub(/^#{Regexp.escape(prefix)}#{Regexp.escape(sep)}/, '') if slug.start_with?("#{prefix}#{sep}")
-      "#{prefix}#{sep}#{slug}.md"
+      slug = @title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
+      "#{cfg[:prefix]}#{sep}#{slug}.md"
     end
 
     def content

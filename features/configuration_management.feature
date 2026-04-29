@@ -20,11 +20,11 @@ Feature: Configuration Management and Document Creation
     When I run `bundle exec dia howto new "Configure System"`
     Then the exit status should be 0
     And the output should contain "Created new howto:"
-    And the file "test_docs/how-to/how_to_configure_system.md" should exist
+    And the file "test_docs/how-to/howto_how_to_configure_system.md" should exist
     And the file "test_docs/README.md" should exist
 
   Scenario: README contains correct how-to link
     When I run `bundle exec dia howto new "Configure System"`
     Then the file "test_docs/README.md" should contain "### How-To Guides"
     And the file "test_docs/README.md" should contain "How to configure System"
-    And the file "test_docs/README.md" should contain "how-to/how_to_configure_system.md"
+    And the file "test_docs/README.md" should contain "how-to/howto_how_to_configure_system.md"

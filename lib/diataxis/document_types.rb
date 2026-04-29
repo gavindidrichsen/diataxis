@@ -41,11 +41,10 @@ module Diataxis
   DocumentRegistry.configure do |r|
     r.register(
       command: 'explanation',
-      prefix: 'understanding',
-      category: 'explanations',
+      prefix: 'explanation',
+      category: 'explanation',
       config_key: 'explanations',
       readme_section: 'Explanations',
-      title_prefix: 'Understanding',
       template: 'explanation',
       section_tag: 'explanation'
     )
@@ -53,7 +52,7 @@ module Diataxis
     r.register(
       command: 'tutorial',
       prefix: 'tutorial',
-      category: 'tutorials',
+      category: 'tutorial',
       config_key: 'tutorials',
       readme_section: 'Tutorials',
       template: 'tutorial',
@@ -103,7 +102,7 @@ module Diataxis
     r.register(
       command: 'pr',
       prefix: 'pr',
-      category: 'explanations',
+      category: 'explanation',
       config_key: 'explanations',
       readme_section: 'Pull Requests',
       template: 'pr',
@@ -125,11 +124,10 @@ module Diataxis
     r.register(
       handler: Diataxis::HowTo,
       command: 'howto',
-      prefix: 'how_to',
-      category: 'how-tos',
+      prefix: 'howto',
+      category: 'howto',
       config_key: 'howtos',
       readme_section: 'How-To Guides',
-      title_prefix: 'How to',
       template: 'howto',
       section_tag: 'howto'
     )
