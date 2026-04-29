@@ -26,8 +26,9 @@ module Diataxis
       end
 
       def pattern(config_root = '.')
-        default_dir = Config.path_for('default')
-        File.join(config_root, default_dir, '**', "#{type_config[:prefix]}_*.md")
+        config = Config.load(config_root)
+        type_dir = config[type_config[:config_key]] || config['default']
+        File.join(config_root, type_dir, '**', "#{type_config[:prefix]}_*.md")
       end
 
       def generate_filename_from_file(filepath)
