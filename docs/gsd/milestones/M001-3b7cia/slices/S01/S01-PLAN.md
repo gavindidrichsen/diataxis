@@ -95,7 +95,7 @@ Create the `templates/common.metadata` file with the 6 universal formatting rule
   - Files: `lib/diataxis/template_loader.rb`, `templates/common.metadata`, `diataxis.gemspec`
   - Verify: bundle exec rspec && test -f templates/common.metadata && grep -q 'common.metadata' diataxis.gemspec
 
-- [ ] **T02: Update 5 templates to use {{common.metadata}} with section-header structure** `est:45m`
+- [x] **T02: Update 5 templates to use {{common.metadata}} with section-header structure** `est:45m`
   ## Description
 
 Replace the duplicated Style Guidelines block in all 5 templates that carry metadata with the `{{common.metadata}}` placeholder, using the user's preferred section-header structure inside the HTML comment.
