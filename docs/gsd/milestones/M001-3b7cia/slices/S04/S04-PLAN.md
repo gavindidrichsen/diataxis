@@ -43,7 +43,7 @@ Reference the existing handover and note test contexts (lines 171-228) for the p
   - Files: `spec/diataxis_spec.rb`
   - Verify: bundle exec rspec spec/diataxis_spec.rb && bundle exec rspec && bundle exec cucumber
 
-- [ ] **T03: Verify no remaining dead code and run full test suite** `est:10m`
+- [x] **T03: Verify no remaining dead code and run full test suite** `est:10m`
   Final verification sweep:
 1. Grep for any remaining unused public methods in lib/diataxis/ (check that every `def self.` method is called somewhere)
 2. Run full rspec and cucumber suites
