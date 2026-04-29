@@ -31,7 +31,7 @@ Not provided.
   - Files: `lib/diataxis/file_manager.rb`, `lib/diataxis/document.rb`
   - Verify: bundle exec rspec && bundle exec cucumber
 
-- [ ] **T02: Add creation and content tests for project, 5why, and pr document types** `est:25m`
+- [x] **T02: Add creation and content tests for project, 5why, and pr document types** `est:25m`
   The existing spec covers howto, tutorial, adr, explanation, handover, and note — but project, 5why (fivewhyanalysis), and pr have zero creation or content tests. Add test contexts for all three in spec/diataxis_spec.rb.
 
 For each type, test:

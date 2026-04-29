@@ -226,6 +226,98 @@ RSpec.describe Diataxis do
         expect(readme_content).to include('### Notes')
       end
     end
+
+    context 'creating project' do
+      let(:project_dir) { File.join(test_dir, 'docs/_gtd') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['project', 'new', 'Sprint Planning'])
+        end
+      end
+
+      it 'creates project file with correct filename prefix' do
+        project_files = Dir.glob(File.join(project_dir, 'project_*.md'))
+        expect(project_files).not_to be_empty
+      end
+
+      it 'creates project with correct template structure' do
+        project_file = Dir.glob(File.join(project_dir, 'project_*.md')).first
+        content = File.read(project_file)
+        aggregate_failures do
+          expect(content).to include('Sprint Planning')
+          expect(content).to include('## Context')
+          expect(content).to include('## Project Purpose')
+          expect(content).to include('## Desired Outcome')
+        end
+      end
+
+      it 'updates README with project link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Project: Sprint Planning]')
+        expect(readme_content).to include('### Projects')
+      end
+    end
+
+    context 'creating 5why' do
+      let(:fivewhy_path) { File.join(docs_paths[:five_why], '5why_server_crash.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['5why', 'new', 'Server Crash'])
+        end
+      end
+
+      it 'creates 5why file with correct filename prefix' do
+        expect(File).to exist(fivewhy_path)
+      end
+
+      it 'creates 5why with correct template structure' do
+        content = File.read(fivewhy_path)
+        aggregate_failures do
+          expect(content).to include('# Server Crash')
+          expect(content).to include('## Problem Statement')
+          expect(content).to include('## Analysis')
+          expect(content).to include('## References')
+        end
+      end
+
+      it 'updates README with 5why link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Server Crash]')
+        expect(readme_content).to include('### Five Why Analyses')
+      end
+    end
+
+    context 'creating pr' do
+      let(:pr_path) { File.join(docs_paths[:explanation], 'pr_fix_login_bug.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['pr', 'new', 'Fix Login Bug'])
+        end
+      end
+
+      it 'creates pr file with correct filename prefix' do
+        expect(File).to exist(pr_path)
+      end
+
+      it 'creates pr with correct template structure' do
+        content = File.read(pr_path)
+        aggregate_failures do
+          expect(content).to include('# Fix Login Bug')
+          expect(content).to include('## Purpose')
+          expect(content).to include('## Background')
+          expect(content).to include('## Changes')
+        end
+      end
+
+      it 'updates README with pr link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Fix Login Bug]')
+        expect(readme_content).to include('### Pull Requests')
+      end
+    end
   end
 
   describe 'document title changes' do
