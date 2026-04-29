@@ -21,7 +21,7 @@ Not provided.
 
 ## Tasks
 
-- [ ] **T01: Remove dead code from FileManager and Document** `est:15m`
+- [x] **T01: Remove dead code from FileManager and Document** `est:15m`
   Remove unused methods from FileManager and Document base class.
 
 1. In file_manager.rb: remove `update_filenames`, `process_document_type`, `get_document_directory`, `find_files_for_document_type`, `update_file_in_place`, `cache_files`, `cached_files` (lines 8-51). These methods are never called — ReadmeManager handles all file update logic directly via FileManager.update_filename.

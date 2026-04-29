@@ -104,10 +104,6 @@ module Diataxis
       content
     end
 
-    def customize_readme_entry(title, path, filepath)
-      nil
-    end
-
     def generate_filename
       cfg = self.class.type_config
       sep = cfg[:slug_separator]
