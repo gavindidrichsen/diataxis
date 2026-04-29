@@ -20,13 +20,13 @@
 - [x] **S02: S02** `risk:high` `depends:[]`
   > After this: Shell class files eliminated; dia new adr still auto-numbers; dia new howto still normalizes titles; adding a type requires only register call + .md file
 
-- [ ] **S04: Cleanup, tests, and SOLID audit** `risk:low` `depends:[S03]`
-  > After this: All existing tests pass, test suite simplified, dead code removed, no SOLID violations
+- [ ] **S04: Dead code removal, test gaps, and SOLID cleanup** `risk:low` `depends:[S02]`
+  > After this: After this: dead code removed, all document types have test coverage, no SOLID violations, all tests green
 
 - [ ] **S05: Output consistency polish and collaborative review** `risk:low` `depends:[S04]`
-  > After this: Generated sample documents reviewed and approved; consistent code evidence style, link formatting, and structural patterns across all types
+  > After this: After this: Generated sample documents reviewed and approved; consistent code evidence style, link formatting, and structural patterns across all types
 
-- [ ] **S03: S03** `risk:medium` `depends:[]`
+- [x] **S03: S03** `risk:medium` `depends:[]`
   > After this: dia update . on a directory with files like project_fixing_foo.md no longer renames them to project_project_fixing_foo.md; regression tests cover all 9 document types
 
 ## Boundary Map
