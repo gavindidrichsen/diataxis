@@ -124,6 +124,16 @@ This file is the explicit capability and coverage contract for the project.
 - Validation: unmapped
 - Notes: Covers: how_to_add_a_new_document_template.md (complete rewrite), how_to_manually_test_all_diataxis_features.md (update test procedures), README.md (update usage section). Review ADRs for potential successor ADR documenting the new approach.
 
+### R016 — PR template (pr.md) places commit reference links at the top of each Key Changes section — matching the bolt-private PR #78 pattern for reviewer clarity
+- Class: quality-attribute
+- Status: active
+- Description: PR template (pr.md) places commit reference links at the top of each Key Changes section — matching the bolt-private PR #78 pattern for reviewer clarity
+- Why it matters: Makes PRs easy to follow and review even with hundreds of changes. Reviewer sees the commit link immediately under each section heading, not buried at the end. Over-arching aim: PR descriptions should be super easy for anyone to follow, review, and assess regardless of change volume.
+- Source: user
+- Primary owning slice: M001-3b7cia/S04
+- Validation: dia new pr populated from a GSD milestone produces output structurally similar to the bolt-private PR #78 reference — commit links at top of each change section, clear breakdown into appropriate sections
+- Notes: Reference PR: github.com/puppetlabs/bolt-private/pull/78. Reference GSD data: /Users/gavin.didrichsen/@REFERENCES/github/app/development/tools/puppet/repositories/puppetlabs/bolt-private/docs/gsd/milestones/M001-88t59w. Download PR description locally as golden file for verification. Structure decision (flat narrative vs Problem/Fix/Commit sub-headings) deferred to S04 review — user wants to decide closer to the time.
+
 ## Deferred
 
 ### R013 — Auto-discovery of templates — zero-config registration, just drop a template file
@@ -167,10 +177,11 @@ This file is the explicit capability and coverage contract for the project.
 | R013 | core-capability | deferred | none | none | unmapped |
 | R014 | anti-feature | out-of-scope | none | none | n/a |
 | R015 | continuity | active | M001-3b7cia/S05 | none | unmapped |
+| R016 | quality-attribute | active | M001-3b7cia/S04 | none | dia new pr populated from a GSD milestone produces output structurally similar to the bolt-private PR #78 reference — commit links at top of each change section, clear breakdown into appropriate sections |
 
 ## Coverage Summary
 
-- Active requirements: 13
-- Mapped to slices: 13
+- Active requirements: 14
+- Mapped to slices: 14
 - Validated: 0
 - Unmapped active requirements: 0
