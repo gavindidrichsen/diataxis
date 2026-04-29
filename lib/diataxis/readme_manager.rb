@@ -99,9 +99,8 @@ module Diataxis
     def update_existing_readme
       content = File.read(readme_path)
       @document_types.each do |doc_type|
-        section_name = doc_type.name.split('::').last
         section_title = document_type_section(doc_type)
-        section_type = section_name.downcase
+        section_type = doc_type.type_config[:section_tag] || doc_type.name&.split('::')&.last&.downcase
         entries = @entries[doc_type]
 
         if content.include?("<!-- #{section_type}log -->")
@@ -151,9 +150,8 @@ module Diataxis
         entries = @entries[doc_type]
         next if entries.empty? # Skip sections without content
 
-        section_name = doc_type.name.split('::').last
         section_title = document_type_section(doc_type)
-        section_type = section_name.downcase
+        section_type = doc_type.type_config[:section_tag] || doc_type.name&.split('::')&.last&.downcase
 
         <<~SECTION
           ### #{section_title}

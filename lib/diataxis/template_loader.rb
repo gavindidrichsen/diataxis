@@ -30,8 +30,11 @@ module Diataxis
     end
 
     def self.find_template_file(document_class)
-      class_name = document_class.name.split('::').last
-      template_filename = "#{class_name.downcase}.md"
+      template_name = document_class.type_config[:template] ||
+                      document_class.name&.split('::')&.last&.downcase
+      raise TemplateError.new("Cannot determine template name for #{document_class}") unless template_name
+
+      template_filename = "#{template_name}.md"
       category = document_class.type_config[:category]
 
       gem_root = File.expand_path('../..', __dir__)

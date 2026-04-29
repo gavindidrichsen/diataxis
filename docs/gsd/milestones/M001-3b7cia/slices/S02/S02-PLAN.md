@@ -98,7 +98,7 @@ This task is purely additive — no existing behavior changes because all hooks 
   - Files: `lib/diataxis/document.rb`
   - Verify: bundle exec rspec && bundle exec cucumber && test $(grep -c 'def customize_' lib/diataxis/document.rb) -eq 4
 
-- [ ] **T02: Create registry DSL in document_types.rb with config-based template and section tag resolution** `est:1h`
+- [x] **T02: Create registry DSL in document_types.rb with config-based template and section tag resolution** `est:1h`
   ---
 estimated_steps: 7
 estimated_files: 4

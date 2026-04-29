@@ -12,7 +12,7 @@ module Diataxis
     class << self
       attr_reader :type_config
 
-      def register_type(command:, prefix:, category:, config_key:, readme_section:, title_prefix: nil, slug_separator: '_')
+      def register_type(command:, prefix:, category:, config_key:, readme_section:, title_prefix: nil, slug_separator: '_', template: nil, section_tag: nil)
         @type_config = {
           command: command,
           prefix: prefix,
@@ -20,7 +20,9 @@ module Diataxis
           config_key: config_key,
           readme_section: readme_section,
           title_prefix: title_prefix,
-          slug_separator: slug_separator
+          slug_separator: slug_separator,
+          template: template,
+          section_tag: section_tag
         }
         DocumentRegistry.register(command, self)
       end
@@ -72,7 +74,7 @@ module Diataxis
       def find_files(config_root = '.')
         search_pattern = File.expand_path(pattern(config_root), config_root)
         files = Dir.glob(search_pattern).sort
-        Diataxis.logger.info "Found #{files.length} #{name.split('::').last} files matching #{search_pattern}"
+        Diataxis.logger.info "Found #{files.length} #{type_config[:section_tag] || name&.split('::')&.last || 'unknown'} files matching #{search_pattern}"
         files
       end
     end
@@ -93,7 +95,7 @@ module Diataxis
     protected
 
     def type
-      self.class.name.split('::').last.downcase
+      self.class.type_config[:command]
     end
 
     def apply_title_prefix(title)
