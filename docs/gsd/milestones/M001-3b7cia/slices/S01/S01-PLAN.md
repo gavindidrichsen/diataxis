@@ -180,7 +180,7 @@ The common block being replaced is the `**Style Guidelines (Strict):**` header a
   - Files: `templates/explanations/explanation.md`, `templates/tutorials/tutorial.md`, `templates/how-tos/howto.md`, `templates/explanations/pr.md`, `templates/references/handover.md`
   - Verify: bundle exec rspec && bundle exec cucumber
 
-- [ ] **T03: Add TemplateLoader unit tests for placeholder resolution** `est:30m`
+- [x] **T03: Add TemplateLoader unit tests for placeholder resolution** `est:30m`
   ## Description
 
 Add a new spec file `spec/template_loader_spec.rb` with focused unit tests for the `{{common.metadata}}` placeholder resolution in `TemplateLoader.load_template()`.
