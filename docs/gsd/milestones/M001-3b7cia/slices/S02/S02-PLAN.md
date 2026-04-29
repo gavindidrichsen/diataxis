@@ -356,7 +356,7 @@ Actually the simplest migration: keep HowTo's initialize override but have it ca
   - Files: `lib/diataxis/document/adr.rb`, `lib/diataxis/document/howto.rb`, `lib/diataxis/document/explanation.rb`, `lib/diataxis/document/tutorial.rb`, `lib/diataxis/document/handover.rb`, `lib/diataxis/document/five_why_analysis.rb`, `lib/diataxis/document/note.rb`, `lib/diataxis/document/project.rb`, `lib/diataxis/document/pr.rb`
   - Verify: bundle exec rspec && bundle exec cucumber && test $(grep -l 'template:' lib/diataxis/document/*.rb | wc -l | tr -d ' ') -eq 9 && ! grep -q 'Config.path_for' lib/diataxis/document/adr.rb
 
-- [ ] **T04: Wire document_types.rb, delete 7 shell classes, update tests, and verify behavioral equivalence** `est:1h`
+- [x] **T04: Wire document_types.rb, delete 7 shell classes, update tests, and verify behavioral equivalence** `est:1h`
   ---
 estimated_steps: 8
 estimated_files: 11

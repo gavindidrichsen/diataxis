@@ -26,7 +26,7 @@ RSpec.describe Diataxis::TemplateLoader do
 
     context 'with {{common.metadata}} placeholder' do
       it 'resolves the placeholder with common.metadata content' do
-        content = described_class.load_template(Diataxis::Explanation, 'Test Topic')
+        content = described_class.load_template(Diataxis::DocumentRegistry.lookup('explanation'), 'Test Topic')
 
         expect(content).to include('**Style Guidelines (Strict):**')
         expect(content).to include('Treat this document as a template to be filled, not redesigned.')
@@ -38,7 +38,7 @@ RSpec.describe Diataxis::TemplateLoader do
 
         begin
           File.write(common_path, original_content + "\n{{title}} should remain literal")
-          content = described_class.load_template(Diataxis::Explanation, 'My Title')
+          content = described_class.load_template(Diataxis::DocumentRegistry.lookup('explanation'), 'My Title')
 
           expect(content).to include('My Title should remain literal')
           expect(content).not_to include('{{title}} should remain literal')
@@ -67,7 +67,7 @@ RSpec.describe Diataxis::TemplateLoader do
         begin
           FileUtils.mv(common_path, backup_path)
 
-          expect { described_class.load_template(Diataxis::Explanation, 'Test') }
+          expect { described_class.load_template(Diataxis::DocumentRegistry.lookup('explanation'), 'Test') }
             .to raise_error(Diataxis::TemplateError, /common\.metadata/)
         ensure
           FileUtils.mv(backup_path, common_path)
