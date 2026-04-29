@@ -78,9 +78,11 @@ module Diataxis
     end
 
     def initialize(title, directory = '.')
-      @title = apply_title_prefix(title)
+      @title = customize_title(apply_title_prefix(title))
       @directory = get_configured_directory(directory)
       @filename = File.join(@directory, generate_filename)
+      custom = customize_filename(@title, @directory)
+      @filename = custom if custom
     end
 
     def create
@@ -103,6 +105,22 @@ module Diataxis
       "#{prefix} #{title}"
     end
 
+    def customize_title(title)
+      title
+    end
+
+    def customize_filename(title, dir)
+      nil
+    end
+
+    def customize_content(content)
+      content
+    end
+
+    def customize_readme_entry(title, path, filepath)
+      nil
+    end
+
     def generate_filename
       cfg = self.class.type_config
       sep = cfg[:slug_separator]
@@ -116,7 +134,7 @@ module Diataxis
     end
 
     def content
-      TemplateLoader.load_template(self.class, @title)
+      customize_content(TemplateLoader.load_template(self.class, @title))
     end
 
     private

@@ -17,7 +17,7 @@
 - [x] **S01: S01** `risk:medium` `depends:[]`
   > After this: dia new explanation renders with metadata sourced from common.metadata file instead of hardcoded block in the template
 
-- [ ] **S02: Registry DSL and template method pattern** `risk:high` `depends:[S01]`
+- [ ] **S02: S02** `risk:high` `depends:[]`
   > After this: Shell class files eliminated; dia new adr still auto-numbers; dia new howto still normalizes titles; adding a type requires only register call + .md file
 
 - [ ] **S03: Cleanup, tests, and SOLID audit** `risk:low` `depends:[S02]`
