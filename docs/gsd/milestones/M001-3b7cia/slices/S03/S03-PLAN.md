@@ -21,7 +21,7 @@ Not provided.
 
 ## Tasks
 
-- [ ] **T01: Add prefix-stripping logic to generate_filename_from_file and generate_filename in document.rb** `est:20m`
+- [x] **T01: Add prefix-stripping logic to generate_filename_from_file and generate_filename in document.rb** `est:20m`
   Fix the two methods that build filenames from titles. Both methods build a slug from the title and prepend type_config[:prefix], but neither checks whether the slug already starts with the prefix. The fix: after building the slug, strip a leading `prefix + separator` if present before prepending it again.
 
 In `generate_filename_from_file` (class method, line 46): after the slug is built on line 46, add prefix-stripping before line 47.

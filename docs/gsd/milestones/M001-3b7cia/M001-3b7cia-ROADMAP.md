@@ -14,14 +14,11 @@
 
 ## Slices
 
-- [x] **S01: Common metadata template injection** `risk:medium` `depends:[]`
+- [x] **S01: S01** `risk:medium` `depends:[]`
   > After this: dia new explanation renders with metadata sourced from common.metadata file instead of hardcoded block in the template
 
-- [x] **S02: Registry DSL and template method pattern** `risk:high` `depends:[S01]`
+- [x] **S02: S02** `risk:high` `depends:[]`
   > After this: Shell class files eliminated; dia new adr still auto-numbers; dia new howto still normalizes titles; adding a type requires only register call + .md file
-
-- [ ] **S03: Fix dia update filename-doubling bug when slug starts with prefix** `risk:medium` `depends:[S02]`
-  > After this: dia update . on a directory with files like project_fixing_foo.md no longer renames them to project_project_fixing_foo.md; regression tests cover all 9 document types
 
 - [ ] **S04: Cleanup, tests, and SOLID audit** `risk:low` `depends:[S03]`
   > After this: All existing tests pass, test suite simplified, dead code removed, no SOLID violations
@@ -29,57 +26,9 @@
 - [ ] **S05: Output consistency polish and collaborative review** `risk:low` `depends:[S04]`
   > After this: Generated sample documents reviewed and approved; consistent code evidence style, link formatting, and structural patterns across all types
 
+- [ ] **S03: S03** `risk:medium` `depends:[]`
+  > After this: dia update . on a directory with files like project_fixing_foo.md no longer renames them to project_project_fixing_foo.md; regression tests cover all 9 document types
+
 ## Boundary Map
 
-### S01 → S02
-
-Produces:
-- `templates/common.metadata` — universal formatting rules file (~9 lines)
-- `TemplateLoader#resolve_placeholder` — extended to handle `{{common.metadata}}` by reading and injecting the common metadata file content
-- Templates updated with `{{common.metadata}}` placeholder replacing hardcoded common blocks
-
-Consumes: nothing (first slice)
-
-### S02 → S03
-
-Produces:
-- `lib/diataxis/document_types.rb` — registry DSL with `DocumentRegistry.configure` block registering all types
-- `Document#customize_title(title)` — no-op hook, overridden by HowTo
-- `Document#customize_filename(title, dir)` — no-op hook, overridden by ADR
-- `Document#customize_content(content)` — no-op hook for future use
-- `Document#customize_readme_entry(title, path, filepath)` — no-op hook, overridden by ADR
-- `handler:` option in register calls pointing to custom classes
-
-Consumes from S01:
-- `TemplateLoader` metadata injection (templates already updated)
-
-### S03 → S04
-
-Produces:
-- Prefix-stripping logic in `generate_filename` that prevents filename-doubling
-- Regression tests covering all 9 document types
-
-Consumes from S02:
-- Registry DSL (all types registered)
-- Template method hooks (custom behavior working)
-
-### S04 → S05
-
-Produces:
-- User-approved metadata content across all templates
-- Potentially refined common.metadata and per-template metadata based on review feedback
-- Finalized architecture that documentation should describe
-
-Consumes from S03:
-- Clean, tested codebase ready for output review
-
-### S05 (terminal)
-
-Produces:
-- Updated `docs/how_to_add_a_new_document_template.md` — rewritten for register call + .md file process
-- Updated `docs/how_to_manually_test_all_diataxis_features.md` — test procedures for new architecture
-- Updated `README.md` — usage section reflects current behavior
-- Optional successor ADR if architectural changes warrant it
-
-Consumes from S04:
-- Finalized, user-approved architecture and metadata system
+### S01 → S02\n\nProduces:\n- `templates/common.metadata` — universal formatting rules file (~9 lines)\n- `TemplateLoader#resolve_placeholder` — extended to handle `{{common.metadata}}` by reading and injecting the common metadata file content\n- Templates updated with `{{common.metadata}}` placeholder replacing hardcoded common blocks\n\nConsumes: nothing (first slice)\n\n### S02 → S03\n\nProduces:\n- `lib/diataxis/document_types.rb` — registry DSL with `DocumentRegistry.configure` block registering all types\n- `Document#customize_title(title)` — no-op hook, overridden by HowTo\n- `Document#customize_filename(title, dir)` — no-op hook, overridden by ADR\n- `Document#customize_content(content)` — no-op hook for future use\n- `Document#customize_readme_entry(title, path, filepath)` — no-op hook, overridden by ADR\n- `handler:` option in register calls pointing to custom classes\n\nConsumes from S01:\n- `TemplateLoader` metadata injection (templates already updated)\n\n### S03 → S04\n\nProduces:\n- Clean codebase with shell classes removed\n- Simplified test suite with full functional coverage\n- SOLID-compliant document creation path\n\nConsumes from S02:\n- Registry DSL (all types registered)\n- Template method hooks (custom behavior working)\n\n### S04 → S05\n\nProduces:\n- User-approved metadata content across all templates\n- Potentially refined common.metadata and per-template metadata based on review feedback\n- Finalized architecture that documentation should describe\n\nConsumes from S03:\n- Clean, tested codebase ready for output review\n\n### S05 (terminal)\n\nProduces:\n- Updated `docs/how_to_add_a_new_document_template.md` — rewritten for register call + .md file process\n- Updated `docs/how_to_manually_test_all_diataxis_features.md` — test procedures for new architecture\n- Updated `README.md` — usage section reflects current behavior\n- Optional successor ADR if architectural changes warrant it\n\nConsumes from S04:\n- Finalized, user-approved architecture and metadata system

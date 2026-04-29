@@ -44,7 +44,9 @@ module Diataxis
                       end
         sep = type_config[:slug_separator]
         slug = clean_title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-        "#{type_config[:prefix]}#{sep}#{slug}.md"
+        prefix = type_config[:prefix]
+        slug = slug.sub(/^#{Regexp.escape(prefix)}#{Regexp.escape(sep)}/, '') if slug.start_with?("#{prefix}#{sep}")
+        "#{prefix}#{sep}#{slug}.md"
       end
 
       def generate_filename_from_existing(filepath)
@@ -132,7 +134,9 @@ module Diataxis
                @title
              end
       slug = base.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-      "#{cfg[:prefix]}#{sep}#{slug}.md"
+      prefix = cfg[:prefix]
+      slug = slug.sub(/^#{Regexp.escape(prefix)}#{Regexp.escape(sep)}/, '') if slug.start_with?("#{prefix}#{sep}")
+      "#{prefix}#{sep}#{slug}.md"
     end
 
     def content
