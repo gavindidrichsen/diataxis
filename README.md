@@ -116,12 +116,13 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 ### Projects
 
 <!-- projectlog -->
-* [Project: Create common style guidelines for each template](docs/_gtd/project_create_common_style_guidelines_for_each_template.md)
-* [Project: Error handle new document failures](docs/_gtd/project_error_handle_new_document_failures.md)
-* [Project: Fix broken search for 5why docs](docs/_gtd/project_fix_broken_search_for_5why_docs.md)
-* [Project: Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
-* [Project: Fix GSD slice insertion and reordering to keep markdown and database aligned](docs/_gtd/project_fix_gsd_slice_insertion_and_reordering_to_keep_markdown_and_database_aligned.md)
-* [Project: Fixing the dia update filename-doubling bug when titles already contain the document-type prefix](docs/_gtd/project_fixing_the_dia_update_filename_doubling_bug_when_titles_already_contain_the_document_type_prefix.md)
+* [Project: Building a GSD-to-human-readable adapter: GitHub Projects, diataxis docs, and PM-tool export](docs/_gtd/project_project_building_a_gsd_to_human_readable_adapter_github_projects_diataxis_docs_and_pm_tool_export.md)
+* [Project: Create common style guidelines for each template](docs/_gtd/project_project_create_common_style_guidelines_for_each_template.md)
+* [Project: Error handle new document failures](docs/_gtd/project_project_error_handle_new_document_failures.md)
+* [Project: Fix broken search for 5why docs](docs/_gtd/project_project_fix_broken_search_for_5why_docs.md)
+* [Project: Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
+* [Project: Fix GSD slice insertion and reordering to keep markdown and database aligned](docs/_gtd/project_project_fix_gsd_slice_insertion_and_reordering_to_keep_markdown_and_database_aligned.md)
+* [Project: Fixing the dia update filename-doubling bug when titles already contain the document-type prefix](docs/_gtd/project_project_fixing_the_dia_update_filename_doubling_bug_when_titles_already_contain_the_document_type_prefix.md)
 <!-- projectlogstop -->
 
 ### Design Decisions
