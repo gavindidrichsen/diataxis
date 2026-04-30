@@ -48,14 +48,16 @@ RSpec.describe Diataxis::TemplateLoader do
       end
     end
 
-    context 'with templates that lack the placeholder' do
-      it 'returns content without error' do
+    context 'with ADR template' do
+      it 'resolves common.metadata and additional variables' do
         Dir.chdir(test_dir) do
           content = described_class.load_template(Diataxis::ADR, 'Test Decision', adr_number: '0001', status: 'Proposed')
 
           expect(content).to include('Test Decision')
           expect(content).not_to include('{{common.metadata}}')
-          expect(content).not_to include('Style Guidelines')
+          expect(content).to include('Style Guidelines')
+          expect(content).to include('0001')
+          expect(content).to include('Proposed')
         end
       end
     end

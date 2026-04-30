@@ -75,8 +75,8 @@ module Diataxis
       category: 'references',
       config_key: 'five_why_analyses',
       readme_section: 'Five Why Analyses',
-      template: 'fivewhyanalysis',
-      section_tag: 'fivewhyanalysis'
+      template: '5why',
+      section_tag: '5why'
     )
 
     r.register(

@@ -6,3 +6,36 @@
 - Use bulleted lists with `-` instead of numbered lists for easy reordering.
 - Create headings without numbers (e.g., `### Install Package` not `### Step 1: Install Package`).
 - Keep headings descriptive so steps can be rearranged without renumbering.
+
+**Heading Rules:**
+- All `###` and lower subheadings must be concise, descriptive titles (3-7 words).
+- Placeholder headings (e.g., `### Concept 1`, `### Change 1`) must be replaced with topic-specific titles before completion.
+- Use `####` subheadings for subsections instead of bold text with numbers.
+
+**Linking Rules:**
+- Every reference in Related Topics must be a real link (no placeholder bullets).
+- **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123).
+- **Docs**: Link to official documentation pages.
+- **Local**: Link to local docs with relative paths.
+
+**Code Evidence Requirement (required when code is referenced):**
+- For each major section,
+  - include BOTH a source link to real code (with line numbers), and a short "Code Sample" block that clarifies intent.
+- The "Code Sample" may be:
+  - A minimal real excerpt, or
+  - A simplified pseudocode version with brief comments.
+- The sample must explain behavior, not just repeat syntax.
+- Keep samples small and focused (about 5-20 lines).
+- Add 1-3 bullets under each sample explaining:
+  - what the code is doing,
+  - why it matters in this document,
+  - and any important caveat/assumption.
+- Never fabricate APIs or behavior; if code cannot be verified, explicitly state that and omit the sample.
+
+**File Setup Formatting Rule (required for how-to steps):**
+- Do not use heredoc-style file creation commands such as `cat > file <<'EOF'` in instructional steps.
+- For each file, present setup as:
+  - `Create <path/filename>` (short purpose sentence), then
+  - one fenced code block containing the file contents.
+- Include the filename as the first line in the code block (for example, `# hosts.yaml`).
+- Keep command blocks for executable commands only (for example, directory setup, `bundle install`, and test execution).

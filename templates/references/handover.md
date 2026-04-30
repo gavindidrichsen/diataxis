@@ -3,14 +3,7 @@
 {{common.metadata}}
 
 # Template-Specific Guidelines
-- Key concept headings must be concise, descriptive titles (3-7 words).
-- Use `####` subheadings for troubleshooting subsections instead of bold text with numbers.
-
-**Linking Rules:**
-- Every reference in Related Topics must be a real link (no placeholder bullets).
-- **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123).
-- **Docs**: Link to official documentation pages.
-- **Local**: Link to local docs with relative paths.
+(No additional template-specific guidelines.)
 -->
 
 # {{title}}
@@ -60,9 +53,4 @@ Research suggestions:
 
 ## References
 
-When adding references:
-
-* **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
-* **Docs**: Link to official documentation: [Documentation Title](https://example.com/docs)
-* **Issues**: Link to issue trackers: [JIRA-123](https://jira.example.com/browse/JIRA-123)
-* **Local**: Link to local docs: [Related Analysis](../five_why_analyses/5why_issue.md)
+- Code, documentation, issue trackers, and local docs links go here.
