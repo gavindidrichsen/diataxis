@@ -73,8 +73,8 @@ module Diataxis
       command: '5why',
       prefix: '5why',
       category: 'references',
-      config_key: 'five_why_analyses',
-      readme_section: 'Five Why Analyses',
+      config_key: '5whys',
+      readme_section: '5-Whys',
       template: '5why',
       section_tag: '5why'
     )

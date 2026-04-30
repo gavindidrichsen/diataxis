@@ -285,7 +285,7 @@ RSpec.describe Diataxis do
       it 'updates README with 5why link and section' do
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[Server Crash]')
-        expect(readme_content).to include('### Five Why Analyses')
+        expect(readme_content).to include('### 5-Whys')
       end
     end
 
