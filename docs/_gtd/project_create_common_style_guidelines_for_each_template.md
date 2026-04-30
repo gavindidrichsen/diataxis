@@ -35,7 +35,7 @@ Core Principles:
    Weekly review ensures clarity and trust in your system.
 -->
 
-# Project: Create common style guidelines for each template
+# Create common style guidelines for each template
 
 **@urgent** tasks:
 
@@ -257,7 +257,7 @@ Modify `templates/project.md.erb`:
 ```erb
 <%= Diataxis::StyleGuidelines.new.render_comment('projects') %>
 
-# Project: <%= title %>
+# <%= title %>
 
 **@urgent** tasks:
 

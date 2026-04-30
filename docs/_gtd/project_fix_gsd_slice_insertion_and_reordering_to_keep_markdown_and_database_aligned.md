@@ -48,7 +48,7 @@ When referencing code or documentation:
 - **Local**: Link to local docs: [Related How-to](../how_to_other_guide.md)
 -->
 
-# Project: Fix GSD slice insertion and reordering to keep markdown and database aligned
+# Fix GSD slice insertion and reordering to keep markdown and database aligned
 
 **@urgent** tasks:
 

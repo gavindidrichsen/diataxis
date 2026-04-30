@@ -48,7 +48,7 @@ When referencing code or documentation:
 - **Local**: Link to local docs: [Related How-to](../how_to_other_guide.md)
 -->
 
-# Project: Building a GSD-to-human-readable adapter: GitHub Projects, diataxis docs, Jira sync, and PM-tool export
+# Build a GSD-to-human-readable adapter: GitHub Projects, diataxis docs, Jira sync, and PM-tool export
 
 **@urgent** tasks:
 

@@ -1,4 +1,4 @@
-# Project: Fix broken search for 5why docs
+# Fix broken search for 5why docs
 
 **@urgent** tasks:
 

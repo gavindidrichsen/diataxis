@@ -35,7 +35,7 @@ Core Principles:
    Weekly review ensures clarity and trust in your system.
 -->
 
-# Project: Fixing the dia update filename-doubling bug when titles already contain the document-type prefix
+# Fixing the dia update filename-doubling bug when titles already contain the document-type prefix
 
 **@urgent** tasks:
 

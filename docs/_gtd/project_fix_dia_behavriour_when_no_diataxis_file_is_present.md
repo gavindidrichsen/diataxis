@@ -48,7 +48,7 @@ When referencing code or documentation:
 - **Local**: Link to local docs: [Related How-to](../how_to_other_guide.md)
 -->
 
-# Project: Fix dia behavriour when no .diataxis file is present
+# Fix dia behavriour when no .diataxis file is present
 
 **@urgent** tasks:
 
