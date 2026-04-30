@@ -20,7 +20,7 @@
 - [x] **S02: S02** `risk:high` `depends:[]`
   > After this: Shell class files eliminated; dia new adr still auto-numbers; dia new howto still normalizes titles; adding a type requires only register call + .md file
 
-- [ ] **S04: S04** `risk:low` `depends:[]`
+- [x] **S04: S04** `risk:low` `depends:[]`
   > After this: After this: dead code removed, all document types have test coverage, no SOLID violations, all tests green
 
 - [ ] **S05: Output consistency polish and collaborative review** `risk:low` `depends:[S04]`
