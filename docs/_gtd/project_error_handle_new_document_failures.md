@@ -35,7 +35,7 @@ Core Principles:
    Weekly review ensures clarity and trust in your system.
 -->
 
-# Error handle new document failures
+# Project: Error handle new document failures
 
 ## Context
 
