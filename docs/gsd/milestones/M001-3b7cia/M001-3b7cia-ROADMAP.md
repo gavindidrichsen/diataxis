@@ -23,7 +23,7 @@
 - [x] **S04: S04** `risk:low` `depends:[]`
   > After this: After this: dead code removed, all document types have test coverage, no SOLID violations, all tests green
 
-- [ ] **S05: Output consistency polish and collaborative review** `risk:low` `depends:[S04]`
+- [ ] **S05: S05** `risk:low` `depends:[]`
   > After this: After this: Generated sample documents reviewed and approved; consistent code evidence style, link formatting, and structural patterns across all types
 
 - [x] **S03: S03** `risk:medium` `depends:[]`
