@@ -37,7 +37,7 @@ RSpec.describe Diataxis::TemplateLoader do
         original_content = File.read(common_path)
 
         begin
-          File.write(common_path, original_content + "\n{{title}} should remain literal")
+          File.write(common_path, "#{original_content}\n{{title}} should remain literal")
           content = described_class.load_template(Diataxis::DocumentRegistry.lookup('explanation'), 'My Title')
 
           expect(content).to include('My Title should remain literal')
@@ -51,7 +51,8 @@ RSpec.describe Diataxis::TemplateLoader do
     context 'with ADR template' do
       it 'resolves common.metadata and additional variables' do
         Dir.chdir(test_dir) do
-          content = described_class.load_template(Diataxis::ADR, 'Test Decision', adr_number: '0001', status: 'Proposed')
+          content = described_class.load_template(Diataxis::ADR, 'Test Decision', adr_number: '0001',
+                                                                                  status: 'Proposed')
 
           expect(content).to include('Test Decision')
           expect(content).not_to include('{{common.metadata}}')

@@ -12,7 +12,7 @@ module Diataxis
       if content.include?('{{common.metadata}}')
         common_path = File.join(File.expand_path('../..', __dir__), 'templates', 'common.metadata')
         unless File.exist?(common_path)
-          raise TemplateError.new("Common metadata file not found: templates/common.metadata",
+          raise TemplateError.new('Common metadata file not found: templates/common.metadata',
                                   search_paths: [common_path])
         end
 
@@ -32,7 +32,7 @@ module Diataxis
     def self.find_template_file(document_class)
       template_name = document_class.type_config[:template] ||
                       document_class.name&.split('::')&.last&.downcase
-      raise TemplateError.new("Cannot determine template name for #{document_class}") unless template_name
+      raise TemplateError, "Cannot determine template name for #{document_class}" unless template_name
 
       template_filename = "#{template_name}.md"
       category = document_class.type_config[:category]

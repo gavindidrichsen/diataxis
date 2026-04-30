@@ -26,7 +26,7 @@ module Diataxis
 
       private_class_method def self.build_usage_text
         doc_commands = DocumentRegistry.command_names.map do |cmd|
-          format("    %-28s- Create a new %s document", "#{cmd} new \"Title\"", cmd)
+          format('    %-28s- Create a new %s document', "#{cmd} new \"Title\"", cmd)
         end.join("\n")
 
         <<~USAGE

@@ -12,7 +12,8 @@ module Diataxis
     class << self
       attr_reader :type_config
 
-      def register_type(command:, prefix:, category:, config_key:, readme_section:, slug_separator: '_', template: nil, section_tag: nil, **_ignored)
+      def register_type(command:, prefix:, category:, config_key:, readme_section:, slug_separator: '_', template: nil,
+                        section_tag: nil, **_ignored)
         @type_config = {
           command: command,
           prefix: prefix,
@@ -96,7 +97,7 @@ module Diataxis
       title
     end
 
-    def customize_filename(title, dir)
+    def customize_filename(_title, _dir)
       nil
     end
 

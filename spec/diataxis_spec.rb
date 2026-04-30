@@ -391,7 +391,9 @@ RSpec.describe Diataxis do
     end
 
     context 'with Understanding in the title' do
-      let(:explanation_path) { File.join(docs_paths[:explanation], 'explanation_understanding_configuration_management.md') }
+      let(:explanation_path) do
+        File.join(docs_paths[:explanation], 'explanation_understanding_configuration_management.md')
+      end
 
       before do
         Dir.chdir(test_dir) do
@@ -417,7 +419,7 @@ RSpec.describe Diataxis do
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
           content = File.read(original_path)
-          new_content = content.sub(/# System Architecture/, '# Advanced System Design')
+          new_content = content.sub('# System Architecture', '# Advanced System Design')
           File.write(original_path, new_content)
           Diataxis::CLI.run(['update', '.'])
         end

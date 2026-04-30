@@ -28,11 +28,7 @@ module Diataxis
 
     private_class_method def self.apply_registration(config)
       handler = config.delete(:handler)
-      klass = if handler
-                handler
-              else
-                Class.new(Document)
-              end
+      klass = handler || Class.new(Document)
 
       klass.register_type(**config)
     end
