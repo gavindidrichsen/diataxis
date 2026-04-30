@@ -1,3 +1,13 @@
+<!--
+# Common Guidelines
+{{common.metadata}}
+
+# Template-Specific Guidelines
+
+**Additional Linking Rules:**
+- **Related ADRs**: Link to other ADRs: [ADR-0001](./0001-title.md).
+-->
+
 # {{adr_number}}. {{title}}
 
 Date: {{date}}
@@ -20,7 +30,4 @@ What becomes easier or more difficult to do because of this change?
 
 ## References
 
-When adding references:
-- **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
-- **Docs**: Link to official documentation: [Documentation Title](https://example.com/docs)
-- **Related ADRs**: Link to other ADRs: [ADR-0001](./0001-title.md)
+- Related ADRs, code, documentation, and local docs links go here.

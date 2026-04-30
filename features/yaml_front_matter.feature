@@ -13,7 +13,7 @@ Feature: YAML Front Matter Support
       """
 
   Scenario: Extract title from document with YAML front matter
-    Given a file named "docs/how-tos/how_to_setup_server.md" with:
+    Given a file named "docs/how-tos/howto_setup_server.md" with:
       """
       ---
       aliases:
@@ -32,10 +32,10 @@ Feature: YAML Front Matter Support
     When I run `bundle exec dia update .`
     Then the exit status should be 0
     And the file "docs/README.md" should contain "How to Setup Server on Linux"
-    And the file "docs/README.md" should contain "how-tos/how_to_setup_server_on_linux.md"
+    And the file "docs/README.md" should contain "how-tos/howto_how_to_setup_server_on_linux.md"
 
   Scenario: Extract title from document without YAML front matter
-    Given a file named "docs/how-tos/how_to_deploy_app.md" with:
+    Given a file named "docs/how-tos/howto_deploy_app.md" with:
       """
       # How to Deploy Application
 
@@ -46,10 +46,10 @@ Feature: YAML Front Matter Support
     When I run `bundle exec dia update .`
     Then the exit status should be 0
     And the file "docs/README.md" should contain "How to Deploy Application"
-    And the file "docs/README.md" should contain "how-tos/how_to_deploy_application.md"
+    And the file "docs/README.md" should contain "how-tos/howto_how_to_deploy_application.md"
 
   Scenario: Handle multiple documents with mixed front matter
-    Given a file named "docs/how-tos/how_to_with_metadata.md" with:
+    Given a file named "docs/how-tos/howto_with_metadata.md" with:
       """
       ---
       tags:
@@ -60,7 +60,7 @@ Feature: YAML Front Matter Support
 
       Content here.
       """
-    And a file named "docs/how-tos/how_to_without_metadata.md" with:
+    And a file named "docs/how-tos/howto_without_metadata.md" with:
       """
       # How to Test without Metadata
 
@@ -70,14 +70,14 @@ Feature: YAML Front Matter Support
     Then the exit status should be 0
     And the file "docs/README.md" should contain "How to Test with Metadata"
     And the file "docs/README.md" should contain "How to Test without Metadata"
-    And the file "docs/README.md" should contain "how-tos/how_to_test_with_metadata.md"
-    And the file "docs/README.md" should contain "how-tos/how_to_test_without_metadata.md"
+    And the file "docs/README.md" should contain "how-tos/howto_how_to_test_with_metadata.md"
+    And the file "docs/README.md" should contain "how-tos/howto_how_to_test_without_metadata.md"
 
   Scenario: Create new document and update README with YAML front matter
     When I run `bundle exec dia howto new "Configure Database"`
     Then the exit status should be 0
-    And the file "docs/how-tos/how_to_configure_database.md" should exist
-    Given I append to "docs/how-tos/how_to_configure_database.md" with:
+    And the file "docs/how-tos/howto_how_to_configure_database.md" should exist
+    Given I append to "docs/how-tos/howto_how_to_configure_database.md" with:
       """
       ---
       aliases:

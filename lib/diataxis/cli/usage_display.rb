@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative '../version'
+require_relative '../document_registry'
 
 module Diataxis
   module CLI
-    # Handles displaying usage information and help
     class UsageDisplay
       def self.show_version
         puts "diataxis version #{VERSION}"
@@ -25,6 +25,10 @@ module Diataxis
       end
 
       private_class_method def self.build_usage_text
+        doc_commands = DocumentRegistry.command_names.map do |cmd|
+          format('    %-28s- Create a new %s document', "#{cmd} new \"Title\"", cmd)
+        end.join("\n")
+
         <<~USAGE
           Usage: diataxis [options] <command> [arguments]
 
@@ -36,13 +40,7 @@ module Diataxis
 
           Commands:
             init                      - Initialize .diataxis config file
-            howto new "Title"         - Create a new how-to guide
-            tutorial new "Title"      - Create a new tutorial
-            adr new "Title"           - Create a new architectural decision record
-            explanation new "Title"   - Create a new explanation document
-            handover new "Title"      - Create a new handover document
-            5why new "Title"          - Create a new five why analysis document
-            note new "Title"          - Create a new note document
+          #{doc_commands}
             update <directory>        - Update document filenames and README.md
           #{'  '}
           Environment Variables:

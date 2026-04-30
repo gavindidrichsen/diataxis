@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   end
 
   # Ensure templates are included in the gem (best practice location)
-  spec.files += Dir['templates/*.md']
+  spec.files += Dir['templates/**/*']
   spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']

@@ -52,7 +52,7 @@ RSpec.describe Diataxis do
           Diataxis::CLI.run(['howto', 'new', 'Test Document'])
         end
 
-        expect(File).to exist(File.join(docs_paths[:howto], 'how_to_test_document.md'))
+        expect(File).to exist(File.join(docs_paths[:howto], 'howto_how_to_test_document.md'))
         expect(File).to exist(docs_paths[:readme])
       end
     end
@@ -76,7 +76,7 @@ RSpec.describe Diataxis do
           Diataxis::CLI.run(['howto', 'new', 'Test Custom Path'])
         end
 
-        expect(File).to exist(File.join(custom_dir, 'howtos/how_to_test_custom_path.md'))
+        expect(File).to exist(File.join(custom_dir, 'howtos/howto_how_to_test_custom_path.md'))
         expect(File).to exist(File.join(custom_dir, 'README.md'))
       end
     end
@@ -123,7 +123,7 @@ RSpec.describe Diataxis do
           Diataxis::CLI.run(['howto', 'new', 'Configure System'])
         end
 
-        howto_path = File.join(docs_paths[:howto], 'how_to_configure_system.md')
+        howto_path = File.join(docs_paths[:howto], 'howto_how_to_configure_system.md')
         expect(File).to exist(howto_path)
 
         content = File.read(howto_path)
@@ -226,6 +226,98 @@ RSpec.describe Diataxis do
         expect(readme_content).to include('### Notes')
       end
     end
+
+    context 'creating project' do
+      let(:project_dir) { File.join(test_dir, 'docs/_gtd') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['project', 'new', 'Sprint Planning'])
+        end
+      end
+
+      it 'creates project file with correct filename prefix' do
+        project_files = Dir.glob(File.join(project_dir, 'project_*.md'))
+        expect(project_files).not_to be_empty
+      end
+
+      it 'creates project with correct template structure' do
+        project_file = Dir.glob(File.join(project_dir, 'project_*.md')).first
+        content = File.read(project_file)
+        aggregate_failures do
+          expect(content).to include('Sprint Planning')
+          expect(content).to include('## Context')
+          expect(content).to include('## Project Purpose')
+          expect(content).to include('## Desired Outcome')
+        end
+      end
+
+      it 'updates README with project link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Project: Sprint Planning]')
+        expect(readme_content).to include('### Projects')
+      end
+    end
+
+    context 'creating 5why' do
+      let(:fivewhy_path) { File.join(docs_paths[:five_why], '5why_server_crash.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['5why', 'new', 'Server Crash'])
+        end
+      end
+
+      it 'creates 5why file with correct filename prefix' do
+        expect(File).to exist(fivewhy_path)
+      end
+
+      it 'creates 5why with correct template structure' do
+        content = File.read(fivewhy_path)
+        aggregate_failures do
+          expect(content).to include('# Server Crash')
+          expect(content).to include('## Problem Statement')
+          expect(content).to include('## Analysis')
+          expect(content).to include('## References')
+        end
+      end
+
+      it 'updates README with 5why link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Server Crash]')
+        expect(readme_content).to include('### 5-Whys')
+      end
+    end
+
+    context 'creating pr' do
+      let(:pr_path) { File.join(docs_paths[:explanation], 'pr_fix_login_bug.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(['pr', 'new', 'Fix Login Bug'])
+        end
+      end
+
+      it 'creates pr file with correct filename prefix' do
+        expect(File).to exist(pr_path)
+      end
+
+      it 'creates pr with correct template structure' do
+        content = File.read(pr_path)
+        aggregate_failures do
+          expect(content).to include('# Fix Login Bug')
+          expect(content).to include('## Purpose')
+          expect(content).to include('## Background')
+          expect(content).to include('## Changes')
+        end
+      end
+
+      it 'updates README with pr link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Fix Login Bug]')
+        expect(readme_content).to include('### Pull Requests')
+      end
+    end
   end
 
   describe 'document title changes' do
@@ -233,7 +325,7 @@ RSpec.describe Diataxis do
       Dir.chdir(test_dir) do
         # Create initial document
         Diataxis::CLI.run(['howto', 'new', 'Original Title'])
-        original_path = File.join(docs_paths[:howto], 'how_to_original_title.md')
+        original_path = File.join(docs_paths[:howto], 'howto_how_to_original_title.md')
 
         # Update title
         content = File.read(original_path)
@@ -244,7 +336,7 @@ RSpec.describe Diataxis do
         Diataxis::CLI.run(['update', '.'])
 
         # Check results
-        new_path = File.join(docs_paths[:howto], 'how_to_updated_title.md')
+        new_path = File.join(docs_paths[:howto], 'howto_how_to_updated_title.md')
         expect(File).not_to exist(original_path)
         expect(File).to exist(new_path)
 
@@ -258,7 +350,7 @@ RSpec.describe Diataxis do
 
   describe 'explanation document creation' do
     context 'with basic title' do
-      let(:explanation_path) { File.join(docs_paths[:explanation], 'understanding_system_architecture.md') }
+      let(:explanation_path) { File.join(docs_paths[:explanation], 'explanation_system_architecture.md') }
 
       before do
         Dir.chdir(test_dir) do
@@ -266,14 +358,14 @@ RSpec.describe Diataxis do
         end
       end
 
-      it 'creates explanation file with understanding prefix' do
+      it 'creates explanation file with explanation prefix' do
         expect(File).to exist(explanation_path)
       end
 
       it 'creates explanation with correct template sections' do
         content = File.read(explanation_path)
         expected_sections = [
-          '# Understanding System Architecture',
+          '# System Architecture',
           '## Purpose',
           'This document answers:',
           '- Why do we do things this way?',
@@ -293,13 +385,15 @@ RSpec.describe Diataxis do
 
       it 'updates README with explanation section and link' do
         readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Understanding System Architecture]')
+        expect(readme_content).to include('[System Architecture]')
         expect(readme_content).to include('### Explanations')
       end
     end
 
-    context 'with existing Understanding prefix' do
-      let(:explanation_path) { File.join(docs_paths[:explanation], 'understanding_configuration_management.md') }
+    context 'with Understanding in the title' do
+      let(:explanation_path) do
+        File.join(docs_paths[:explanation], 'explanation_understanding_configuration_management.md')
+      end
 
       before do
         Dir.chdir(test_dir) do
@@ -307,46 +401,44 @@ RSpec.describe Diataxis do
         end
       end
 
-      it 'preserves single Understanding prefix' do
+      it 'keeps Understanding as part of the title' do
         content = File.read(explanation_path)
         expect(content).to include('# Understanding Configuration Management')
-        expect(content).not_to include('# Understanding Understanding')
       end
 
-      it 'creates correct filename without double prefix' do
+      it 'includes understanding in the filename slug' do
         expect(File).to exist(explanation_path)
-        expect(Dir.glob(File.join(docs_paths[:explanation], 'understanding_understanding_*.md'))).to be_empty
       end
     end
 
     context 'when changing title' do
-      let(:original_path) { File.join(docs_paths[:explanation], 'understanding_system_architecture.md') }
-      let(:new_path) { File.join(docs_paths[:explanation], 'understanding_advanced_system_design.md') }
+      let(:original_path) { File.join(docs_paths[:explanation], 'explanation_system_architecture.md') }
+      let(:new_path) { File.join(docs_paths[:explanation], 'explanation_advanced_system_design.md') }
 
       before do
         Dir.chdir(test_dir) do
           Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
           content = File.read(original_path)
-          new_content = content.sub(/# Understanding.*$/, '# Understanding Advanced System Design')
+          new_content = content.sub('# System Architecture', '# Advanced System Design')
           File.write(original_path, new_content)
           Diataxis::CLI.run(['update', '.'])
         end
       end
 
-      it 'renames file preserving Understanding prefix' do
+      it 'renames file based on new title' do
         expect(File).not_to exist(original_path)
         expect(File).to exist(new_path)
       end
 
       it 'updates README links' do
         readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).not_to include('[Understanding System Architecture]')
-        expect(readme_content).to include('[Understanding Advanced System Design]')
+        expect(readme_content).not_to include('[System Architecture]')
+        expect(readme_content).to include('[Advanced System Design]')
       end
 
       it 'maintains correct document structure' do
         content = File.read(new_path)
-        expect(content).to include('# Understanding Advanced System Design')
+        expect(content).to include('# Advanced System Design')
         expect(content).to include('## Purpose')
         expect(content).to include('## Background')
         expect(content).to include('## Key Concepts')
