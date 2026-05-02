@@ -74,8 +74,9 @@ module Diataxis
       end
     end
 
-    def initialize(title, directory = '.')
+    def initialize(title, directory = '.', tags: [])
       @title = customize_title(title)
+      @tags = tags
       @directory = get_configured_directory(directory)
       @filename = File.join(@directory, generate_filename)
       custom = customize_filename(@title, @directory)
@@ -113,7 +114,7 @@ module Diataxis
     end
 
     def content
-      customize_content(TemplateLoader.load_template(self.class, @title))
+      customize_content(TemplateLoader.load_template(self.class, @title, tags: @tags))
     end
 
     private

@@ -2,47 +2,68 @@
 
 ## Description
 
-This guide walks you through adding a new document template type to the Diataxis gem. You'll create all necessary files, update CLI commands, and ensure proper integration with existing functionality.
+This guide walks you through adding a new document template type to the Diataxis gem. The registry DSL makes this a simple process — most of the infrastructure (CLI routing, help text, document creation, README integration) is automatic.
 
 ## Prerequisites
 
 - Ruby development environment
 - Access to the diataxis gem source code
-- Understanding of Ruby classes and inheritance
-- Familiarity with the existing document types (HowTo, Explanation, Tutorial, ADR)
+- Familiarity with the existing document types (run `dia --help` to see the current list)
 
-## Key files to modify
+## Key files
 
-- `templates/<newtype>.md` - Template file with {{variable}} placeholders
-- `lib/diataxis/document/<newtype>.rb` - Document class implementing DocumentInterface methods
-- `lib/diataxis/diataxis.rb` - Add require statement, e.g., `require_relative 'document/checklist'`
-- `lib/diataxis/cli/command_router.rb` - Add command mapping and routing
-- `lib/diataxis/cli/command_handlers.rb` - Add handler method and update config/document types
+| File | Purpose |
+|------|---------|
+| `lib/diataxis/document_types.rb` | Registry DSL — all document types are registered here |
+| `templates/<category>/<type>.md` | Markdown template with `{{title}}`, `{{date}}`, and `{{common.metadata}}` placeholders |
+| `lib/diataxis/config.rb` | `DEFAULT_CONFIG` — only needed if your type requires a non-default directory |
+
+## What's automatic
+
+Once a type is registered, the following happens with zero additional code:
+
+- **CLI command**: `dia <command> new "Title"` is routed automatically via `DocumentRegistry.lookup` in `CommandRouter`
+- **Help text**: `dia --help` lists the new command automatically via `DocumentRegistry.command_names` in `UsageDisplay`
+- **Document creation**: `CommandHandlers.handle_document` is generic — it works for all registered types
+- **README integration**: `dia update .` discovers files, generates sections, and manages links for all registered types
 
 ## Usage
 
-### Step 1: Create the new document class file
+### Step 1: Create the template file
 
-Create a new Ruby file in `lib/diataxis/document/` following the naming convention:
+Create a markdown template in `templates/<category>/` where `<category>` matches the Diataxis quadrant or `references` for reference documents:
 
-```bash
-# Example: creating a "checklist" document type
-touch lib/diataxis/document/checklist.rb
+```
+templates/
+  explanation/    # Explanations, PRs
+  howto/          # How-to guides
+  tutorial/       # Tutorials
+  references/     # ADRs, notes, handovers, 5-whys, projects
 ```
 
-### Step 2: Create the template file
-
-Create a markdown template in the `templates/` directory:
+For example, to add a "checklist" reference type:
 
 ```bash
-# Create the template file
-touch templates/checklist.md
+touch templates/references/checklist.md
 ```
 
-Add the template content:
+Add the template content with the standard metadata wrapper:
 
 ```markdown
+<!--
+# Common Guidelines
+
+{{common.metadata}}
+
+# Template-Specific Guidelines
+
+- Each checklist should have a clear completion criteria
+- Items should be actionable and verifiable
+-->
+
 # {{title}}
+
+**Date:** {{date}}
 
 ## Purpose
 
@@ -51,7 +72,7 @@ Brief description of what this checklist covers.
 ## Checklist Items
 
 - [ ] Item 1
-- [ ] Item 2  
+- [ ] Item 2
 - [ ] Item 3
 
 ## Notes
@@ -59,264 +80,119 @@ Brief description of what this checklist covers.
 Additional context or instructions.
 ```
 
-### Step 3: Implement the document class
+The `{{common.metadata}}` placeholder is resolved by `TemplateLoader` from `templates/common.metadata` and contains universal formatting rules shared across all templates. The `{{title}}` and `{{date}}` placeholders are substituted at document creation time.
 
-Add the class definition implementing all DocumentInterface methods:
+### Step 2: Register the type
+
+Add a `register` call to the `DocumentRegistry.configure` block in `lib/diataxis/document_types.rb`:
 
 ```ruby
-# lib/diataxis/document/checklist.rb
-require_relative '../document'
-require_relative '../config'
-require_relative '../template_loader'
-
-module Diataxis
-  class Checklist < Document
-    # === DocumentInterface Implementation ===
-    
-    implements :pattern
-    def self.pattern(config_root = '.')
-      path = Config.path_for('checklists')
-      File.join(path, '**', 'checklist_*.md')
-    end
-
-    implements :generate_filename_from_file
-    def self.generate_filename_from_file(filepath)
-      # Extract title from file content, skipping YAML front matter and HTML comments
-      title = MarkdownUtils.extract_title(filepath)
-      return nil if title.nil?
-
-      slug = title.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_|_$/, '')
-      "checklist_#{slug}.md"
-    end
-
-    implements :matches_filename_pattern?
-    def self.matches_filename_pattern?(filename)
-      filename.match?(/^checklist_.*\.md$/)
-    end
-
-    implements :readme_section_title
-    def self.readme_section_title
-      'Checklists'
-    end
-
-    implements :config_key
-    def self.config_key
-      'checklists'
-    end
-
-    implements :format_readme_entry
-    def self.format_readme_entry(title, relative_path, _filepath)
-      "* [#{title}](#{relative_path})"
-    end
-
-    implements :find_files
-    def self.find_files(config_root = '.')
-      search_pattern = File.expand_path(pattern(config_root), config_root)
-      files = Dir.glob(search_pattern).sort
-      Diataxis.logger.info "Found #{files.length} #{name.split('::').last} files matching #{search_pattern}"
-      files
-    end
-
-    # === End DocumentInterface Implementation ===
-
-    protected
-
-    def content
-      TemplateLoader.load_template(self.class, title)
-    end
-  end
-end
+r.register(
+  command: 'checklist',       # CLI command name: `dia checklist new "Title"`
+  prefix: 'checklist',        # Filename prefix: checklist_my_title.md
+  category: 'references',     # Template directory: templates/references/
+  config_key: 'checklists',   # .diataxis config key for custom directory
+  readme_section: 'Checklists', # README section heading
+  template: 'checklist',      # Template filename (without .md)
+  section_tag: 'checklist'    # HTML comment tag in README
+)
 ```
 
-### Step 4: Update the CLI infrastructure
+**Registration fields:**
 
-Add the new document type to multiple CLI files:
+| Field | Required | Description |
+|-------|----------|-------------|
+| `command` | yes | CLI command name used in `dia <command> new "Title"` |
+| `prefix` | yes | Filename prefix — files are named `<prefix>_<slug>.md` |
+| `category` | yes | Template subdirectory under `templates/` |
+| `config_key` | yes | Key in `.diataxis` config for custom directory path |
+| `readme_section` | yes | Section heading used in the generated README |
+| `template` | yes | Template filename (without `.md` extension) in `templates/<category>/` |
+| `section_tag` | yes | HTML comment tag used to mark the README section |
+| `slug_separator` | no | Character between prefix and slug (default: `_`). ADR uses `-` |
+| `handler` | no | Custom Document subclass (see "Custom behavior" below) |
 
-**4a. Add to command routing (`lib/diataxis/cli/command_router.rb`):**
+### Step 3 (optional): Add a default directory
 
-```ruby
-# Add to COMMAND_MAP hash:
-COMMAND_MAP = {
-  # ... existing entries ...
-  'checklist' => :checklist,  # Add this line
-  'update' => :update
-}.freeze
-
-# Add to HANDLER_MAP hash:
-HANDLER_MAP = {
-  # ... existing entries ...
-  checklist: ->(args) { CommandHandlers.handle_checklist(args) },  # Add this line
-  update: ->(args) { CommandHandlers.handle_update(args) }
-}.freeze
-```
-
-**4b. Add handler method (`lib/diataxis/cli/command_handlers.rb`):**
+By default, documents are created in the directory specified by the `default` key in `.diataxis` (typically `docs`). If your type should have its own directory by default, add it to `Config::DEFAULT_CONFIG` in `lib/diataxis/config.rb`:
 
 ```ruby
-def self.handle_checklist(args)
-  validate_document_args!(args, 'checklist')
-  create_document_with_readme_update(args, Checklist, 'checklists', [HowTo, Tutorial, Explanation, Checklist])
-end
-```
-
-**4c. Update Config::DEFAULT_CONFIG and document types list:**
-
-Below is the default document structure.  All document types except for `adr` and `readme` will be placed beneathe the `default` directory:
-
-```ruby
-# In lib/diataxis/config.rb, add to DEFAULT_CONFIG:
 DEFAULT_CONFIG = {
-  'default' => 'docs',
+  'default' => DEFAULT_DOCS_ROOT,
   'readme' => 'README.md',
-  'adr' => 'docs/adr',
+  'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
+  'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd",
+  'checklists' => "#{DEFAULT_DOCS_ROOT}/checklists"  # Add this
 }.freeze
-
-# In lib/diataxis/cli/command_handlers.rb handle_update method:
-document_types = [HowTo, Tutorial, Explanation, ADR, Checklist]  # Add Checklist
 ```
 
-If, however, you want all `checklists` by default to go to a different directory, then you can either make this customzation by hand in the `.diataxis` or more permanently in this `DEFAULT_CONFIG`.  Favour intermittent changes in the `.diataxis`.  If, on the other hand, you find yourself always placing a new document in another specific directory, then consider updating the default `DEFAULT_CONFIG`
+Users can also override the directory per-project in their `.diataxis` config file without changing `DEFAULT_CONFIG`.
 
-### Step 5: Update the main diataxis.rb file
-
-Add the require statement for your new class:
-
-```ruby
-# lib/diataxis/diataxis.rb
-require_relative 'document/checklist'  # Add this line
-```
-
-### Step 6: Update the help text
-
-Add the new command to the CLI help output in `lib/diataxis/cli/usage_display.rb`:
-
-```ruby
-# In the build_usage_text method, add to the Commands section:
-Commands:
-  init                  - Initialize .diataxis config file
-  howto new "Title"     - Create a new how-to guide
-  tutorial new "Title"  - Create a new tutorial
-  adr new "Title"      - Create a new architectural decision record
-  explanation new "Title" - Create a new explanation document
-  checklist new "Title" - Create a new checklist document  # Add this line
-  update <directory>    - Update document filenames and README.md
-```
-
-### Step 7: Add tests for the new document type
-
-Update the test suite in `spec/diataxis_spec.rb` to include your new document type:
-
-**7a. Update test configuration:**
-
-```ruby
-# In the before block, add to the config hash:
-config = {
-  'readme' => 'docs/README.md',
-  'howtos' => 'docs/how-to', 
-  'tutorials' => 'docs/tutorials',
-  'explanations' => 'docs/explanations',
-  'adr' => 'docs/exp/adr',
-  'checklists' => 'docs/checklists'  # Add this line
-}
-```
-
-**7b. Add test paths:**
-
-```ruby
-# In the docs_paths let block:
-let(:docs_paths) do
-  {
-    docs: File.join(test_dir, 'docs'),
-    howto: File.join(test_dir, 'docs/how-to'),
-    # ... existing paths ...
-    checklist: File.join(test_dir, 'docs/checklists'),  # Add this line
-    readme: File.join(test_dir, 'docs/README.md')
-  }
-end
-```
-
-**7c. Add document creation test:**
-
-```ruby
-context 'creating checklist' do
-  it 'creates checklist with correct template and updates README' do
-    Dir.chdir(test_dir) do
-      Diataxis::CLI.run(['checklist', 'new', 'Deployment Checklist'])
-    end
-
-    checklist_path = File.join(docs_paths[:checklist], 'checklist_deployment_checklist.md')
-    expect(File).to exist(checklist_path)
-
-    content = File.read(checklist_path)
-    aggregate_failures do
-      expect(content).to include('# Deployment Checklist')
-      expect(content).to include('## Purpose') 
-      expect(content).to include('## Checklist Items')
-    end
-
-    readme_content = File.read(docs_paths[:readme])
-    expect(readme_content).to include('[Deployment Checklist]')
-    expect(readme_content).to include('### Checklists')
-  end
-end
-```
-
-**Note:** Use `aggregate_failures` when checking multiple template sections to avoid RuboCop's `RSpec/MultipleExpectations` warning (limit is 4 expectations per test).
-
-**7d. Update help text test:**
-
-```ruby
-# Add to the help text test:
-it 'includes remaining document types in help text' do
-  Diataxis::CLI.run([])
-rescue Diataxis::UsageError => e
-  expect(e.usage_message).to include('adr new "Title"')
-  expect(e.usage_message).to include('explanation new "Title"')
-  expect(e.usage_message).to include('checklist new "Title"')  # Add this line
-end
-```
-
-### Step 8: Test the implementation
+### Step 4: Run tests
 
 ```bash
-# Run the test suite to verify integration
 bundle exec rspec
+bundle exec cucumber
+```
 
-# Verify help shows the new command
-bundle exec dia --help
+The existing test suite exercises template loading, document creation, and README integration for all registered types. If your template uses `{{common.metadata}}`, the TemplateLoader tests will verify it resolves correctly.
 
-# Initialize config if not already done  
+## Custom behavior
+
+Most types need only the register call above. For types that require special behavior during document creation, provide a `handler` class that extends `Document` and overrides the template method hooks:
+
+| Hook | Default | Example use |
+|------|---------|-------------|
+| `customize_title(title)` | Returns title unchanged | HowTo prepends "How to " if missing |
+| `customize_filename(title, dir)` | Returns `nil` (use default) | ADR generates auto-numbered filenames like `0001-title.md` |
+| `customize_content(content)` | Returns content unchanged | Could inject dynamic sections |
+
+Example — registering with a custom handler:
+
+```ruby
+# In lib/diataxis/document_types.rb:
+r.register(
+  handler: Diataxis::ADR,      # Custom class instead of generic Document
+  command: 'adr',
+  prefix: '[0-9][0-9][0-9][0-9]',
+  category: 'references',
+  config_key: 'adr',
+  readme_section: 'Design Decisions',
+  slug_separator: '-',
+  template: 'adr',
+  section_tag: 'adr'
+)
+```
+
+The custom handler class lives in `lib/diataxis/document/adr.rb` and overrides `customize_filename` to implement auto-numbering. Only ADR and HowTo currently use custom handlers — all other types use generic registration.
+
+## Testing a new type manually
+
+```bash
+# Initialize config if needed
 bundle exec dia init
 
-# Test creating a new document
-bundle exec dia checklist new "Project setup checklist"
+# Create a document
+bundle exec dia checklist new "Deployment checklist"
 
 # Verify the file was created
 ls docs/checklists/
 
-# Test the update functionality
+# Verify README was updated
+cat docs/README.md | grep -A2 "Checklists"
+
+# Test title change and filename sync
+# (edit the title in the created file, then:)
 bundle exec dia update .
 ```
 
-## Appendix
+## Summary
 
-### Sample usage output
-
-```bash
-$ bundle exec dia checklist new "Deployment checklist"
-Created new checklist: /path/to/docs/checklists/checklist_deployment_checklist.md
-Found 1 Checklist files matching /path/to/docs/checklists/**/checklist_*.md
-
-$ bundle exec dia update .
-Found 1 Checklist files matching /path/to/docs/checklists/**/checklist_*.md
-Found 2 HowTo files matching /path/to/docs/how-to/**/how_to_*.md
-...
-```
-
-### Template system benefits
-
-- **External templates**: Easy to edit markdown files in `templates/` directory
-- **Variable substitution**: Use `{{title}}`, `{{date}}`, and custom variables
-- **AI-friendly**: Templates can be easily analyzed and improved by AI tools
-- **Version controlled**: Template changes tracked with clear diffs
-- **No code changes**: Template updates don't require Ruby code modifications
+| What you need | Simple type | Custom behavior |
+|---------------|-------------|-----------------|
+| Template file | yes | yes |
+| Register call | yes | yes (with `handler:`) |
+| Handler class | no | yes (`lib/diataxis/document/<type>.rb`) |
+| Config change | only if custom default dir | only if custom default dir |
+| CLI changes | none (automatic) | none (automatic) |
+| Help text changes | none (automatic) | none (automatic) |

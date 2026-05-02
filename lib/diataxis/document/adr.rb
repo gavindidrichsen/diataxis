@@ -55,7 +55,7 @@ module Diataxis
 
     def content
       formatted_number = format('%04d', next_number)
-      TemplateLoader.load_template(self.class, @title, adr_number: formatted_number, status: 'Proposed')
+      TemplateLoader.load_template(self.class, @title, adr_number: formatted_number, status: 'Proposed', tags: @tags)
     end
 
     private

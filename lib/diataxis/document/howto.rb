@@ -16,9 +16,9 @@ module Diataxis
       section_tag: 'howto'
     )
 
-    def initialize(title, directory = '.')
+    def initialize(title, directory = '.', tags: [])
       validated = validate_title(title)
-      super(validated, directory)
+      super(validated, directory, tags: tags)
     end
 
     private

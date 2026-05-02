@@ -1,15 +1,19 @@
 # Diataxis
 
-Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It helps maintain How-To guides, tutorials, and Architectural Decision Records (ADRs), with automatic README.md updates.
+Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It supports 9 document types — how-to guides, tutorials, explanations, ADRs, notes, handovers, 5-why analyses, project briefs, and PR summaries — with automatic README integration.
 
 ## Features
 
-* Create How-To guides with proper formatting and naming conventions
-* Create tutorials with consistent structure
-* Create explanation documents following the Diataxis framework
-* Create and manage ADRs following established community practices
-* Automatically update README.md with links to documentation
-* Smart title formatting that converts statements to "How to" format
+* Create and manage 9 document types via a simple registry DSL
+* How-to guides with automatic "How to" title normalization
+* ADRs with auto-numbered sequential filenames
+* Tutorials, explanations, notes, handovers, 5-why analyses, project briefs, and PR summaries
+* Automatically update README.md with links to all documentation
+* Recursive document discovery in subdirectories
+* Configurable directory structure via `.diataxis` config file
+* `DIATAXIS_ROOT` environment variable for running `dia` from any directory
+* `--tag`/`-t` flags and `DIATAXIS_TAG` for attaching YAML front matter tags at creation time
+* Shared metadata guidelines injected into templates via `{{common.metadata}}`
 * Maintains alphabetical order in documentation lists
 
 ## Installation
@@ -32,18 +36,17 @@ Make sure that `dia` is available on your PATH.
 dia init
 cat .diataxis                                           # view and edit the default configuration
 
-# Create a New How-To Guide
-dia howto new "How to configure SSL certificates"       # create with a "How to" title
-dia howto new "Configure SSL certificates"              # or use an imperative statement (automatically converted)
-
-# Create a New Tutorial
-dia tutorial new "Getting Started with Docker"
-
-# Create a New Explanation
-dia explanation new "Why We Use PostgreSQL"
-
-# Create a new ADR
-dia adr new "Do whiteboard wednesday talks"
+# Create documents — all 9 types supported
+dia howto new "How to configure SSL certificates"       # how-to guide (auto "How to" prefix)
+dia howto new "Configure SSL certificates"              # imperative form also works
+dia tutorial new "Getting Started with Docker"          # tutorial
+dia explanation new "Why We Use PostgreSQL"             # explanation
+dia adr new "Do whiteboard wednesday talks"             # ADR (auto-numbered)
+dia note new "Meeting Notes Q4"                         # note
+dia handover new "Frontend Ownership"                   # handover
+dia 5why new "Login Timeout Root Cause"                 # 5-why analysis
+dia project new "API Migration"                         # project brief
+dia pr new "Refactor Auth Module"                       # PR summary
 ```
 
 If you change any document titles, then run the following to automatically rename the filenames and update the links:
@@ -51,6 +54,47 @@ If you change any document titles, then run the following to automatically renam
 ```bash
 dia update .
 ```
+
+### Environment Variables
+
+Set `DIATAXIS_ROOT` to run `dia` commands from any directory without `cd`-ing to the project root:
+
+```bash
+export DIATAXIS_ROOT=/path/to/my/project
+dia explanation new "Why We Chose PostgreSQL"           # creates doc under DIATAXIS_ROOT
+dia update                                              # updates README at DIATAXIS_ROOT
+```
+
+When `DIATAXIS_ROOT` is set, all operations — `init`, document creation, and `update` — target that directory and load the `.diataxis` config from there.
+
+### Tagging Documents
+
+Attach tags to generated documents as YAML front matter using `--tag`/`-t` flags or the `DIATAXIS_TAG` environment variable:
+
+```bash
+# CLI flags (repeatable)
+dia explanation new "API Design" --tag backend -t api
+
+# Environment variable (comma-separated)
+export DIATAXIS_TAG="sprint-42, backend"
+dia howto new "Configure Redis"                         # inherits tags from DIATAXIS_TAG
+
+# Both sources are merged and deduplicated
+DIATAXIS_TAG="backend" dia note new "Redis Notes" -t api
+# Result front matter: tags: [backend, api]
+```
+
+Tags are prepended as YAML front matter at the top of the generated document:
+
+```yaml
+---
+tags:
+  - backend
+  - api
+---
+```
+
+When no tags are specified, no front matter is added — existing behaviour is unchanged.
 
 For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
 
@@ -98,18 +142,6 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 
 ## Appendix
 
-### Projects
-
-<!-- projectlog -->
-* [Build a GSD-to-human-readable adapter: GitHub Projects, diataxis docs, Jira sync, and PM-tool export](docs/_gtd/project_build_a_gsd_to_human_readable_adapter_github_projects_diataxis_docs_jira_sync_and_pm_tool_export.md)
-* [Create common style guidelines for each template](docs/_gtd/project_create_common_style_guidelines_for_each_template.md)
-* [Error handle new document failures](docs/_gtd/project_error_handle_new_document_failures.md)
-* [Fix broken search for 5why docs](docs/_gtd/project_fix_broken_search_for_5why_docs.md)
-* [Fix dia behavriour when no .diataxis file is present](docs/_gtd/project_fix_dia_behavriour_when_no_diataxis_file_is_present.md)
-* [Fix GSD slice insertion and reordering to keep markdown and database aligned](docs/_gtd/project_fix_gsd_slice_insertion_and_reordering_to_keep_markdown_and_database_aligned.md)
-* [Fixing the dia update filename-doubling bug when titles already contain the document-type prefix](docs/_gtd/project_fixing_the_dia_update_filename_doubling_bug_when_titles_already_contain_the_document_type_prefix.md)
-<!-- projectlogstop -->
-
 ### Design Decisions
 
 <!-- adrlog -->
@@ -127,10 +159,8 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0012](docs/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
 * [ADR-0013](docs/adr/0013-set-default-directory-for-all-templates.md) - Set default directory for all templates
 * [ADR-0014](docs/adr/0014-underscore-the-gtd-directory-for-project-files-so-they-always-live-at-the-top.md) - Underscore the gtd directory for project files so they always live at the top
+* [ADR-0015](docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tag.md) - Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAG
+* [ADR-0016](docs/adr/0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md) - Replace per-type class files with registry DSL and template method hooks
 <!-- adrlogstop -->
 
-### Pull Requests
 
-<!-- prlog -->
-* [Consolidate common template directives into common.metadata](docs/pr_consolidate_common_template_directives_into_common_metadata.md)
-<!-- prlogstop -->

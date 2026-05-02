@@ -16,13 +16,13 @@ module Diataxis
         'update' => :update
       }.freeze
 
-      def self.route(command, args)
+      def self.route(command, args, tags: [])
         action = BUILTIN_COMMANDS[command]
 
         if action
           execute_builtin(action, args)
         elsif DocumentRegistry.lookup(command)
-          CommandHandlers.handle_document(command, args)
+          CommandHandlers.handle_document(command, args, tags: tags)
         else
           UsageDisplay.show_unknown_command_error(command)
         end

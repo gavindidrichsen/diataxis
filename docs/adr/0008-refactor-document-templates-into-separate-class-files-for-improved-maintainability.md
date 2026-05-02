@@ -4,7 +4,7 @@ Date: 2025-11-04
 
 ## Status
 
-Proposed
+Superseded by [ADR-0016](0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md)
 
 ## Context
 

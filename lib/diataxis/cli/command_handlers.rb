@@ -10,7 +10,7 @@ module Diataxis
   module CLI
     class CommandHandlers
       def self.handle_init(args)
-        directory = args.empty? ? Dir.pwd : File.expand_path(args[0])
+        directory = args.empty? ? resolve_root_directory : File.expand_path(args[0])
         Diataxis.logger.debug("Initializing Diataxis config in directory: #{directory}")
 
         validate_directory!(directory)
@@ -19,16 +19,18 @@ module Diataxis
         Config.create(directory, config)
       end
 
-      def self.handle_document(command, args)
+      def self.handle_document(command, args, tags: [])
         validate_document_args!(args, command)
         document_class = DocumentRegistry.lookup(command)
-        create_document_with_readme_update(args, document_class)
+        create_document_with_readme_update(args, document_class, tags: tags)
       end
 
       def self.handle_update(args)
-        raise UsageError.new('Usage: diataxis update <directory>', 1) if args.empty?
-
-        directory = File.expand_path(args[0])
+        directory = if args.empty?
+                      resolve_root_directory
+                    else
+                      File.expand_path(args[0])
+                    end
         validate_directory!(directory)
 
         Config.load(directory)
@@ -61,17 +63,24 @@ module Diataxis
         )
       end
 
-      private_class_method def self.create_document_with_readme_update(args, document_class)
-        directory = Dir.pwd
+      private_class_method def self.resolve_root_directory
+        root = ENV.fetch('DIATAXIS_ROOT', nil)
+        return Dir.pwd if root.nil? || root.empty?
+
+        File.expand_path(root)
+      end
+
+      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [])
+        directory = resolve_root_directory
         ensure_config_exists!(directory)
 
         title = args[1..].join(' ')
 
-        path = Config.path_for(document_class.config_key)
+        path = Config.path_for(document_class.config_key, directory)
         document_dir = File.join(directory, path)
         FileUtils.mkdir_p(document_dir)
 
-        document_class.new(title, document_dir).create
+        document_class.new(title, document_dir, tags: tags).create
 
         ReadmeManager.new(directory, DocumentRegistry.all).update
       end
