@@ -646,6 +646,177 @@ RSpec.describe Diataxis do
     end
   end
 
+  describe 'DIATAXIS_ROOT environment variable' do
+    let(:remote_dir) { File.join(File.expand_path('..', File.dirname(__FILE__)), 'tmp', 'remote_root') }
+    let(:remote_config_path) { File.join(remote_dir, '.diataxis') }
+
+    before do
+      FileUtils.mkdir_p(remote_dir)
+      File.write(remote_config_path, JSON.generate(Diataxis::Config::DEFAULT_CONFIG))
+    end
+
+    after do
+      ENV.delete('DIATAXIS_ROOT')
+      FileUtils.rm_rf(remote_dir)
+    end
+
+    it 'creates documents in DIATAXIS_ROOT directory instead of CWD' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'Remote Doc'])
+      end
+
+      expect(File).to exist(File.join(remote_dir, 'docs', 'explanation_remote_doc.md'))
+      expect(File).not_to exist(File.join(test_dir, 'docs', 'explanation_remote_doc.md'))
+    end
+
+    it 'raises ConfigurationError when DIATAXIS_ROOT has no .diataxis file' do
+      no_config_dir = File.join(remote_dir, 'empty')
+      FileUtils.mkdir_p(no_config_dir)
+      ENV['DIATAXIS_ROOT'] = no_config_dir
+
+      Dir.chdir(test_dir) do
+        expect { Diataxis::CLI.run(%w[howto new Test]) }
+          .to raise_error(Diataxis::ConfigurationError, /No \.diataxis configuration file found/)
+      end
+    end
+
+    it 'uses CWD when DIATAXIS_ROOT is not set' do
+      ENV.delete('DIATAXIS_ROOT')
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['note', 'new', 'Local Doc'])
+      end
+
+      expect(File).to exist(File.join(test_dir, 'docs', 'note_local_doc.md'))
+    end
+
+    it 'updates README at DIATAXIS_ROOT' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['tutorial', 'new', 'Remote Tutorial'])
+      end
+
+      readme = File.join(remote_dir, 'README.md')
+      expect(File).to exist(readme)
+      expect(File.read(readme)).to include('[Remote Tutorial]')
+    end
+
+    it 'runs update command with DIATAXIS_ROOT when no directory argument given' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(%w[explanation new Test])
+      end
+
+      readme = File.join(remote_dir, 'README.md')
+      File.read(readme)
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['update'])
+      end
+
+      expect(File.read(readme)).to include('[Test]')
+    end
+
+    it 'loads config from DIATAXIS_ROOT, not CWD' do
+      custom_config = { 'default' => 'docs', 'adr' => 'custom/decisions' }
+      File.write(remote_config_path, JSON.generate(custom_config))
+      ENV['DIATAXIS_ROOT'] = remote_dir
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['adr', 'new', 'Remote Decision'])
+      end
+
+      expect(File).to exist(File.join(remote_dir, 'custom', 'decisions', '0001-remote-decision.md'))
+    end
+
+    it 'uses DIATAXIS_ROOT for init when no directory argument given' do
+      init_dir = File.join(remote_dir, 'init_target')
+      FileUtils.mkdir_p(init_dir)
+      FileUtils.rm_f(config_path)
+      ENV['DIATAXIS_ROOT'] = init_dir
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['init'])
+      end
+
+      expect(File).to exist(File.join(init_dir, '.diataxis'))
+      expect(File).not_to exist(config_path)
+    end
+  end
+
+  describe '--tag / -t flag and DIATAXIS_TAG' do
+    after do
+      ENV.delete('DIATAXIS_TAG')
+    end
+
+    it 'creates document with YAML front matter tags from CLI flags' do
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['-t', '-jira/bolt/135', '-t', '-jira/bolt/141', 'explanation', 'new', 'Tagged Doc'])
+      end
+
+      doc_path = File.join(test_dir, 'docs', 'explanation_tagged_doc.md')
+      content = File.read(doc_path)
+
+      expect(content).to start_with("---\ntags:\n")
+      expect(content).to include('  - -jira/bolt/135')
+      expect(content).to include('  - -jira/bolt/141')
+    end
+
+    it 'creates document with tags from DIATAXIS_TAG env var' do
+      ENV['DIATAXIS_TAG'] = '-env/tag1,-env/tag2'
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['note', 'new', 'Env Tagged'])
+      end
+
+      doc_path = File.join(test_dir, 'docs', 'note_env_tagged.md')
+      content = File.read(doc_path)
+
+      expect(content).to include('  - -env/tag1')
+      expect(content).to include('  - -env/tag2')
+    end
+
+    it 'merges CLI tags with DIATAXIS_TAG and deduplicates' do
+      ENV['DIATAXIS_TAG'] = '-shared,-env-only'
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['-t', '-shared', '-t', '-cli-only', 'howto', 'new', 'Merged Tags'])
+      end
+
+      doc_path = File.join(test_dir, 'docs', 'howto_how_to_merged_tags.md')
+      content = File.read(doc_path)
+
+      expect(content.scan('- -shared').length).to eq(1)
+      expect(content).to include('  - -env-only')
+      expect(content).to include('  - -cli-only')
+    end
+
+    it 'creates document without front matter when no tags provided' do
+      ENV.delete('DIATAXIS_TAG')
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'No Tags'])
+      end
+
+      doc_path = File.join(test_dir, 'docs', 'explanation_no_tags.md')
+      content = File.read(doc_path)
+
+      expect(content).not_to start_with('---')
+    end
+
+    it 'preserves leading hyphens in tag values' do
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['-t', '-alpha-sort-tag', 'tutorial', 'new', 'Hyphen Tags'])
+      end
+
+      doc_path = File.join(test_dir, 'docs', 'tutorial_hyphen_tags.md')
+      content = File.read(doc_path)
+
+      expect(content).to include('  - -alpha-sort-tag')
+    end
+  end
+
   describe 'error handling' do
     context 'with missing arguments' do
       it 'shows usage for howto without title' do
