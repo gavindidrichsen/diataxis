@@ -4,25 +4,41 @@ require 'logger'
 
 module Diataxis
   module CLI
-    # Handles global CLI flags like --verbose and --quiet
+    # Extracts global flags (--verbose, --quiet, --tag) from argv before command routing.
     class GlobalFlagsHandler
-      # Process global flags and remove them from args array
       def self.process!(args)
-        # if flags exist then remove them from args and set logging level
-        # otherwise leave args unchanged
-        args.delete_if do |arg|
-          case arg
+        tags = []
+        remaining = []
+        i = 0
+
+        while i < args.length
+          case args[i]
           when '--verbose', '-V'
             Diataxis::Log.level = Logger::DEBUG
             Diataxis.logger.debug('Verbose mode enabled')
-            true # remove this flag from args
           when '--quiet', '-q'
             Diataxis::Log.level = Logger::WARN
-            true # remove this flag from args
+          when '--tag', '-t'
+            i += 1
+            tags << args[i] if i < args.length
           else
-            false # keep this arg (not a global flag)
+            remaining << args[i]
           end
+          i += 1
         end
+
+        env_tags = parse_env_tags
+        merged = (env_tags + tags).uniq
+
+        args.replace(remaining)
+        { tags: merged }
+      end
+
+      private_class_method def self.parse_env_tags
+        value = ENV.fetch('DIATAXIS_TAG', nil)
+        return [] if value.nil? || value.strip.empty?
+
+        value.split(',').map(&:strip).reject(&:empty?)
       end
     end
   end

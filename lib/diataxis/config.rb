@@ -44,8 +44,8 @@ module Diataxis
 
     # Get path for a document type
     # Precedence: config[type_key] (includes .diataxis overrides) > config['default']
-    def self.path_for(type_key)
-      config = load
+    def self.path_for(type_key, directory = '.')
+      config = load(directory)
       config[type_key] || config['default']
     end
   end

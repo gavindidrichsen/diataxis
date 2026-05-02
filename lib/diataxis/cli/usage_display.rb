@@ -35,15 +35,18 @@ module Diataxis
           Global Options:
             --verbose, -V             - Enable verbose output (debug level)
             --quiet, -q               - Suppress informational output (warnings only)
+            --tag, -t <tag>           - Add a tag to YAML front matter (repeatable)
             --version, -v             - Show version number
             --help, -h                - Show this help message
 
           Commands:
             init                      - Initialize .diataxis config file
           #{doc_commands}
-            update <directory>        - Update document filenames and README.md
+            update [directory]        - Update document filenames and README.md
           #{'  '}
           Environment Variables:
+            DIATAXIS_ROOT             - Root directory for dia commands (overrides CWD)
+            DIATAXIS_TAG              - Default tags, comma-separated (e.g. "-foo,-bar")
             DIATAXIS_LOG_LEVEL        - Set log level (DEBUG, INFO, WARN, ERROR, FATAL)
             DIATAXIS_QUIET            - Set to 'true' to suppress output
         USAGE
