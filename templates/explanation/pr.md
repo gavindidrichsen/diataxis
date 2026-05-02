@@ -13,10 +13,11 @@
 - **Commits**: Link to specific commits: [`short-message`](https://github.com/org/repo/commit/full-sha).
 
 **Changes Section Requirement (the core of this template):**
-- Each change section must follow the Problem → Fix → Commit structure:
+- Each change section must begin with a commit reference blockquote immediately after the heading:
+  `> Commit: [\`short-sha\`](https://github.com/org/repo/commit/full-sha)`
+- Then follow the Problem → Fix structure:
   1. **Problem**: What was broken or needed, with code evidence showing the issue.
   2. **Fix**: What was done, with code evidence showing the solution.
-  3. **Commit**: Link to the commit(s) that implement this change.
 
 **What Did NOT Change Section Requirement:**
 - Every PR description must include a "What Did NOT Change" section.
@@ -28,7 +29,7 @@
 - Placeholder text removed.
 - Purpose questions are PR-specific.
 - Related Topics links are all concrete and valid.
-- Each change section includes Problem, Fix, and Commit link.
+- Each change section begins with a commit reference blockquote and includes Problem and Fix.
 - Each code reference includes both a link and an explanatory code sample.
 - "What Did NOT Change" section is present and specific.
 -->
@@ -51,6 +52,7 @@ Explain the context: why this work was needed, what the current state is, and wh
 ## Changes
 
 ### Change 1: Descriptive Title
+> Commit: [`short-sha`](https://github.com/org/repo/commit/full-sha)
 
 #### Problem
 
@@ -77,11 +79,10 @@ Explain what was done to solve it.
 - What the fix does and why this approach was chosen.
 - Any caveats or assumptions.
 
-**Commit**: [`short commit message`](https://github.com/org/repo/commit/full-sha)
-
 ---
 
 ### Change 2: Descriptive Title
+> Commit: [`short-sha`](https://github.com/org/repo/commit/full-sha)
 
 #### Problem
 
@@ -90,8 +91,6 @@ Explain what was done to solve it.
 #### Fix
 
 ...
-
-**Commit**: [`short commit message`](https://github.com/org/repo/commit/full-sha)
 
 ## What Did NOT Change
 
