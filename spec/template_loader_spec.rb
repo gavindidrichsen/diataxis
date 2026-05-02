@@ -79,6 +79,61 @@ RSpec.describe Diataxis::TemplateLoader do
     end
   end
 
+  describe '.load_template with tags' do
+    it 'prepends YAML front matter when tags are provided' do
+      content = described_class.load_template(
+        Diataxis::DocumentRegistry.lookup('explanation'), 'Test',
+        tags: ['-jira/bolt/135', '-jira/bolt/141']
+      )
+
+      expect(content).to start_with("---\ntags:\n")
+      expect(content).to include('  - -jira/bolt/135')
+      expect(content).to include('  - -jira/bolt/141')
+      expect(content).to include("---\n\n")
+    end
+
+    it 'produces no front matter when tags are empty' do
+      content = described_class.load_template(
+        Diataxis::DocumentRegistry.lookup('explanation'), 'Test',
+        tags: []
+      )
+
+      expect(content).not_to start_with('---')
+    end
+
+    it 'produces no front matter when tags are omitted' do
+      content = described_class.load_template(
+        Diataxis::DocumentRegistry.lookup('explanation'), 'Test'
+      )
+
+      expect(content).not_to start_with('---')
+    end
+
+    it 'preserves leading hyphens in tag values' do
+      content = described_class.load_template(
+        Diataxis::DocumentRegistry.lookup('note'), 'Test',
+        tags: ['-alpha-sort']
+      )
+
+      expect(content).to include('  - -alpha-sort')
+    end
+
+    it 'works with ADR template and additional variables' do
+      Dir.chdir(test_dir) do
+        content = described_class.load_template(
+          Diataxis::ADR, 'Test Decision',
+          adr_number: '0001', status: 'Proposed',
+          tags: ['-project/decisions']
+        )
+
+        expect(content).to start_with("---\ntags:\n")
+        expect(content).to include('  - -project/decisions')
+        expect(content).to include('0001')
+        expect(content).to include('Proposed')
+      end
+    end
+  end
+
   describe 'behavioral equivalence' do
     it 'produces explanation with common guidelines and type-specific metadata' do
       Dir.chdir(test_dir) do
