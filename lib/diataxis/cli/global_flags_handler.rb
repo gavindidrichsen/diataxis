@@ -18,9 +18,11 @@ module Diataxis
             Diataxis.logger.debug('Verbose mode enabled')
           when '--quiet', '-q'
             Diataxis::Log.level = Logger::WARN
-          when '--tag', '-t'
+          when '--tag', '--tags', '-t'
             i += 1
             tags << args[i] if i < args.length
+          when /\A--tags?=(.*)\z/
+            tags << Regexp.last_match(1) unless Regexp.last_match(1).empty?
           else
             remaining << args[i]
           end
