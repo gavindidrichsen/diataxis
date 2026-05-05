@@ -45,3 +45,21 @@ Feature: Document Tagging
     And the file "test_docs/notes/note_merged_tags_note.md" should contain "- sprint-42"
     And the file "test_docs/notes/note_merged_tags_note.md" should contain "- infrastructure"
     And the file "test_docs/notes/note_merged_tags_note.md" should contain "- monitoring"
+
+  Scenario: Create document with --tag=value syntax
+    When I run `bundle exec dia explanation new "Equals Tagged" --tag=backend`
+    Then the exit status should be 0
+    And the file "test_docs/explanations/explanation_equals_tagged.md" should contain "tags:"
+    And the file "test_docs/explanations/explanation_equals_tagged.md" should contain "- backend"
+
+  Scenario: Create document with --tags=value syntax (plural)
+    When I run `bundle exec dia explanation new "Plural Tagged" --tags=frontend`
+    Then the exit status should be 0
+    And the file "test_docs/explanations/explanation_plural_tagged.md" should contain "tags:"
+    And the file "test_docs/explanations/explanation_plural_tagged.md" should contain "- frontend"
+
+  Scenario: Create document with --tags space-separated value
+    When I run `bundle exec dia explanation new "Space Tagged" --tags api`
+    Then the exit status should be 0
+    And the file "test_docs/explanations/explanation_space_tagged.md" should contain "tags:"
+    And the file "test_docs/explanations/explanation_space_tagged.md" should contain "- api"
