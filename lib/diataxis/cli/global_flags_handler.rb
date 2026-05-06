@@ -37,7 +37,7 @@ module Diataxis
       end
 
       private_class_method def self.parse_env_tags
-        value = ENV.fetch('DIATAXIS_TAG', nil)
+        value = ENV.fetch('DIATAXIS_TAGS', nil)
         return [] if value.nil? || value.strip.empty?
 
         value.split(',').map(&:strip).reject(&:empty?)

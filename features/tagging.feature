@@ -31,15 +31,15 @@ Feature: Document Tagging
     Then the exit status should be 0
     And the file "test_docs/explanations/explanation_untagged_document.md" should not contain "tags:"
 
-  Scenario: Tags from DIATAXIS_TAG environment variable
-    Given I set the environment variable "DIATAXIS_TAG" to "sprint-42, infrastructure"
+  Scenario: Tags from DIATAXIS_TAGS environment variable
+    Given I set the environment variable "DIATAXIS_TAGS" to "sprint-42, infrastructure"
     When I run `bundle exec dia note new "Env Tagged Note"`
     Then the exit status should be 0
     And the file "test_docs/notes/note_env_tagged_note.md" should contain "- sprint-42"
     And the file "test_docs/notes/note_env_tagged_note.md" should contain "- infrastructure"
 
   Scenario: Merge CLI and env tags with deduplication
-    Given I set the environment variable "DIATAXIS_TAG" to "sprint-42, infrastructure"
+    Given I set the environment variable "DIATAXIS_TAGS" to "sprint-42, infrastructure"
     When I run `bundle exec dia note new "Merged Tags Note" --tag infrastructure -t monitoring`
     Then the exit status should be 0
     And the file "test_docs/notes/note_merged_tags_note.md" should contain "- sprint-42"

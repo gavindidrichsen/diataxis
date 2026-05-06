@@ -12,7 +12,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 * Recursive document discovery in subdirectories
 * Configurable directory structure via `.diataxis` config file
 * `DIATAXIS_ROOT` environment variable for running `dia` from any directory
-* `--tag`/`-t` flags and `DIATAXIS_TAG` for attaching YAML front matter tags at creation time
+* `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time
 * Shared metadata guidelines injected into templates via `{{common.metadata}}`
 * Maintains alphabetical order in documentation lists
 
@@ -69,18 +69,18 @@ When `DIATAXIS_ROOT` is set, all operations — `init`, document creation, and `
 
 ### Tagging Documents
 
-Attach tags to generated documents as YAML front matter using `--tag`/`-t` flags or the `DIATAXIS_TAG` environment variable:
+Attach tags to generated documents as YAML front matter using `--tag`/`-t` flags or the `DIATAXIS_TAGS` environment variable:
 
 ```bash
 # CLI flags (repeatable)
 dia explanation new "API Design" --tag backend -t api
 
 # Environment variable (comma-separated)
-export DIATAXIS_TAG="sprint-42, backend"
-dia howto new "Configure Redis"                         # inherits tags from DIATAXIS_TAG
+export DIATAXIS_TAGS="sprint-42, backend"
+dia howto new "Configure Redis"                         # inherits tags from DIATAXIS_TAGS
 
 # Both sources are merged and deduplicated
-DIATAXIS_TAG="backend" dia note new "Redis Notes" -t api
+DIATAXIS_TAGS="backend" dia note new "Redis Notes" -t api
 # Result front matter: tags: [backend, api]
 ```
 
@@ -159,7 +159,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0012](docs/adr/0012-move-to-external-template-system-with-direct-templateloader-usage.md) - Move to External Template System with Direct TemplateLoader Usage
 * [ADR-0013](docs/adr/0013-set-default-directory-for-all-templates.md) - Set default directory for all templates
 * [ADR-0014](docs/adr/0014-underscore-the-gtd-directory-for-project-files-so-they-always-live-at-the-top.md) - Underscore the gtd directory for project files so they always live at the top
-* [ADR-0015](docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tag.md) - Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAG
+* [ADR-0015](docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md) - Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAGS
 * [ADR-0016](docs/adr/0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md) - Replace per-type class files with registry DSL and template method hooks
 <!-- adrlogstop -->
 
