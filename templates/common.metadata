@@ -15,6 +15,7 @@
 **Linking Rules:**
 - Every reference in Related Topics must be a real link (no placeholder bullets).
 - **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123).
+- **Commits**: Link to the actual commit: [`short-sha`](https://github.com/org/repo/commit/full-sha). In PR descriptions, each change section must include a commit link so reviewers can navigate directly to the diff.
 - **Docs**: Link to official documentation pages.
 - **Local**: Link to local docs with relative paths.
 

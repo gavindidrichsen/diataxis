@@ -745,9 +745,9 @@ RSpec.describe Diataxis do
     end
   end
 
-  describe '--tag / -t flag and DIATAXIS_TAG' do
+  describe '--tag / -t flag and DIATAXIS_TAGS' do
     after do
-      ENV.delete('DIATAXIS_TAG')
+      ENV.delete('DIATAXIS_TAGS')
     end
 
     it 'creates document with YAML front matter tags from CLI flags' do
@@ -763,8 +763,8 @@ RSpec.describe Diataxis do
       expect(content).to include('  - -jira/bolt/141')
     end
 
-    it 'creates document with tags from DIATAXIS_TAG env var' do
-      ENV['DIATAXIS_TAG'] = '-env/tag1,-env/tag2'
+    it 'creates document with tags from DIATAXIS_TAGS env var' do
+      ENV['DIATAXIS_TAGS'] = '-env/tag1,-env/tag2'
 
       Dir.chdir(test_dir) do
         Diataxis::CLI.run(['note', 'new', 'Env Tagged'])
@@ -777,8 +777,8 @@ RSpec.describe Diataxis do
       expect(content).to include('  - -env/tag2')
     end
 
-    it 'merges CLI tags with DIATAXIS_TAG and deduplicates' do
-      ENV['DIATAXIS_TAG'] = '-shared,-env-only'
+    it 'merges CLI tags with DIATAXIS_TAGS and deduplicates' do
+      ENV['DIATAXIS_TAGS'] = '-shared,-env-only'
 
       Dir.chdir(test_dir) do
         Diataxis::CLI.run(['-t', '-shared', '-t', '-cli-only', 'howto', 'new', 'Merged Tags'])
@@ -793,7 +793,7 @@ RSpec.describe Diataxis do
     end
 
     it 'creates document without front matter when no tags provided' do
-      ENV.delete('DIATAXIS_TAG')
+      ENV.delete('DIATAXIS_TAGS')
 
       Dir.chdir(test_dir) do
         Diataxis::CLI.run(['explanation', 'new', 'No Tags'])

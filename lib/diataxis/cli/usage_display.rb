@@ -46,7 +46,7 @@ module Diataxis
           #{'  '}
           Environment Variables:
             DIATAXIS_ROOT             - Root directory for dia commands (overrides CWD)
-            DIATAXIS_TAG              - Default tags, comma-separated (e.g. "-foo,-bar")
+            DIATAXIS_TAGS             - Default tags, comma-separated (e.g. "-foo,-bar")
             DIATAXIS_LOG_LEVEL        - Set log level (DEBUG, INFO, WARN, ERROR, FATAL)
             DIATAXIS_QUIET            - Set to 'true' to suppress output
         USAGE
