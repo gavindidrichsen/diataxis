@@ -17,7 +17,7 @@
 - **Code**: Link to GitHub with line numbers: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123).
 - **Commits**: Link to the actual commit: [`short-sha`](https://github.com/org/repo/commit/full-sha). In PR descriptions, each change section must include a commit link so reviewers can navigate directly to the diff.
 - **Docs**: Link to official documentation pages.
-- **Local**: Link to local docs with relative paths.
+- **Local**: Link to local docs with Obsidian-style wiki links: `[[doc-filename]]` or `[[doc-filename|display text]]`. Use the filename without the `.md` extension. Wiki links resolve by filename, so they survive file moves within the vault.
 
 **Code Evidence Requirement (required when code is referenced):**
 - For each major section,
