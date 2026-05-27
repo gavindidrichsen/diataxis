@@ -5,7 +5,7 @@
 # Template-Specific Guidelines
 
 **Additional Linking Rules:**
-- **Related ADRs**: Link to other ADRs: [ADR-0001](./0001-title.md).
+- **Related ADRs**: Link to other ADRs: [[0001-title|ADR-0001]].
 -->
 
 # {{adr_number}}. {{title}}
