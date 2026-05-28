@@ -51,6 +51,6 @@ Research suggestions:
 # useful commands for investigation
 ```
 
-## References
+## Related Topics
 
 - Code, documentation, issue trackers, and local docs links go here.

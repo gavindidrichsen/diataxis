@@ -28,6 +28,6 @@ What is the change that we're proposing and/or doing?
 
 What becomes easier or more difficult to do because of this change?
 
-## References
+## Related Topics
 
 - Related ADRs, code, documentation, and local docs links go here.
