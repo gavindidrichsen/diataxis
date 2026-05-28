@@ -42,7 +42,7 @@ Core Principles:
 (No additional template-specific guidelines.)
 -->
 
-# Project: {{title}}
+# {{title}}
 
 **@urgent** tasks:
 
