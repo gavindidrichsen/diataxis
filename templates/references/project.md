@@ -1,86 +1,113 @@
 <!--
-GTD Philosophy Overview
-
-Getting Things Done (GTD) is a productivity methodology by David Allen designed to reduce 
-stress and improve clarity by organizing tasks and commitments into actionable lists.
-
-Core Principles:
-
-1. Capture Everything
-   Collect all tasks, ideas, and commitments into a trusted system so nothing stays in your head.
-
-2. Clarify & Organize
-   Decide what each item means and where it belongs:
-   - Is it actionable?
-   - If yes, what's the Next Action?
-   - If no, trash it, incubate it, or file it as reference.
-
-3. Next Action Thinking
-   Break projects into the very next physical, visible step you can take to move it forward.
-   Example: Instead of "Plan website redesign," write "Email designer to schedule kickoff."
-
-4. Project Definition
-   A project in GTD is any outcome requiring more than one action. Define:
-   - Purpose (Why this matters)
-   - Desired Outcome (What "done" looks like)
-   - Next Actions (What to do now)
-
-5. Contextual Lists
-   Organize actions by context or state:
-   - @waiting – tasks dependent on others
-   - @backlog – deferred tasks
-   - @someday – ideas for the future
-
-6. Review Regularly
-   Weekly review ensures clarity and trust in your system.
--->
-<!--
 # Common Guidelines
 {{common.metadata}}
 
 # Template-Specific Guidelines
-(No additional template-specific guidelines.)
+Project doc — a project is any outcome needing more than one action.
+
+Shape: open by capturing your thinking (handover style — problem, what we know,
+what we think), then a sparse Next Actions checklist, with the supporting detail pushed
+down into a Key Concepts section (explanation style). Each task assumes the
+reader already knows what it means and links to its Key Concept for the "what
+does this actually mean / what are the options" detail. This keeps the task list
+lovely and clear without losing the depth a reviewer needs.
+
+Sections:
+- Problem            — the problem in one line + what "done" looks like in one line
+  - What we know     — (### subsection) confirmed facts / current state, with evidence
+  - What we think    — (### subsection) hypotheses, or the chosen plan and the reasoning for it
+- Next Actions       — @urgent items, one line each, each linking to a Key Concept
+- Key Concepts       — the meat behind the actions (mechanisms, decisions, jargon)
+- Background         — running breadcrumb of decisions made and progress so far
+- Related Topics     — real links to code, docs, tickets, and local notes
+
+**Problem section:**
+- Lead with two bold lines: **Problem:** (one line) and **Done looks like:** (one line).
+- Then two `###` subsections — **What we know** and **What we think** (see below).
+- This is the orientation. Keep the leads to one sentence each — depth belongs lower down.
+
+**What we know / What we think:**
+- "What we know" = confirmed, evidenced facts and current state — link evidence
+  (code lines, logs, command output) rather than asserting.
+- "What we think" = hypotheses or the chosen plan, each with its reasoning. This
+  is where judgement lives; mark anything unconfirmed as such.
+- If a project has no open thinking (pure delivery), keep "What we think" short
+  — a one-line statement of the plan is fine — but do not delete the heading.
+
+**Next Actions ↔ Key Concept linking:**
+- Next Actions is a bare `@urgent` checklist — one line per item, with **no
+  intro or explanatory line above it** (that rule lives here, not in the body).
+- Each item is sparse and skimmable; assume the reader knows the terms.
+- Any term, mechanism, or decision an action leans on gets its own Key Concept
+  subsection, and the action links to it with a same-file heading link
+  (Obsidian form: `[[#Heading Text|display text]]`).
+- Push all explanation into Key Concepts — never pad the Next Actions list itself.
+
+**Key Concepts section:**
+- One subsection per term, mechanism, or decision a task links to — nothing the
+  tasks don't reach for.
+- A concept that is a *decision* lays out the options and their trade-offs (a
+  short comparison table works well), then states the recommendation.
+- A concept that touches code includes a source link (with line numbers) and a
+  short code sample, per the Code Evidence Requirement above.
+
+**Background section:**
+- This is the running log, not static context: decisions already made,
+  progress, dead-ends. It is what lets the project be resumed later. Keep it
+  distinct from "What we know" (which is the current evidenced picture).
+
+**Final Compliance Check (required before finishing):**
+- "Other Lists" / @waiting / @backlog / @someday are NOT present.
+- Problem leads with **Problem:** + **Done looks like:**, then the What we know /
+  What we think `###` subsections.
+- Next Actions has NO intro line — just the `@urgent` checklist; every item is
+  one line and links to a Key Concept (unless trivially self-explanatory).
+- Each Key Concept that touches code has both a link and a short code sample.
+- Related Topics links are all concrete and valid.
 -->
 
 # {{title}}
 
-**@urgent** tasks:
+## Problem
 
-- [ ] Task 1
-- [ ] Task 2
+**Problem:** State the problem motivating this project in one line.
 
-## Context
+**Done looks like:** State the concrete end-state you're aiming for in one line.
 
-What is the issue that we're seeing that is motivating this decision or change?
+### What we know
 
-## Other Lists
+- Confirmed facts and current state, with evidence (link code lines, logs, or command output rather than asserting).
 
-These hold my other actions so I can know they're recorded but "forget" about them to reduce cognitive load.
+### What we think
 
-**@waiting** for these tasks:
+- The chosen plan, or hypotheses if anything is still open — each with its reasoning. Mark unconfirmed items as such.
 
-- [ ] Waiting task 1
+## Next Actions
 
-**@backlog** tasks for later:
+- [ ] First next action — see [[#Concept One|the concept]]
+- [ ] Second next action — see [[#Concept Two|the concept]]
 
-- [ ] Backlog task 1
+## Key Concepts
 
-**@someday** ideas to revisit:
+The supporting detail behind the tasks. One subsection per term, mechanism, or
+decision a task leans on, so the task list itself can stay one line per item.
+Where a task is a *decision*, lay out the options and trade-offs here.
 
-- [ ] Someday idea 1
+### Concept One
 
-## Project Purpose
+Explain the concept, mechanism, or decision a task refers to.
 
-**Why does this project matter?**
+**Code Location** (if relevant): [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
 
-Explain the motivation and value this project provides.
+### Concept Two
 
-## Desired Outcome
-
-**What does "done" look like?**
-
-Describe the concrete end result you're aiming for. Be specific.
+Explain the next one.
 
 ## Background
 
-Use this section to capture context, decisions made, or a running log of progress.
+Running breadcrumb trail: decisions already made, progress, and dead-ends — so
+the project can be picked up later without re-deriving everything.
+
+## Related Topics
+
+- Code, documentation, issue trackers, and local docs links go here.

@@ -39,6 +39,6 @@ Key commands used during investigation:
 # command examples
 ```
 
-## References
+## Related Topics
 
 - Issue trackers, code, documentation, and local docs links go here.
