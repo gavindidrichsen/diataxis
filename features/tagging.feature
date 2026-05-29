@@ -9,8 +9,7 @@ Feature: Document Tagging
       {
         "readme": "test_docs/README.md",
         "default": "test_docs",
-        "explanations": "test_docs/explanations",
-        "notes": "test_docs/notes"
+        "explanations": "test_docs/explanations"
       }
       """
 
@@ -33,18 +32,18 @@ Feature: Document Tagging
 
   Scenario: Tags from DIATAXIS_TAGS environment variable
     Given I set the environment variable "DIATAXIS_TAGS" to "sprint-42, infrastructure"
-    When I run `bundle exec dia note new "Env Tagged Note"`
+    When I run `bundle exec dia explanation new "Env Tagged Note"`
     Then the exit status should be 0
-    And the file "test_docs/notes/note_env_tagged_note.md" should contain "- sprint-42"
-    And the file "test_docs/notes/note_env_tagged_note.md" should contain "- infrastructure"
+    And the file "test_docs/explanations/explanation_env_tagged_note.md" should contain "- sprint-42"
+    And the file "test_docs/explanations/explanation_env_tagged_note.md" should contain "- infrastructure"
 
   Scenario: Merge CLI and env tags with deduplication
     Given I set the environment variable "DIATAXIS_TAGS" to "sprint-42, infrastructure"
-    When I run `bundle exec dia note new "Merged Tags Note" --tag infrastructure -t monitoring`
+    When I run `bundle exec dia explanation new "Merged Tags Note" --tag infrastructure -t monitoring`
     Then the exit status should be 0
-    And the file "test_docs/notes/note_merged_tags_note.md" should contain "- sprint-42"
-    And the file "test_docs/notes/note_merged_tags_note.md" should contain "- infrastructure"
-    And the file "test_docs/notes/note_merged_tags_note.md" should contain "- monitoring"
+    And the file "test_docs/explanations/explanation_merged_tags_note.md" should contain "- sprint-42"
+    And the file "test_docs/explanations/explanation_merged_tags_note.md" should contain "- infrastructure"
+    And the file "test_docs/explanations/explanation_merged_tags_note.md" should contain "- monitoring"
 
   Scenario: Create document with --tag=value syntax
     When I run `bundle exec dia explanation new "Equals Tagged" --tag=backend`

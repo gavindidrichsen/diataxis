@@ -14,9 +14,6 @@ RSpec.describe Diataxis do
       tutorial: File.join(test_dir, 'docs'),
       adr: File.join(test_dir, 'docs/adr'),
       explanation: File.join(test_dir, 'docs'),
-      handover: File.join(test_dir, 'docs'),
-      note: File.join(test_dir, 'docs'),
-      five_why: File.join(test_dir, 'docs'),
       project: File.join(test_dir, 'docs'),
       readme: File.join(test_dir, 'README.md')
     }
@@ -168,65 +165,6 @@ RSpec.describe Diataxis do
       end
     end
 
-    context 'creating handover' do
-      let(:handover_path) { File.join(docs_paths[:handover], 'handover_windows_long_path_issue.md') }
-
-      before do
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['handover', 'new', 'Windows Long Path Issue'])
-        end
-      end
-
-      it 'creates handover file with correct filename' do
-        expect(File).to exist(handover_path)
-      end
-
-      it 'creates handover with correct template structure' do
-        content = File.read(handover_path)
-        expect(content).to include('# Windows Long Path Issue')
-        expect(content).to include('## Problem Summary')
-        expect(content).to include('## What Do We Know')
-        expect(content).to include('## What We Think')
-      end
-
-      it 'updates README with handover link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Windows Long Path Issue]')
-        expect(readme_content).to include('### Handovers')
-      end
-    end
-
-    context 'creating note' do
-      let(:note_path) { File.join(docs_paths[:note], 'note_git_branch_commands.md') }
-
-      before do
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['note', 'new', 'Git Branch Commands'])
-        end
-      end
-
-      it 'creates note file with correct filename' do
-        expect(File).to exist(note_path)
-      end
-
-      it 'creates note with correct template structure' do
-        content = File.read(note_path)
-        aggregate_failures do
-          expect(content).to include('# Git Branch Commands')
-          expect(content).to include('## KEYPOINTS')
-          expect(content).to include('## SUMMARY')
-          expect(content).to include('## TASKS')
-          expect(content).to include('## BACKGROUND')
-        end
-      end
-
-      it 'updates README with note link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Git Branch Commands]')
-        expect(readme_content).to include('### Notes')
-      end
-    end
-
     context 'creating project' do
       let(:project_dir) { File.join(test_dir, 'docs/_gtd') }
 
@@ -246,46 +184,16 @@ RSpec.describe Diataxis do
         content = File.read(project_file)
         aggregate_failures do
           expect(content).to include('Sprint Planning')
-          expect(content).to include('## Context')
-          expect(content).to include('## Project Purpose')
-          expect(content).to include('## Desired Outcome')
+          expect(content).to include('## Problem')
+          expect(content).to include('## Next Actions')
+          expect(content).to include('## Key Concepts')
         end
       end
 
       it 'updates README with project link and section' do
         readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Project: Sprint Planning]')
+        expect(readme_content).to include('[Sprint Planning]')
         expect(readme_content).to include('### Projects')
-      end
-    end
-
-    context 'creating 5why' do
-      let(:fivewhy_path) { File.join(docs_paths[:five_why], '5why_server_crash.md') }
-
-      before do
-        Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['5why', 'new', 'Server Crash'])
-        end
-      end
-
-      it 'creates 5why file with correct filename prefix' do
-        expect(File).to exist(fivewhy_path)
-      end
-
-      it 'creates 5why with correct template structure' do
-        content = File.read(fivewhy_path)
-        aggregate_failures do
-          expect(content).to include('# Server Crash')
-          expect(content).to include('## Problem Statement')
-          expect(content).to include('## Analysis')
-          expect(content).to include('## References')
-        end
-      end
-
-      it 'updates README with 5why link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Server Crash]')
-        expect(readme_content).to include('### 5-Whys')
       end
     end
 
@@ -629,8 +537,8 @@ RSpec.describe Diataxis do
     rescue Diataxis::UsageError => e
       expect(e.usage_message).to include('adr new "Title"')
       expect(e.usage_message).to include('explanation new "Title"')
-      expect(e.usage_message).to include('handover new "Title"')
-      expect(e.usage_message).to include('note new "Title"')
+      expect(e.usage_message).to include('project new "Title"')
+      expect(e.usage_message).to include('pr new "Title"')
     end
 
     it 'shows version information' do
@@ -684,10 +592,10 @@ RSpec.describe Diataxis do
     it 'uses CWD when DIATAXIS_ROOT is not set' do
       ENV.delete('DIATAXIS_ROOT')
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['note', 'new', 'Local Doc'])
+        Diataxis::CLI.run(['explanation', 'new', 'Local Doc'])
       end
 
-      expect(File).to exist(File.join(test_dir, 'docs', 'note_local_doc.md'))
+      expect(File).to exist(File.join(test_dir, 'docs', 'explanation_local_doc.md'))
     end
 
     it 'updates README at DIATAXIS_ROOT' do
@@ -767,10 +675,10 @@ RSpec.describe Diataxis do
       ENV['DIATAXIS_TAGS'] = '-env/tag1,-env/tag2'
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['note', 'new', 'Env Tagged'])
+        Diataxis::CLI.run(['explanation', 'new', 'Env Tagged'])
       end
 
-      doc_path = File.join(test_dir, 'docs', 'note_env_tagged.md')
+      doc_path = File.join(test_dir, 'docs', 'explanation_env_tagged.md')
       content = File.read(doc_path)
 
       expect(content).to include('  - -env/tag1')
