@@ -20,6 +20,14 @@ RSpec.describe Diataxis do
   end
   let(:config_path) { File.join(test_dir, '.diataxis') }
 
+  # Drive the CLI with the test's root injected, so document-creating examples
+  # are hermetic regardless of any ambient DIATAXIS_ROOT / DIATAXIS_TAGS. The
+  # dedicated env-var describe blocks below instead call Diataxis::CLI.run
+  # directly, to exercise the real environment resolution.
+  def run_cli(args)
+    Diataxis::CLI.run(args, root: test_dir, default_tags: nil)
+  end
+
   before do
     # Reset logger state for clean test environment
     Diataxis::Log.reset!
@@ -46,7 +54,7 @@ RSpec.describe Diataxis do
     context 'with default configuration' do
       it 'creates documents in default locations' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Test Document'])
+          run_cli(['howto', 'new', 'Test Document'])
         end
 
         expect(File).to exist(File.join(docs_paths[:howto], 'howto_how_to_test_document.md'))
@@ -70,7 +78,7 @@ RSpec.describe Diataxis do
 
       it 'creates documents in configured locations' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Test Custom Path'])
+          run_cli(['howto', 'new', 'Test Custom Path'])
         end
 
         expect(File).to exist(File.join(custom_dir, 'howtos/howto_how_to_test_custom_path.md'))
@@ -86,7 +94,7 @@ RSpec.describe Diataxis do
 
       it 'shows clear error message' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(['howto', 'new', 'Test Error']) }.to raise_error(JSON::ParserError)
+          expect { run_cli(['howto', 'new', 'Test Error']) }.to raise_error(JSON::ParserError)
         end
       end
     end
@@ -99,14 +107,14 @@ RSpec.describe Diataxis do
 
       it 'fails with helpful error message when creating a document' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(['project', 'new', 'Test Project']) }
+          expect { run_cli(['project', 'new', 'Test Project']) }
             .to raise_error(Diataxis::ConfigurationError, /No \.diataxis configuration file found/)
         end
       end
 
       it 'suggests running dia init in error message' do
         Dir.chdir(test_dir) do
-          expect { Diataxis::CLI.run(%w[howto new Test]) }
+          expect { run_cli(%w[howto new Test]) }
             .to raise_error(Diataxis::ConfigurationError, /Please run 'dia init'/)
         end
       end
@@ -117,7 +125,7 @@ RSpec.describe Diataxis do
     context 'creating how-tos' do
       it 'creates how-to with correct template and updates README' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Configure System'])
+          run_cli(['howto', 'new', 'Configure System'])
         end
 
         howto_path = File.join(docs_paths[:howto], 'howto_how_to_configure_system.md')
@@ -134,7 +142,7 @@ RSpec.describe Diataxis do
     context 'creating tutorial' do
       it 'creates tutorial with correct template and updates README' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['tutorial', 'new', 'Getting Started'])
+          run_cli(['tutorial', 'new', 'Getting Started'])
         end
 
         tutorial_path = File.join(docs_paths[:tutorial], 'tutorial_getting_started.md')
@@ -151,7 +159,7 @@ RSpec.describe Diataxis do
     context 'creating ADR' do
       it 'creates ADR with correct numbering and updates README' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['adr', 'new', 'Use PostgreSQL Database'])
+          run_cli(['adr', 'new', 'Use PostgreSQL Database'])
         end
 
         adr_path = File.join(docs_paths[:adr], '0001-use-postgresql-database.md')
@@ -170,7 +178,7 @@ RSpec.describe Diataxis do
 
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['project', 'new', 'Sprint Planning'])
+          run_cli(['project', 'new', 'Sprint Planning'])
         end
       end
 
@@ -202,7 +210,7 @@ RSpec.describe Diataxis do
 
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['pr', 'new', 'Fix Login Bug'])
+          run_cli(['pr', 'new', 'Fix Login Bug'])
         end
       end
 
@@ -232,7 +240,7 @@ RSpec.describe Diataxis do
     it 'renames file and updates README when title changes' do
       Dir.chdir(test_dir) do
         # Create initial document
-        Diataxis::CLI.run(['howto', 'new', 'Original Title'])
+        run_cli(['howto', 'new', 'Original Title'])
         original_path = File.join(docs_paths[:howto], 'howto_how_to_original_title.md')
 
         # Update title
@@ -241,7 +249,7 @@ RSpec.describe Diataxis do
         File.write(original_path, new_content)
 
         # Run update
-        Diataxis::CLI.run(['update', '.'])
+        run_cli(['update', '.'])
 
         # Check results
         new_path = File.join(docs_paths[:howto], 'howto_how_to_updated_title.md')
@@ -262,7 +270,7 @@ RSpec.describe Diataxis do
 
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+          run_cli(['explanation', 'new', 'System Architecture'])
         end
       end
 
@@ -305,7 +313,7 @@ RSpec.describe Diataxis do
 
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'Understanding Configuration Management'])
+          run_cli(['explanation', 'new', 'Understanding Configuration Management'])
         end
       end
 
@@ -325,11 +333,11 @@ RSpec.describe Diataxis do
 
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['explanation', 'new', 'System Architecture'])
+          run_cli(['explanation', 'new', 'System Architecture'])
           content = File.read(original_path)
           new_content = content.sub('# System Architecture', '# Advanced System Design')
           File.write(original_path, new_content)
-          Diataxis::CLI.run(['update', '.'])
+          run_cli(['update', '.'])
         end
       end
 
@@ -381,17 +389,19 @@ RSpec.describe Diataxis do
 
         # Create documents in both repositories
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['adr', 'new', 'Main Repo Decision'])
+          run_cli(['adr', 'new', 'Main Repo Decision'])
         end
 
+        # This document belongs to the *other* repo, so inject that root
+        # explicitly rather than the default test_dir used by run_cli.
         Dir.chdir(other_repo_dir) do
-          Diataxis::CLI.run(['adr', 'new', 'Other Repo Decision'])
+          Diataxis::CLI.run(['adr', 'new', 'Other Repo Decision'], root: other_repo_dir)
         end
       end
 
       it 'only includes documents from the current repository in README' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['update', '.'])
+          run_cli(['update', '.'])
         end
 
         readme_content = File.read(docs_paths[:readme])
@@ -410,7 +420,7 @@ RSpec.describe Diataxis do
         File.write(wrong_path_adr, "# 2. Misplaced Decision\n\nDate: 2025-03-05\n")
 
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['update', '.'])
+          run_cli(['update', '.'])
         end
 
         readme_content = File.read(docs_paths[:readme])
@@ -428,7 +438,7 @@ RSpec.describe Diataxis do
 
       it 'preserves custom content while updating document links' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Test Document'])
+          run_cli(['howto', 'new', 'Test Document'])
         end
 
         readme_content = File.read(docs_paths[:readme])
@@ -440,7 +450,7 @@ RSpec.describe Diataxis do
     context 'without existing README' do
       it 'creates new README with correct sections' do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Test Document'])
+          run_cli(['howto', 'new', 'Test Document'])
         end
 
         readme_content = File.read(docs_paths[:readme])
@@ -454,7 +464,7 @@ RSpec.describe Diataxis do
   describe 'directory handling' do
     it 'creates necessary directories when missing' do
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['howto', 'new', 'Test Document'])
+        run_cli(['howto', 'new', 'Test Document'])
       end
 
       expect(Dir).to exist(docs_paths[:docs])
@@ -466,8 +476,8 @@ RSpec.describe Diataxis do
     context 'with mixed document types' do
       before do
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Deploy Application'])
-          Diataxis::CLI.run(['adr', 'new', 'Use Docker'])
+          run_cli(['howto', 'new', 'Deploy Application'])
+          run_cli(['adr', 'new', 'Use Docker'])
           # NOTE: No tutorials or explanations created
         end
       end
@@ -496,7 +506,7 @@ RSpec.describe Diataxis do
       before do
         # Start with no tutorials
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['howto', 'new', 'Basic Guide'])
+          run_cli(['howto', 'new', 'Basic Guide'])
         end
       end
 
@@ -507,7 +517,7 @@ RSpec.describe Diataxis do
 
         # Add a tutorial
         Dir.chdir(test_dir) do
-          Diataxis::CLI.run(['tutorial', 'new', 'Getting Started'])
+          run_cli(['tutorial', 'new', 'Getting Started'])
         end
 
         readme_content = File.read(docs_paths[:readme])
@@ -660,7 +670,8 @@ RSpec.describe Diataxis do
 
     it 'creates document with YAML front matter tags from CLI flags' do
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['-t', '-jira/bolt/135', '-t', '-jira/bolt/141', 'explanation', 'new', 'Tagged Doc'])
+        Diataxis::CLI.run(['-t', '-jira/bolt/135', '-t', '-jira/bolt/141', 'explanation', 'new', 'Tagged Doc'],
+                          root: test_dir)
       end
 
       doc_path = File.join(test_dir, 'docs', 'explanation_tagged_doc.md')
@@ -675,7 +686,7 @@ RSpec.describe Diataxis do
       ENV['DIATAXIS_TAGS'] = '-env/tag1,-env/tag2'
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['explanation', 'new', 'Env Tagged'])
+        Diataxis::CLI.run(['explanation', 'new', 'Env Tagged'], root: test_dir)
       end
 
       doc_path = File.join(test_dir, 'docs', 'explanation_env_tagged.md')
@@ -689,7 +700,7 @@ RSpec.describe Diataxis do
       ENV['DIATAXIS_TAGS'] = '-shared,-env-only'
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['-t', '-shared', '-t', '-cli-only', 'howto', 'new', 'Merged Tags'])
+        Diataxis::CLI.run(['-t', '-shared', '-t', '-cli-only', 'howto', 'new', 'Merged Tags'], root: test_dir)
       end
 
       doc_path = File.join(test_dir, 'docs', 'howto_how_to_merged_tags.md')
@@ -704,7 +715,7 @@ RSpec.describe Diataxis do
       ENV.delete('DIATAXIS_TAGS')
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['explanation', 'new', 'No Tags'])
+        Diataxis::CLI.run(['explanation', 'new', 'No Tags'], root: test_dir)
       end
 
       doc_path = File.join(test_dir, 'docs', 'explanation_no_tags.md')
@@ -715,7 +726,7 @@ RSpec.describe Diataxis do
 
     it 'preserves leading hyphens in tag values' do
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['-t', '-alpha-sort-tag', 'tutorial', 'new', 'Hyphen Tags'])
+        Diataxis::CLI.run(['-t', '-alpha-sort-tag', 'tutorial', 'new', 'Hyphen Tags'], root: test_dir)
       end
 
       doc_path = File.join(test_dir, 'docs', 'tutorial_hyphen_tags.md')
