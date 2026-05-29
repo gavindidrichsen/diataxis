@@ -6,7 +6,10 @@ module Diataxis
   module CLI
     # Extracts global flags (--verbose, --quiet, --tag) from argv before command routing.
     class GlobalFlagsHandler
-      def self.process!(args)
+      # `default_tags` is the resolved default-tags input (a comma-separated
+      # string, e.g. from DIATAXIS_TAGS, or nil). It is passed in by the caller
+      # rather than read from ENV here, so this stays free of ambient state.
+      def self.process!(args, default_tags: nil)
         tags = []
         remaining = []
         i = 0
@@ -29,15 +32,13 @@ module Diataxis
           i += 1
         end
 
-        env_tags = parse_env_tags
-        merged = (env_tags + tags).uniq
+        merged = (parse_tags(default_tags) + tags).uniq
 
         args.replace(remaining)
         { tags: merged }
       end
 
-      private_class_method def self.parse_env_tags
-        value = ENV.fetch('DIATAXIS_TAGS', nil)
+      private_class_method def self.parse_tags(value)
         return [] if value.nil? || value.strip.empty?
 
         value.split(',').map(&:strip).reject(&:empty?)
