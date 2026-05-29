@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Neutralise any ambient diataxis env vars (e.g. exported in a dev shell) BEFORE
+# aruba loads, so its per-scenario environment is seeded clean and spawned
+# commands stay hermetic. Scenarios that exercise these vars set them explicitly
+# via aruba steps below.
+%w[DIATAXIS_ROOT DIATAXIS_TAGS].each { |key| ENV.delete(key) }
+
 require 'aruba/cucumber'
 
 # Set default timeout for commands

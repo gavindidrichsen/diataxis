@@ -111,7 +111,7 @@ RSpec.describe Diataxis::TemplateLoader do
 
     it 'preserves leading hyphens in tag values' do
       content = described_class.load_template(
-        Diataxis::DocumentRegistry.lookup('note'), 'Test',
+        Diataxis::DocumentRegistry.lookup('explanation'), 'Test',
         tags: ['-alpha-sort']
       )
 
@@ -140,7 +140,7 @@ RSpec.describe Diataxis::TemplateLoader do
         Diataxis::CLI.run(['explanation', 'new', 'Test Topic'])
       end
 
-      doc_path = File.join(test_dir, 'docs', 'understanding_test_topic.md')
+      doc_path = File.join(test_dir, 'docs', 'explanation_test_topic.md')
       content = File.read(doc_path)
 
       aggregate_failures do
@@ -148,19 +148,19 @@ RSpec.describe Diataxis::TemplateLoader do
         expect(content).to include('Treat this document as a template to be filled')
         expect(content).to include('Purpose Section Requirement')
         expect(content).to include('Code Evidence Requirement')
-        expect(content).to include('# Understanding Test Topic')
+        expect(content).to include('# Test Topic')
         expect(content).to include('## Purpose')
         expect(content).to include('## Background')
         expect(content).to include('## Key Concepts')
       end
     end
 
-    it 'produces handover with common guidelines and type-specific metadata' do
+    it 'produces project with common guidelines and type-specific metadata' do
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['handover', 'new', 'Server Migration'])
+        Diataxis::CLI.run(['project', 'new', 'Server Migration'])
       end
 
-      doc_path = File.join(test_dir, 'docs', 'handover_server_migration.md')
+      doc_path = Dir.glob(File.join(test_dir, 'docs', '_gtd', 'project_*.md')).first
       content = File.read(doc_path)
 
       aggregate_failures do
@@ -168,9 +168,9 @@ RSpec.describe Diataxis::TemplateLoader do
         expect(content).to include('Treat this document as a template to be filled')
         expect(content).to include('Linking Rules')
         expect(content).to include('# Server Migration')
-        expect(content).to include('## Problem Summary')
-        expect(content).to include('## What Do We Know')
-        expect(content).to include('## What We Think')
+        expect(content).to include('## Problem')
+        expect(content).to include('## Next Actions')
+        expect(content).to include('## Key Concepts')
       end
     end
   end

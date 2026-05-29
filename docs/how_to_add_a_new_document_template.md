@@ -38,7 +38,7 @@ templates/
   explanation/    # Explanations, PRs
   howto/          # How-to guides
   tutorial/       # Tutorials
-  references/     # ADRs, notes, handovers, 5-whys, projects
+  references/     # ADRs, projects
 ```
 
 For example, to add a "checklist" reference type:
@@ -185,6 +185,54 @@ cat docs/README.md | grep -A2 "Checklists"
 # (edit the title in the created file, then:)
 bundle exec dia update .
 ```
+
+## Removing a document type
+
+Removing a type is the reverse of adding one: undo the registration, delete the template, and strip the tests and docs that referenced it. Because `register` drives the CLI, help text, and README integration automatically, there is no per-command code to hunt down — the same single registration that wired everything up is the single thing you unwire.
+
+### Step 1: Delete the register call
+
+Remove the type's `register(...)` block from the `DocumentRegistry.configure` block in `lib/diataxis/document_types.rb`. Once it's gone, `dia <command> new` returns `Unknown command: <command>` and the command disappears from `dia --help` automatically.
+
+### Step 2: Delete the template file
+
+```bash
+git rm templates/<category>/<type>.md
+```
+
+Use the `category` and `template` values from the register call you just deleted to locate the file (`templates/<category>/<template>.md`).
+
+### Step 3: Strip the tests that exercise the type
+
+Removing the registration breaks any test that created or asserted on that type. Search for every reference and remove or repoint it:
+
+```bash
+grep -rn "<command>" spec/ features/
+```
+
+Typical spots:
+
+- `spec/diataxis_spec.rb` — the type's `context 'creating <type>'` block, its key in the `docs_paths` hash, and any `usage_message` help-text assertion that names the command.
+- `spec/template_loader_spec.rb` — any `DocumentRegistry.lookup('<type>')` call or behavioral-equivalence block for the type.
+- `features/document_types.feature` and `features/tagging.feature` — the type's `Scenario`, its key in the Background `.diataxis` config, and any line in the "all document types" scenario.
+
+Tests that merely *used* the type as a convenient fixture (e.g. a tagging test that happened to create a note) should be repointed to a surviving type rather than deleted.
+
+### Step 4: Update the docs
+
+- This guide's template-directory listing (under "Create the template file").
+- Any README sections or other docs that named the type.
+
+### Step 5: Run tests
+
+```bash
+bundle exec rspec
+bundle exec cucumber
+```
+
+Both suites should pass with the type fully gone.
+
+**What removal does NOT touch:** the type's `config_key` entry in `Config::DEFAULT_CONFIG` (if any) is now dead but harmless — remove it for tidiness. Documents users already generated with the old type are plain markdown and are left exactly as-is; only the generator stops offering the type.
 
 ## Summary
 

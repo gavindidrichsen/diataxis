@@ -56,36 +56,6 @@ module Diataxis
     )
 
     r.register(
-      command: 'handover',
-      prefix: 'handover',
-      category: 'references',
-      config_key: 'handovers',
-      readme_section: 'Handovers',
-      template: 'handover',
-      section_tag: 'handover'
-    )
-
-    r.register(
-      command: '5why',
-      prefix: '5why',
-      category: 'references',
-      config_key: '5whys',
-      readme_section: '5-Whys',
-      template: '5why',
-      section_tag: '5why'
-    )
-
-    r.register(
-      command: 'note',
-      prefix: 'note',
-      category: 'references',
-      config_key: 'notes',
-      readme_section: 'Notes',
-      template: 'note',
-      section_tag: 'note'
-    )
-
-    r.register(
       command: 'project',
       prefix: 'project',
       category: 'references',
