@@ -9,8 +9,8 @@ require_relative '../errors'
 module Diataxis
   module CLI
     class CommandHandlers
-      def self.handle_init(args)
-        directory = args.empty? ? resolve_root_directory : File.expand_path(args[0])
+      def self.handle_init(args, root: nil)
+        directory = args.empty? ? normalize_root(root) : File.expand_path(args[0])
         Diataxis.logger.debug("Initializing Diataxis config in directory: #{directory}")
 
         validate_directory!(directory)
@@ -19,18 +19,14 @@ module Diataxis
         Config.create(directory, config)
       end
 
-      def self.handle_document(command, args, tags: [])
+      def self.handle_document(command, args, tags: [], root: nil)
         validate_document_args!(args, command)
         document_class = DocumentRegistry.lookup(command)
-        create_document_with_readme_update(args, document_class, tags: tags)
+        create_document_with_readme_update(args, document_class, tags: tags, root: root)
       end
 
-      def self.handle_update(args)
-        directory = if args.empty?
-                      resolve_root_directory
-                    else
-                      File.expand_path(args[0])
-                    end
+      def self.handle_update(args, root: nil)
+        directory = args.empty? ? normalize_root(root) : File.expand_path(args[0])
         validate_directory!(directory)
 
         Config.load(directory)
@@ -63,15 +59,17 @@ module Diataxis
         )
       end
 
-      private_class_method def self.resolve_root_directory
-        root = ENV.fetch('DIATAXIS_ROOT', nil)
-        return Dir.pwd if root.nil? || root.empty?
+      # Normalises an already-resolved root (passed down from CLI.run) into a
+      # concrete directory. Does NOT read the environment — an empty/nil root
+      # means "use the current working directory".
+      private_class_method def self.normalize_root(root)
+        return Dir.pwd if root.nil? || root.to_s.empty?
 
         File.expand_path(root)
       end
 
-      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [])
-        directory = resolve_root_directory
+      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [], root: nil)
+        directory = normalize_root(root)
         ensure_config_exists!(directory)
 
         title = args[1..].join(' ')
