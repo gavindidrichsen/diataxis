@@ -33,13 +33,25 @@ module Diataxis
         File.join(config_root, type_dir, '**', "#{type_config[:prefix]}_*.md")
       end
 
+      # Turns a title into the filename slug, e.g. "How to Fly" -> "how_to_fly".
+      def slugify(text)
+        sep = type_config[:slug_separator]
+        text.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
+      end
+
       def generate_filename_from_file(filepath)
         title = MarkdownUtils.extract_title(filepath)
         return nil if title.nil?
 
-        sep = type_config[:slug_separator]
-        slug = title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-        "#{type_config[:prefix]}#{sep}#{slug}.md"
+        "#{type_config[:prefix]}#{type_config[:slug_separator]}#{slugify(title)}.md"
+      end
+
+      # True when `title` slugifies to the name the file already has. Used on
+      # rename to decide whether a wiki-link's alias was the document's title
+      # (and so should track the new title) or a deliberate custom label (left
+      # untouched). ADR overrides this because its filename carries a number.
+      def title_of_filename?(title, filename_stem)
+        filename_stem == "#{type_config[:prefix]}#{type_config[:slug_separator]}#{slugify(title)}"
       end
 
       def generate_filename_from_existing(filepath)
@@ -108,9 +120,7 @@ module Diataxis
 
     def generate_filename
       cfg = self.class.type_config
-      sep = cfg[:slug_separator]
-      slug = @title.downcase.gsub(/[^a-z0-9]+/, sep).gsub(/^#{Regexp.escape(sep)}|#{Regexp.escape(sep)}$/, '')
-      "#{cfg[:prefix]}#{sep}#{slug}.md"
+      "#{cfg[:prefix]}#{cfg[:slug_separator]}#{self.class.slugify(@title)}.md"
     end
 
     def content

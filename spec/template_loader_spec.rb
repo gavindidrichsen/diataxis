@@ -20,6 +20,14 @@ RSpec.describe Diataxis::TemplateLoader do
     FileUtils.rm_rf(test_dir)
   end
 
+  # Drive the CLI with the test's root injected so document-creating examples
+  # stay hermetic regardless of any ambient DIATAXIS_ROOT / DIATAXIS_TAGS.
+  # Without this, CLI.run reads ENV['DIATAXIS_ROOT'] and writes into a dev's
+  # real vault rather than the test directory.
+  def run_cli(args)
+    Diataxis::CLI.run(args, root: test_dir, default_tags: nil)
+  end
+
   describe '.load_template' do
     let(:gem_root) { File.expand_path('..', File.dirname(__FILE__)) }
     let(:common_path) { File.join(gem_root, 'templates', 'common.metadata') }
@@ -136,9 +144,7 @@ RSpec.describe Diataxis::TemplateLoader do
 
   describe 'behavioral equivalence' do
     it 'produces explanation with common guidelines and type-specific metadata' do
-      Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['explanation', 'new', 'Test Topic'])
-      end
+      run_cli(['explanation', 'new', 'Test Topic'])
 
       doc_path = File.join(test_dir, 'docs', 'explanation_test_topic.md')
       content = File.read(doc_path)
@@ -156,9 +162,7 @@ RSpec.describe Diataxis::TemplateLoader do
     end
 
     it 'produces project with common guidelines and type-specific metadata' do
-      Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['project', 'new', 'Server Migration'])
-      end
+      run_cli(['project', 'new', 'Server Migration'])
 
       doc_path = Dir.glob(File.join(test_dir, 'docs', '_gtd', 'project_*.md')).first
       content = File.read(doc_path)

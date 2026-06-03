@@ -3,10 +3,13 @@
 require 'fileutils'
 require_relative 'config'
 require_relative 'document_registry'
+require_relative 'wiki_link_updater'
 
 module Diataxis
   class FileManager
-    def self.update_filename(filepath, directory, document_type = nil)
+    # `root`, when given, is the tree whose wiki-links get repointed at the new
+    # filename after a rename.
+    def self.update_filename(filepath, directory, document_type = nil, root: nil)
       document_type ||= find_document_type_for_file(filepath)
       return filepath unless document_type
 
@@ -18,6 +21,7 @@ module Diataxis
 
       FileUtils.mv(filepath, new_filepath)
       Diataxis.logger.info "Renamed: #{filepath} -> #{new_filepath}"
+      WikiLinkUpdater.update_links(root, filepath, new_filepath, document_type: document_type) if root
       new_filepath
     end
 

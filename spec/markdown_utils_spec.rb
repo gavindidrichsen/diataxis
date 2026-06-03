@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'tempfile'
 
-RSpec.describe 'Diataxis::MarkdownUtils' do
+RSpec.describe Diataxis::MarkdownUtils do
   describe '.extract_title' do
     context 'when markdown file has no YAML front matter' do
       it 'extracts title from first heading' do

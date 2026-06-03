@@ -1,7 +1,7 @@
 # 6. Implement Automated README Link Management
 
 Date: 2025-03-06
-Status: Accepted
+Status: Superseded by [ADR-0017](./0017-obsidian-not-github-is-now-the-primary-reading-surface.md)
 
 ## Context
 

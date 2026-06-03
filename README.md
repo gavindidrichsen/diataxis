@@ -161,6 +161,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0014](docs/adr/0014-underscore-the-gtd-directory-for-project-files-so-they-always-live-at-the-top.md) - Underscore the gtd directory for project files so they always live at the top
 * [ADR-0015](docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md) - Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAGS
 * [ADR-0016](docs/adr/0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md) - Replace per-type class files with registry DSL and template method hooks
+* [ADR-0017](docs/adr/0017-obsidian-not-github-is-now-the-primary-reading-surface.md) - Obsidian, not GitHub, is now the primary reading surface
 <!-- adrlogstop -->
 
 

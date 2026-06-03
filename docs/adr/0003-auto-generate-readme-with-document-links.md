@@ -4,7 +4,7 @@ Date: 2025-02-20
 
 ## Status
 
-Accepted
+Superseded by [ADR-0017](./0017-obsidian-not-github-is-now-the-primary-reading-surface.md)
 
 ## Context
 
