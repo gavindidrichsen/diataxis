@@ -6,9 +6,13 @@ require_relative '../document_registry'
 module Diataxis
   module CLI
     class UsageDisplay
+      # Prints output and returns; never calls exit. The process exit code is
+      # the boundary's job (exe/dia): a UsageError carries a non-zero code,
+      # while the success paths just return and let the script end with 0.
+      # Calling exit here would raise SystemExit through any in-process caller
+      # (notably the test suite, aborting it mid-run).
       def self.show_version
         puts "diataxis version #{VERSION}"
-        exit 0
       end
 
       def self.show_usage(exit_code = 1)
@@ -17,7 +21,6 @@ module Diataxis
         raise UsageError.new(usage_text.strip, exit_code) unless exit_code.zero?
 
         puts usage_text
-        exit 0
       end
 
       def self.show_unknown_command_error(command)

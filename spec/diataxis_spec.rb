@@ -552,15 +552,18 @@ RSpec.describe Diataxis do
     end
 
     it 'shows version information' do
-      expect { Diataxis::CLI.run(['--version']) }.to raise_error(SystemExit)
-
       output = capture_stdout do
         Diataxis::CLI.run(['--version'])
-      rescue StandardError
-        nil
       end
       expect(output).to include('diataxis version')
       expect(output).to include(Diataxis::VERSION)
+    end
+
+    it 'prints usage for --help and returns without raising' do
+      output = capture_stdout do
+        expect { Diataxis::CLI.run(['--help']) }.not_to raise_error
+      end
+      expect(output).to include('Usage: diataxis [options] <command>')
     end
   end
 
