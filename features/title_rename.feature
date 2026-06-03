@@ -57,3 +57,24 @@ Feature: Title Change and Filename Rename
     Then the file "test_docs/README.md" should not contain "tutorial_getting_started.md"
     And the file "test_docs/README.md" should contain "tutorial_quick_start_guide.md"
     And the file "test_docs/README.md" should contain "Quick Start Guide"
+
+  Scenario: Wiki-links to a renamed file are repointed, exact matches only
+    When I run `bundle exec dia explanation new "System Architecture"`
+    Given a file named "test_docs/explanations/explanation_system_architecture.md" with:
+      """
+      # Advanced System Design
+
+      Updated content about advanced system design.
+      """
+    And a file named "test_docs/explanations/notes.md" with:
+      """
+      # Notes
+
+      See [[explanation_system_architecture]] and also
+      [[explanation_system_architecture_v2]] which must stay put.
+      """
+    When I run `bundle exec dia update .`
+    Then the exit status should be 0
+    And the file "test_docs/explanations/notes.md" should contain "[[explanation_advanced_system_design]]"
+    And the file "test_docs/explanations/notes.md" should contain "[[explanation_system_architecture_v2]]"
+    And the file "test_docs/explanations/notes.md" should not contain "[[explanation_system_architecture]]"

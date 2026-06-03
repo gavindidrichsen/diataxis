@@ -7,6 +7,7 @@ require_relative 'document'
 require_relative 'document/adr'
 require_relative 'document/howto'
 require_relative 'document_types'
+require_relative 'wiki_link_updater'
 require_relative 'file_manager'
 require_relative 'readme_manager'
 

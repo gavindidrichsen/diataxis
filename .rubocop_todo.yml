@@ -73,6 +73,7 @@ RSpec/SpecFilePathFormat:
   Exclude:
     - '**/spec/routing/**/*'
     - 'spec/template_loader_spec.rb'
+    - 'spec/wiki_link_updater_spec.rb'
 
 # Offense count: 13
 # Configuration parameters: AllowedConstants.

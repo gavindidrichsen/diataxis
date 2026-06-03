@@ -36,6 +36,13 @@ module Diataxis
       filename.match?(/^\d{4}-.*\.md$/)
     end
 
+    # ADR filenames are NNNN-slug; the number is independent of the title, so
+    # compare only the slug portion (and strip any leading "N. " from the title).
+    def self.title_of_filename?(title, filename_stem)
+      clean_title = title.sub(/^\d+\. /, '')
+      filename_stem.sub(/^\d+-/, '') == slugify(clean_title)
+    end
+
     def self.format_readme_entry(title, relative_path, filepath)
       adr_num = File.basename(filepath)[0..3]
       clean_title = title.sub(/^\d+\. /, '')
