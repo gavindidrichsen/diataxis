@@ -13,6 +13,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 * Configurable directory structure via `.diataxis` config file
 * `DIATAXIS_ROOT` environment variable for running `dia` from any directory
 * `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time
+* `--stdout` to print a template to standard output instead of writing a file
 * Shared metadata guidelines injected into templates via `{{common.metadata}}`
 * Maintains alphabetical order in documentation lists
 
@@ -95,6 +96,18 @@ tags:
 ```
 
 When no tags are specified, no front matter is added — existing behaviour is unchanged.
+
+### Printing to stdout
+
+Add `--stdout` to any document command to print the rendered template to standard output instead of writing a file. This is useful for piping a fresh template into another tool — for example, injecting it into an AI discussion:
+
+```bash
+dia explanation new "How to fly" --stdout            # prints the template, creates nothing
+dia adr new "Use PostgreSQL" --stdout                # ADR number/status still injected
+dia howto new "Configure Redis" --stdout --tag backend
+```
+
+`--stdout` has no filesystem side effects: it needs no `.diataxis` config, creates no directories, writes no file, and leaves `README.md` untouched. Type-specific behaviour (how-to title normalization, ADR numbering, tag front matter) is preserved.
 
 For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
 
