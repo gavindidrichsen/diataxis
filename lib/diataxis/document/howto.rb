@@ -16,9 +16,11 @@ module Diataxis
       section_tag: 'howto'
     )
 
-    def initialize(title, directory = '.', tags: [])
-      validated = validate_title(title)
-      super(validated, directory, tags: tags)
+    # Only intercepts the title (to rewrite it into "How to ..."); every other
+    # positional/keyword argument is forwarded to Document#initialize verbatim,
+    # so new base keywords (e.g. preview:) work here without changes.
+    def initialize(title, *args, **kwargs)
+      super(validate_title(title), *args, **kwargs)
     end
 
     private
