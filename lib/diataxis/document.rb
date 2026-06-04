@@ -86,10 +86,13 @@ module Diataxis
       end
     end
 
-    def initialize(title, directory = '.', tags: [])
+    # `preview: true` builds a document for rendering only (see #render): it
+    # skips get_configured_directory so nothing is read from or written to disk
+    # (no config lookup, no mkdir). Used by the `--stdout` flag.
+    def initialize(title, directory = '.', tags: [], preview: false)
       @title = customize_title(title)
       @tags = tags
-      @directory = get_configured_directory(directory)
+      @directory = preview ? directory : get_configured_directory(directory)
       @filename = File.join(@directory, generate_filename)
       custom = customize_filename(@title, @directory)
       @filename = custom if custom
@@ -98,6 +101,13 @@ module Diataxis
     def create
       File.write(@filename, content)
       Diataxis.logger.info "Created new #{type}: #{@filename}"
+    end
+
+    # Returns the rendered template as a string without touching the
+    # filesystem. Pair with `preview: true` so construction stays side-effect
+    # free. Used by the `--stdout` flag to dump a template to standard output.
+    def render
+      content
     end
 
     protected

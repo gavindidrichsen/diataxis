@@ -12,6 +12,7 @@ module Diataxis
       def self.process!(args, default_tags: nil)
         tags = []
         remaining = []
+        to_stdout = false
         i = 0
 
         while i < args.length
@@ -26,6 +27,8 @@ module Diataxis
             tags << args[i] if i < args.length
           when /\A--tags?=(.*)\z/
             tags << Regexp.last_match(1) unless Regexp.last_match(1).empty?
+          when '--stdout'
+            to_stdout = true
           else
             remaining << args[i]
           end
@@ -35,7 +38,7 @@ module Diataxis
         merged = (parse_tags(default_tags) + tags).uniq
 
         args.replace(remaining)
-        { tags: merged }
+        { tags: merged, stdout: to_stdout }
       end
 
       private_class_method def self.parse_tags(value)

@@ -39,6 +39,7 @@ module Diataxis
             --verbose, -V             - Enable verbose output (debug level)
             --quiet, -q               - Suppress informational output (warnings only)
             --tag, -t <tag>           - Add a tag to YAML front matter (repeatable)
+            --stdout                  - Print the document to stdout instead of writing a file
             --version, -v             - Show version number
             --help, -h                - Show this help message
 

@@ -19,7 +19,7 @@ module Diataxis
 
       command = args.shift
 
-      CommandRouter.route(command, args, tags: options[:tags], root: root)
+      CommandRouter.route(command, args, tags: options[:tags], root: root, stdout: options[:stdout])
     end
   end
 end
