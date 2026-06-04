@@ -565,6 +565,51 @@ RSpec.describe Diataxis do
       end
       expect(output).to include('Usage: diataxis [options] <command>')
     end
+
+    it 'lists the --stdout flag in the help text' do
+      Diataxis::CLI.run([])
+    rescue Diataxis::UsageError => e
+      expect(e.usage_message).to include('--stdout')
+    end
+  end
+
+  describe '--stdout flag' do
+    it 'prints the rendered template to stdout without writing a file' do
+      output = capture_stdout do
+        Dir.chdir(test_dir) { run_cli(['howto', 'new', 'Stdout Demo', '--stdout']) }
+      end
+
+      expect(output.downcase).to include('# how to stdout demo')
+      expect(File).not_to exist(File.join(docs_paths[:howto], 'howto_how_to_stdout_demo.md'))
+    end
+
+    it 'does not create or update the README' do
+      FileUtils.rm_f(docs_paths[:readme])
+
+      capture_stdout do
+        Dir.chdir(test_dir) { run_cli(['explanation', 'new', 'No Side Effects', '--stdout']) }
+      end
+
+      expect(File).not_to exist(docs_paths[:readme])
+    end
+
+    it 'prepends tags to the printed template' do
+      output = capture_stdout do
+        Dir.chdir(test_dir) { run_cli(['explanation', 'new', 'Tagged', '--stdout', '--tag', '-foo']) }
+      end
+
+      expect(output).to include("---\ntags:\n  - -foo\n---")
+    end
+
+    it 'works without a .diataxis config file present' do
+      FileUtils.rm_f(config_path)
+
+      output = capture_stdout do
+        Dir.chdir(test_dir) { run_cli(['explanation', 'new', 'No Config Needed', '--stdout']) }
+      end
+
+      expect(output).to include('# No Config Needed')
+    end
   end
 
   describe 'DIATAXIS_ROOT environment variable' do

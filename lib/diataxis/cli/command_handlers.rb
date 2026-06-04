@@ -19,10 +19,14 @@ module Diataxis
         Config.create(directory, config)
       end
 
-      def self.handle_document(command, args, tags: [], root: nil)
+      def self.handle_document(command, args, tags: [], root: nil, stdout: false)
         validate_document_args!(args, command)
         document_class = DocumentRegistry.lookup(command)
-        create_document_with_readme_update(args, document_class, tags: tags, root: root)
+        if stdout
+          print_document(args, document_class, tags: tags)
+        else
+          create_document_with_readme_update(args, document_class, tags: tags, root: root)
+        end
       end
 
       def self.handle_update(args, root: nil)
@@ -66,6 +70,14 @@ module Diataxis
         return Dir.pwd if root.nil? || root.to_s.empty?
 
         File.expand_path(root)
+      end
+
+      # Renders the document template to stdout instead of writing a file.
+      # Needs no config and creates nothing on disk (see Document#render and the
+      # `preview:` flag): handy for piping a fresh template into another tool.
+      private_class_method def self.print_document(args, document_class, tags: [])
+        title = args[1..].join(' ')
+        puts document_class.new(title, tags: tags, preview: true).render
       end
 
       private_class_method def self.create_document_with_readme_update(args, document_class, tags: [], root: nil)
