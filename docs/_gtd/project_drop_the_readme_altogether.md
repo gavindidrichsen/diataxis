@@ -57,6 +57,6 @@ Vaults already carrying a generated README (this repo, and the `@INBOX` vault) n
 ## Related Topics
 
 - [[0017-obsidian-not-github-is-now-the-primary-reading-surface|ADR-0017]] — the decision that created this project.
-- [[0003-auto-generate-readme-with-document-links|ADR-0003]] — superseded; originally established README auto-generation.
-- [[0006-implement-automated-readme-link-management|ADR-0006]] — superseded; the relative-Markdown link format being replaced.
+- [[tools/puppet/repositories/gavindidrichsen/diataxis/docs/adr/0003-auto-generate-readme-with-document-links|ADR-0003]] — superseded; originally established README auto-generation.
+- [[tools/puppet/repositories/gavindidrichsen/diataxis/docs/adr/0006-implement-automated-readme-link-management|ADR-0006]] — superseded; the relative-Markdown link format being replaced.
 - [`lib/diataxis/readme_manager.rb`](lib/diataxis/readme_manager.rb) — the generator under discussion.

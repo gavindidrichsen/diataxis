@@ -45,6 +45,6 @@ The tooling has already been drifting this way: the ADR and project templates bo
 
 ## Related Topics
 
-- [[0003-auto-generate-readme-with-document-links|ADR-0003]] — superseded; established the README as the discovery surface.
-- [[0006-implement-automated-readme-link-management|ADR-0006]] — superseded; mandated relative Markdown links.
+- [[@jira/bolt-180-fix-gem-conflicts-with-pdk/repositories/diataxis/docs/adr/0003-auto-generate-readme-with-document-links|ADR-0003]] — superseded; established the README as the discovery surface.
+- [[@jira/bolt-180-fix-gem-conflicts-with-pdk/repositories/diataxis/docs/adr/0006-implement-automated-readme-link-management|ADR-0006]] — superseded; mandated relative Markdown links.
 - [[project_drop_the_readme_altogether]] — open project tracking the README's fate.
