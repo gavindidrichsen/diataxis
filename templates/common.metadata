@@ -33,6 +33,13 @@
   - and any important caveat/assumption.
 - Never fabricate APIs or behavior; if code cannot be verified, explicitly state that and omit the sample.
 
+**Diagrams (use Mermaid where it earns its place):**
+- Reach for a Mermaid diagram when a picture explains structure or flow faster than prose would — for example: how components fit together, a sequence of steps or messages, a state transition, or a before/after of a change.
+- Do NOT add a diagram just to have one. If the prose is already clear, or the relationship is trivial (two or three linear steps), skip it — a needless diagram is worse than none.
+- Prefer one focused diagram over a single sprawling one; split distinct ideas into separate diagrams.
+- Use a fenced ` ```mermaid ` block. Keep node labels short and the diagram readable without zooming.
+- Always keep the surrounding prose self-sufficient: the diagram should reinforce the explanation, not be the only place a key point is made (it may not render on every surface).
+
 **File Setup Formatting Rule (required for how-to steps):**
 - Do not use heredoc-style file creation commands such as `cat > file <<'EOF'` in instructional steps.
 - For each file, present setup as:
