@@ -1,3 +1,11 @@
+**Orientation — capture the knowledge behind the problem (read this first):**
+
+- This document is almost always written mid-investigation — while fixing a bug, a broken build, or a failing test. **The problem is the lens, not the subject.** Solving it is the author's day-job; it is not what this document is for.
+- The document's enduring value is the **domain knowledge that the problem revealed** — how the system (e.g. Bolt, Puppet, Puppet Enterprise) actually works. Make that the centre of gravity.
+- Before writing, answer for yourself: *What does this problem and its solution verify about the domain? What is now understood better about how this system behaves, because of this issue?* Let those answers drive the content.
+- Keep the triggering problem to a brief motivating context (a sentence or two: "this surfaced while fixing X"). Spend the document on the mental model, mechanism, and transferable insight that outlive the specific incident.
+- Litmus test: if the specific problem vanished tomorrow, the document should still be worth reading as an account of how the domain works.
+
 **Style Guidelines (Strict):**
 
 - Treat this document as a template to be filled, not redesigned.
