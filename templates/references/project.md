@@ -127,7 +127,7 @@ Where a task is a *decision*, lay out the options and trade-offs here.
 
 Explain the concept, mechanism, or decision a task refers to.
 
-**Code Location** (if relevant): [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+**Code Location** (if relevant): [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
 ### Concept Two
 

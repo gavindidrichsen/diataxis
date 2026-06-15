@@ -58,7 +58,7 @@ Explain the context: why this work was needed, what the current state is, and wh
 
 Explain what was broken or needed. Show the problematic code or behaviour.
 
-**Code Location**: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+**Code Location**: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
 ```ruby
 # Show the problematic code or behaviour
@@ -70,7 +70,7 @@ Explain what was broken or needed. Show the problematic code or behaviour.
 
 Explain what was done to solve it.
 
-**Code Location**: [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+**Code Location**: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
 ```ruby
 # Show the fix
