@@ -8,6 +8,11 @@
 - Rewrite the Purpose questions so they explicitly describe what this specific document explains.
 - Do not keep generic Purpose questions if they are template placeholders.
 
+**Surface the domain concept, not just the keystrokes:**
+- Even a how-to is captured because the steps taught something about how the domain works (see the Orientation guideline above). Name that insight — don't reduce the doc to a runbook.
+- Where a step exercises a non-obvious behaviour of the system, add a one-line **Key concept:** note (linking to the companion explanation if one exists) so the reader learns *why* the step works, not only *that* it works.
+- If the underlying knowledge is substantial, prefer splitting it into a companion `explanation` doc and linking the two, rather than burying it in step commentary.
+
 **Concept-Mapped Code Snippets (required when a companion explanation doc exists):**
 - When the howto has a companion explanation document, each code snippet or proof script must map to a specific named concept from that explanation.
 - Open each step's section with a **Key concept:** line that names the concept being demonstrated and links to the explanation doc using a wiki link.
