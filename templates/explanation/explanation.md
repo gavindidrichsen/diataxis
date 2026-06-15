@@ -44,13 +44,13 @@ The problem that set up this investigation (keep it brief — this is context, n
 
 Explain the first key concept...
 
-**Code Location** (if relevant): Link to source code using format [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+**Code Location** (if relevant): permalink to source — commit-SHA-pinned, not `blob/main`: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
 ### Concept 2
 
 Explain the second key concept...
 
-**Code Location** (if relevant): Link to source code using format [`filename:line`](https://github.com/org/repo/blob/main/path/file.rb#L123)
+**Code Location** (if relevant): permalink to source — commit-SHA-pinned, not `blob/main`: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
 ## Related Topics
 
