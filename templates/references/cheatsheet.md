@@ -17,13 +17,14 @@ The reader is mid-task and scanning for the right command — not learning, not 
 - Architecture or design rationale — link to an explanation doc instead.
 
 **Format rules (strict):**
-- H1: `# {{Tool/Topic}} Cheatsheet` — tool name + "Cheatsheet", nothing else.
+- H1 body placeholder is `# {{title}}` — when populating, make the title `# <Tool Name> Cheatsheet` (append "Cheatsheet").
 - One-sentence subtitle immediately below H1 — the "what this tool does in a nutshell".
-- H2: topic areas (e.g. Installation, Configuration, Common Patterns, Gotchas).
-- H3: subtopics within an area when a section gets long.
+- Section order: Quick Reference table → topic H2 sections → `## Gotchas` → `## Related Topics`.
+- H2: topic areas (e.g. Setup, Configuration, Common Patterns). H3 for sub-areas within a long section.
 - Code blocks: annotate with short inline `#` comments — not paragraphs above or below.
-- Tables: use for any option/key/value reference that has 3+ rows.
+- Tables: use for any option/key/value reference that has 3+ rows (flags, profiles, operation/meaning combos).
 - No numbered lists — bullets only, for easy reordering.
+- Keep prose to a single lead line per section at most; anything longer belongs in a linked explanation doc.
 
 **Linking rules:**
 - Add `> 📖 **Deeper dive:** [[explanation_...]]` as a one-line callout above any section
@@ -76,16 +77,6 @@ command --flag arg2  # what it does
 
 ```bash
 command arg          # what it does
-```
-
-## Common Patterns
-
-```bash
-# Pattern: {{description}}
-command
-
-# Pattern: {{description}}
-command
 ```
 
 ## Gotchas
