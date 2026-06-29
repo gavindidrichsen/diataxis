@@ -97,5 +97,15 @@ module Diataxis
       template: 'howto',
       section_tag: 'howto'
     )
+
+    r.register(
+      command: 'cheatsheet',
+      prefix: 'cheatsheet',
+      category: 'references',
+      config_key: 'cheatsheets',
+      readme_section: 'Cheatsheets',
+      template: 'cheatsheet',
+      section_tag: 'cheatsheet'
+    )
   end
 end
