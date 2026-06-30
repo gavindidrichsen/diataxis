@@ -46,28 +46,19 @@ module Diataxis
     # Main method for collecting document entries with subdirectory support
     # Finds documents recursively, updates filenames in place, and creates README entries
     def collect_entries(doc_type)
-      base_dir = get_base_directory(doc_type)
-      files = find_and_update_files(doc_type, base_dir)
+      files = find_and_update_files(doc_type)
       create_readme_entries(files, doc_type)
-    end
-
-    # Gets the configured base directory for a document type
-    def get_base_directory(doc_type)
-      config_dir = File.dirname(Config.find_config(@directory) || @directory)
-      doc_dir_config = @config[doc_type.config_key]
-      File.expand_path(doc_dir_config || '.', config_dir)
     end
 
     # Finds files using document type's find_files method and updates their filenames in place
     # Preserves subdirectory structure during filename updates
-    def find_and_update_files(doc_type, base_dir)
+    def find_and_update_files(doc_type)
       files = doc_type.find_files(@directory)
 
       # Update filenames and collect the final paths (whether renamed or not)
       updated_files = files.map do |filepath|
-        # Calculate relative path to maintain files in their current subdirectories
-        relative_dir = File.dirname(filepath).sub(base_dir, '').sub(%r{^/}, '')
-        target_dir = relative_dir.empty? ? base_dir : File.join(base_dir, relative_dir)
+        # Rename in place — keep each file in its current directory
+        target_dir = File.dirname(filepath)
         FileManager.update_filename(filepath, target_dir, doc_type, root: @directory)
       end
 
