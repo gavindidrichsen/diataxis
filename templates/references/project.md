@@ -5,6 +5,13 @@
 # Template-Specific Guidelines
 Project doc — a project is any outcome needing more than one action.
 
+**Title Rule:**
+- The `# {{title}}` heading must always be an **imperative verb phrase** — action verb first, present tense.
+- Good: `# create GSD milestone retrospective slice`, `# investigate resource_api sensitive parameters`, `# fix bolt-136 broken test`
+- Bad: `# GSD milestone`, `# resource_api`, `# dummy`
+- The verb encodes intent (what you are doing to the subject), which makes the doc self-orienting in any file list and tells an AI agent the goal immediately.
+- Pass the full verb phrase as the `dia` argument: `dia project new 'create GSD milestone retrospective slice'`
+
 **Dual audience — a human GTD doc AND an AI investigation seed.** This document
 has two readers at once, and must serve both:
 - A **human** scanning for the point, the motivation, and the next actions —
