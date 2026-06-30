@@ -30,7 +30,9 @@ module Diataxis
       def pattern(config_root = '.')
         config = Config.load(config_root)
         type_dir = config[type_config[:config_key]] || config['default']
-        File.join(config_root, type_dir, '**', "#{type_config[:prefix]}_*.md")
+        default_dir = config['default']
+        search_dir = type_dir.start_with?("#{default_dir}/") ? default_dir : type_dir
+        File.join(config_root, search_dir, '**', "#{type_config[:prefix]}_*.md")
       end
 
       # Turns a title into the filename slug, e.g. "How to Fly" -> "how_to_fly".

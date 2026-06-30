@@ -58,6 +58,27 @@ Feature: Title Change and Filename Rename
     And the file "test_docs/README.md" should contain "tutorial_quick_start_guide.md"
     And the file "test_docs/README.md" should contain "Quick Start Guide"
 
+  Scenario: Rename project file outside the configured projects directory
+    Given a file named ".diataxis" with:
+      """
+      {
+        "readme": "test_docs/README.md",
+        "default": "test_docs",
+        "projects": "test_docs/_gtd"
+      }
+      """
+    And a file named "test_docs/other/project_old_title.md" with:
+      """
+      # New Title
+
+      Some project content.
+      """
+    When I run `bundle exec dia update .`
+    Then the exit status should be 0
+    And the file "test_docs/other/project_new_title.md" should exist
+    And the file "test_docs/README.md" should contain "New Title"
+    And the file "test_docs/README.md" should contain "project_new_title.md"
+
   Scenario: Wiki-links to a renamed file are repointed, exact matches only
     When I run `bundle exec dia explanation new "System Architecture"`
     Given a file named "test_docs/explanations/explanation_system_architecture.md" with:
