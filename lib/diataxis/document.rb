@@ -29,10 +29,13 @@ module Diataxis
 
       def pattern(config_root = '.')
         config = Config.load(config_root)
-        type_dir = config[type_config[:config_key]] || config['default']
+        # Search from the default root directory to capture files matching the pattern
+        # across the entire hierarchy, including those in subdirectories nested under default.
+        # Note: This assumes all type-specific directories (e.g., docs/_gtd) are located
+        # beneath the default directory (e.g., docs). This is the standard architecture
+        # and is enforced by get_configured_directory.
         default_dir = config['default']
-        search_dir = type_dir.start_with?("#{default_dir}/") ? default_dir : type_dir
-        File.join(config_root, search_dir, '**', "#{type_config[:prefix]}_*.md")
+        File.join(config_root, default_dir, '**', "#{type_config[:prefix]}_*.md")
       end
 
       # Turns a title into the filename slug, e.g. "How to Fly" -> "how_to_fly".
