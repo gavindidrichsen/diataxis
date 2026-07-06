@@ -237,6 +237,22 @@ RSpec.describe Diataxis do
 
     context 'creating fivewhy' do
       let(:fivewhy_path) { File.join(docs_paths[:explanation], 'fivewhy_deploy_script_silently_failed.md') }
+      let(:fivewhy_expected_sections) do
+        [
+          '# Deploy Script Silently Failed',
+          '## Purpose',
+          '## Background',
+          '## Root Cause Analysis',
+          '### Why 1:',
+          '**Investigation**:',
+          '**Evidence**:',
+          '**Next Problem**:',
+          '## Root Cause',
+          '**Proof**:',
+          '## Solution',
+          '## Related Topics'
+        ]
+      end
 
       before do
         Dir.chdir(test_dir) do
@@ -250,19 +266,9 @@ RSpec.describe Diataxis do
 
       it 'creates fivewhy with correct template structure' do
         content = File.read(fivewhy_path)
-        expected_sections = [
-          '# Deploy Script Silently Failed',
-          '## Purpose',
-          '## Background',
-          '## Root Cause Analysis',
-          '### Why 1:',
-          '## Root Cause',
-          '## Solution',
-          '## Related Topics'
-        ]
 
         aggregate_failures do
-          expected_sections.each do |section|
+          fivewhy_expected_sections.each do |section|
             expect(content).to include(section)
           end
         end
