@@ -234,6 +234,55 @@ RSpec.describe Diataxis do
         expect(readme_content).to include('### Pull Requests')
       end
     end
+
+    context 'creating fivewhy' do
+      let(:fivewhy_path) { File.join(docs_paths[:explanation], 'fivewhy_deploy_script_silently_failed.md') }
+      let(:fivewhy_expected_sections) do
+        [
+          '# Deploy Script Silently Failed',
+          '## Purpose',
+          '## Background',
+          '## Root Cause Analysis',
+          '### Why did [symptom] happen?',
+          '**Why This Tool**:',
+          '**Investigation**:',
+          '**Evidence**:',
+          '**Next Problem**:',
+          '## Root Cause',
+          '**Proof**:',
+          '**Known Issue?**:',
+          '## Solution',
+          '**Source**:',
+          '## Related Topics'
+        ]
+      end
+
+      before do
+        Dir.chdir(test_dir) do
+          run_cli(['fivewhy', 'new', 'Deploy Script Silently Failed'])
+        end
+      end
+
+      it 'creates fivewhy file with fivewhy prefix' do
+        expect(File).to exist(fivewhy_path)
+      end
+
+      it 'creates fivewhy with correct template structure' do
+        content = File.read(fivewhy_path)
+
+        aggregate_failures do
+          fivewhy_expected_sections.each do |section|
+            expect(content).to include(section)
+          end
+        end
+      end
+
+      it 'updates README with fivewhy link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Deploy Script Silently Failed]')
+        expect(readme_content).to include('### 5 Whys')
+      end
+    end
   end
 
   describe 'document title changes' do

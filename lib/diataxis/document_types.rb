@@ -76,6 +76,16 @@ module Diataxis
     )
 
     r.register(
+      command: 'fivewhy',
+      prefix: 'fivewhy',
+      category: 'explanation',
+      config_key: 'explanations',
+      readme_section: '5 Whys',
+      template: 'fivewhy',
+      section_tag: 'fivewhy'
+    )
+
+    r.register(
       handler: Diataxis::ADR,
       command: 'adr',
       prefix: '[0-9][0-9][0-9][0-9]',
