@@ -60,6 +60,13 @@ Feature: All Document Types
     And the file "test_docs/README.md" should contain "### Pull Requests"
     And the file "test_docs/README.md" should contain "Refactor Auth Module"
 
+  Scenario: Create a 5 Whys document
+    When I run `bundle exec dia fivewhy new "Deploy Script Silently Failed"`
+    Then the exit status should be 0
+    And the file "test_docs/explanations/fivewhy_deploy_script_silently_failed.md" should exist
+    And the file "test_docs/README.md" should contain "### 5 Whys"
+    And the file "test_docs/README.md" should contain "Deploy Script Silently Failed"
+
   Scenario: All 6 document types appear as separate README sections
     When I run `bundle exec dia howto new "Configure System"`
     And I run `bundle exec dia tutorial new "Getting Started"`
