@@ -244,12 +244,15 @@ RSpec.describe Diataxis do
           '## Background',
           '## Root Cause Analysis',
           '### Why 1:',
+          '**Why This Tool**:',
           '**Investigation**:',
           '**Evidence**:',
           '**Next Problem**:',
           '## Root Cause',
           '**Proof**:',
+          '**Known Issue?**:',
           '## Solution',
+          '**Source**:',
           '## Related Topics'
         ]
       end
