@@ -16,11 +16,11 @@
 - Do not keep generic Purpose questions if they are template placeholders.
 
 **Root Cause Analysis Section Requirement (transparency of method is mandatory):**
-- Number each Why sequentially (Why 1, Why 2, ...) and title each with the specific question asked, not a placeholder.
+- Title each Why heading with the specific question itself (e.g. `### Why did the deploy silently skip validation?`) — do not prefix or number headings as "Why 1:", "Why 2:", etc. The question wording is the only heading; numbering adds clutter without adding information.
 - Each Why must open with **Why This Tool**: one sentence justifying the choice of tool/command *before* showing it — what it can tell you that a faster or more obvious alternative couldn't, or why it was the most direct way to answer this specific question. This is reasoning, not narration; "because it shows X and this Why is about X" beats "let's check the logs."
 - Each Why must show its **Investigation**: the actual tool(s), command(s), or process used to dig into or replicate that specific question — not just the answer. Prefer one fenced shell block with a comment on each step explaining what that step checks and why. If a GUI, dashboard, or doc was consulted instead of a command, name it and link it.
 - Each Why must show its **Evidence**: the exact signal the investigation produced (a quoted log line, error message, exit code, metric, or doc excerpt) — the thing that actually justifies the Answer, not a paraphrase of it.
-- Each Why must close with **Next Problem**: one sentence naming the next question to chase. This is what the next Why heading is built from — a reader should be able to predict the next heading from this line before turning the page.
+- Each Why must close with **Next Problem**: one sentence naming the next question to chase, worded so it can become the next Why heading verbatim — a reader should be able to predict that heading from this line before turning the page.
 - Do not skip Why This Tool/Investigation/Evidence because the answer "seems obvious" — an unverified link in the chain invalidates everything built on top of it.
 - Add or remove Why steps to match the chain actually investigated — do not pad to exactly five.
 
@@ -61,7 +61,7 @@ The symptom as first observed: what broke, what the impact was, and how it was n
 
 > Work through the chain one verified answer at a time. Each Why must justify its tool choice, show the tooling used to dig into it, the evidence that tooling produced, and the next problem that evidence points to. Stop when the root cause is proven — that may take fewer or more than five iterations.
 
-### Why 1: Why did [symptom] happen?
+### Why did [symptom] happen?
 
 **Why This Tool**: Why this specific tool/command is the right way to answer this question — what it reveals that a faster or more obvious alternative couldn't.
 
@@ -81,16 +81,16 @@ command-two path/to/thing   # what signal this surfaces
 
 **Code Location** (if relevant): permalink to source — commit-SHA-pinned, not `blob/main`: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
 
-**Next Problem**: The next question this evidence points to — this becomes the subject of Why 2.
+**Next Problem**: The next question this evidence points to — worded so it becomes the next Why heading below.
 
-### Why 2: Why did [answer to Why 1] happen?
+### Why did [the prior answer] occur?
 
 **Why This Tool**: ...
 
 **Investigation**:
 
 ```bash
-# Step 1: dig into the specific claim from Why 1's Next Problem
+# Step 1: dig into the specific claim from the previous Next Problem
 command-three ...   # what this checks
 ```
 
@@ -98,19 +98,9 @@ command-three ...   # what this checks
 
 **Answer**: The conclusion this evidence supports.
 
-**Next Problem**: The next question this evidence points to — this becomes the subject of Why 3.
+**Next Problem**: The next question this evidence points to — worded so it becomes the next Why heading below.
 
-### Why 3: Why did [answer to Why 2] happen?
-
-**Why This Tool**: ...
-
-**Investigation**: ...
-
-**Evidence**: ...
-
-**Answer**: ...
-
-**Next Problem**: ...
+> Keep adding Why headings, each named after the previous Next Problem, until the root cause below is proven — this may take fewer or more than five.
 
 ## Root Cause
 
