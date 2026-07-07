@@ -146,7 +146,7 @@ module Diataxis
 
     def get_configured_directory(default_dir)
       config = Config.load(default_dir)
-      configured_dir = config[self.class.type_config[:config_key]] || default_dir
+      configured_dir = config[self.class.type_config[:config_key]] || config['default']
 
       unless Pathname.new(configured_dir).absolute?
         config_dir = File.dirname(Config.find_config(default_dir) || '')
