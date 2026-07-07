@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'fileutils'
 require_relative '../config'
 require_relative '../document_registry'
 require_relative '../readme_manager'
@@ -86,11 +85,14 @@ module Diataxis
 
         title = args[1..].join(' ')
 
-        path = Config.path_for(document_class.config_key, directory)
-        document_dir = File.join(directory, path)
-        FileUtils.mkdir_p(document_dir)
-
-        document_class.new(title, document_dir, tags: tags).create
+        # Document.new resolves the configured target directory itself (see
+        # Document#get_configured_directory) starting from `directory`. Do not
+        # pre-resolve and pass that resolved subdirectory in here instead: a
+        # second, independent config lookup starting from an already-resolved
+        # subdirectory can find a *different*, nested .diataxis file before it
+        # reaches the root one, and re-apply the relative path against that
+        # nested file's location, silently doubling it (e.g. docs/docs/...).
+        document_class.new(title, directory, tags: tags).create
 
         ReadmeManager.new(directory, DocumentRegistry.all).update
       end
