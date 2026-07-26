@@ -13,11 +13,12 @@
 - **Commits**: Link to specific commits: [`short-message`](https://github.com/org/repo/commit/full-sha).
 
 **Changes Section Requirement (the core of this template):**
-- Each change section must begin with a commit reference blockquote immediately after the heading:
-  `> Commit: [\`short-sha\`](https://github.com/org/repo/commit/full-sha)`
-- Then follow the Problem → Fix structure:
-  1. **Problem**: What was broken or needed, with code evidence showing the issue.
-  2. **Fix**: What was done, with code evidence showing the solution.
+- Each change section has a descriptive heading, followed immediately by the problem description as prose (no separate Problem subheading).
+- Then a Fix subheading that embeds the commit link and, when the fix has a clear short title, that title follows the commit link on the same line:
+  `#### Fix ([\`short-sha\`](https://github.com/org/repo/commit/full-sha)) Optional fix title`
+- If the fix has no meaningful title, just use:
+  `#### Fix ([\`short-sha\`](https://github.com/org/repo/commit/full-sha))`
+- After the Fix heading, list what was done as bullet points or prose.
 
 **What Did NOT Change Section Requirement:**
 - Every PR description must include a "What Did NOT Change" section.
@@ -29,7 +30,7 @@
 - Placeholder text removed.
 - Purpose questions are PR-specific.
 - Related Topics links are all concrete and valid.
-- Each change section begins with a commit reference blockquote and includes Problem and Fix.
+- Each change section has problem prose followed by a Fix heading with embedded commit link.
 - Each code reference includes both a link and an explanatory code sample.
 - "What Did NOT Change" section is present and specific.
 -->
@@ -52,45 +53,24 @@ Explain the context: why this work was needed, what the current state is, and wh
 ## Changes
 
 ### Change 1: Descriptive Title
-> Commit: [`short-sha`](https://github.com/org/repo/commit/full-sha)
 
-#### Problem
+Explain what was broken or needed. Show the problematic code or behaviour with code samples where relevant.
 
-Explain what was broken or needed. Show the problematic code or behaviour.
+#### Fix ([`short-sha`](https://github.com/org/repo/commit/full-sha)) Optional fix title
 
-**Code Location**: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
-
-```ruby
-# Show the problematic code or behaviour
-```
-
-- What this code does and why it's a problem.
-
-#### Fix
-
-Explain what was done to solve it.
-
-**Code Location**: [`filename:line`](https://github.com/org/repo/blob/<commit-sha>/path/file.rb#L123)
-
-```ruby
-# Show the fix
-```
-
-- What the fix does and why this approach was chosen.
+- What was done to solve it.
+- Why this approach was chosen.
 - Any caveats or assumptions.
 
 ---
 
 ### Change 2: Descriptive Title
-> Commit: [`short-sha`](https://github.com/org/repo/commit/full-sha)
 
-#### Problem
+Explain the problem as prose...
 
-...
+#### Fix ([`short-sha`](https://github.com/org/repo/commit/full-sha))
 
-#### Fix
-
-...
+- What was done...
 
 ## What Did NOT Change
 
