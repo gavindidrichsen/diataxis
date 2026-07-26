@@ -40,6 +40,8 @@ module Diataxis
             --quiet, -q               - Suppress informational output (warnings only)
             --tag, -t <tag>           - Add a tag to YAML front matter (repeatable)
             --stdout                  - Print the document to stdout instead of writing a file
+            --here                    - Force this document into the current directory
+            --root                    - Force this document into DIATAXIS_ROOT
             --version, -v             - Show version number
             --help, -h                - Show this help message
 

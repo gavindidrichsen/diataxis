@@ -4,6 +4,7 @@ require_relative '../config'
 require_relative '../document_registry'
 require_relative '../readme_manager'
 require_relative '../errors'
+require_relative 'destination_resolver'
 
 module Diataxis
   module CLI
@@ -18,13 +19,16 @@ module Diataxis
         Config.create(directory, config)
       end
 
-      def self.handle_document(command, args, tags: [], root: nil, stdout: false)
+      def self.handle_document(command, args, tags: [], root: nil, stdout: false, destination_override: nil,
+                               choose_destination: nil)
         validate_document_args!(args, command)
         document_class = DocumentRegistry.lookup(command)
         if stdout
           print_document(args, document_class, tags: tags)
         else
-          create_document_with_readme_update(args, document_class, tags: tags, root: root)
+          create_document_with_readme_update(args, document_class, tags: tags, root: root,
+                                                                   destination_override: destination_override,
+                                                                   choose_destination: choose_destination)
         end
       end
 
@@ -51,17 +55,6 @@ module Diataxis
         raise UsageError.new("Usage: diataxis #{command_name} new \"Title of the #{command_name.capitalize}\"", 1)
       end
 
-      private_class_method def self.ensure_config_exists!(directory)
-        config_path = File.join(directory, Config::CONFIG_FILE)
-        return if File.exist?(config_path)
-
-        raise ConfigurationError.new(
-          "No .diataxis configuration file found in #{directory}.\n" \
-          "Please run 'dia init' to create a configuration file.",
-          config_path: config_path
-        )
-      end
-
       # Normalises an already-resolved root (passed down from CLI.run) into a
       # concrete directory. Does NOT read the environment — an empty/nil root
       # means "use the current working directory".
@@ -79,22 +72,30 @@ module Diataxis
         puts document_class.new(title, tags: tags, preview: true).render
       end
 
-      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [], root: nil)
-        directory = normalize_root(root)
-        ensure_config_exists!(directory)
-
+      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [], root: nil,
+                                                                       destination_override: nil,
+                                                                       choose_destination: nil)
         title = args[1..].join(' ')
+        destination = resolve_destination(root, destination_override, choose_destination)
 
         # Document.new resolves the configured target directory itself (see
-        # Document#get_configured_directory) starting from `directory`. Do not
-        # pre-resolve and pass that resolved subdirectory in here instead: a
+        # Document#get_configured_directory) starting from `destination.directory`.
+        # Do not pre-resolve and pass that resolved subdirectory in here instead: a
         # second, independent config lookup starting from an already-resolved
         # subdirectory can find a *different*, nested .diataxis file before it
         # reaches the root one, and re-apply the relative path against that
         # nested file's location, silently doubling it (e.g. docs/docs/...).
-        document_class.new(title, directory, tags: tags).create
+        if destination.standalone?
+          document_class.new(title, destination.directory, tags: tags, standalone: true).create
+        else
+          document_class.new(title, destination.directory, tags: tags).create
+          ReadmeManager.new(destination.directory, DocumentRegistry.all).update
+        end
+      end
 
-        ReadmeManager.new(directory, DocumentRegistry.all).update
+      private_class_method def self.resolve_destination(root, destination_override, choose_destination)
+        prompt_kwargs = choose_destination ? { prompt: choose_destination } : {}
+        DestinationResolver.resolve(root: root, override: destination_override, **prompt_kwargs)
       end
 
       private_class_method def self.default_config

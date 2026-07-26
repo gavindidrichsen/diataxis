@@ -144,7 +144,7 @@ RSpec.describe Diataxis::TemplateLoader do
 
   describe 'behavioral equivalence' do
     it 'produces explanation with common guidelines and type-specific metadata' do
-      run_cli(['explanation', 'new', 'Test Topic'])
+      Dir.chdir(test_dir) { run_cli(['explanation', 'new', 'Test Topic']) }
 
       doc_path = File.join(test_dir, 'docs', 'explanation_test_topic.md')
       content = File.read(doc_path)
@@ -162,7 +162,7 @@ RSpec.describe Diataxis::TemplateLoader do
     end
 
     it 'produces project with common guidelines and type-specific metadata' do
-      run_cli(['project', 'new', 'Server Migration'])
+      Dir.chdir(test_dir) { run_cli(['project', 'new', 'Server Migration']) }
 
       doc_path = Dir.glob(File.join(test_dir, 'docs', '_gtd', 'project_*.md')).first
       content = File.read(doc_path)

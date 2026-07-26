@@ -4,9 +4,17 @@ require 'spec_helper'
 require 'fileutils'
 require 'json'
 require 'stringio'
+require 'tmpdir'
 
 RSpec.describe Diataxis do
-  let(:test_dir) { File.join(File.expand_path('..', File.dirname(__FILE__)), 'tmp', 'test') }
+  # Deliberately OUTSIDE the gem's own checkout: this repo has its own root
+  # .diataxis (it self-hosts its docs), and Config.find_config walks upward
+  # to '/'. A sandbox nested under the repo (e.g. tmp/test) would let that
+  # walk silently find the gem's real .diataxis whenever a test removes its
+  # own local config, masking the "no config anywhere" scenarios this suite
+  # exercises (see the 'without configuration file' and DestinationResolver
+  # standalone-routing tests below).
+  let(:test_dir) { File.join(Dir.tmpdir, 'diataxis-spec', 'test') }
   let(:docs_paths) do
     {
       docs: File.join(test_dir, 'docs'),
@@ -99,24 +107,27 @@ RSpec.describe Diataxis do
       end
     end
 
-    context 'without configuration file' do
+    context 'without configuration file and no DIATAXIS_ROOT (standalone routing)' do
       before do
         # Remove the config file that was created in the before block
         FileUtils.rm_f(config_path)
       end
 
-      it 'fails with helpful error message when creating a document' do
+      it 'writes the document directly into the current directory, bypassing .diataxis subdirectories' do
         Dir.chdir(test_dir) do
-          expect { run_cli(['project', 'new', 'Test Project']) }
-            .to raise_error(Diataxis::ConfigurationError, /No \.diataxis configuration file found/)
+          run_cli(['project', 'new', 'Test Project'])
         end
+
+        expect(File).to exist(File.join(test_dir, 'project_test_project.md'))
+        expect(File).not_to exist(File.join(test_dir, 'docs', '_gtd', 'project_test_project.md'))
       end
 
-      it 'suggests running dia init in error message' do
+      it 'does not create or update the README' do
         Dir.chdir(test_dir) do
-          expect { run_cli(%w[howto new Test]) }
-            .to raise_error(Diataxis::ConfigurationError, /Please run 'dia init'/)
+          run_cli(%w[howto new Test])
         end
+
+        expect(File).not_to exist(docs_paths[:readme])
       end
     end
   end
@@ -333,9 +344,9 @@ RSpec.describe Diataxis do
           '# System Architecture',
           '## Purpose',
           'This document answers:',
-          '- Why do we do things this way?',
-          '- What are the core concepts?',
-          '- How do the pieces fit together?',
+          '- What does this reveal about how the domain actually works?',
+          '- What are the core concepts, and how do the pieces fit together?',
+          '- Why does the system behave this way',
           '## Background',
           '## Key Concepts',
           '### Concept 1',
@@ -662,8 +673,18 @@ RSpec.describe Diataxis do
   end
 
   describe 'DIATAXIS_ROOT environment variable' do
-    let(:remote_dir) { File.join(File.expand_path('..', File.dirname(__FILE__)), 'tmp', 'remote_root') }
+    let(:remote_dir) { File.join(Dir.tmpdir, 'diataxis-spec', 'remote_root') }
     let(:remote_config_path) { File.join(remote_dir, '.diataxis') }
+
+    # test_dir already has its own local .diataxis (set up in the outer
+    # `before`), so pointing DIATAXIS_ROOT at a distinct remote_dir is the
+    # genuine-conflict case (see DestinationResolver / ADR-0018). These specs
+    # inject a deterministic `choose_destination` answering :root, rather than
+    # relying on the real prompt reading $stdin (which would hang in an
+    # interactive terminal), to keep asserting the historical "ROOT wins" behaviour.
+    def choose_root
+      ->(_local_dir, _root_dir) { :root }
+    end
 
     before do
       FileUtils.mkdir_p(remote_dir)
@@ -675,24 +696,49 @@ RSpec.describe Diataxis do
       FileUtils.rm_rf(remote_dir)
     end
 
-    it 'creates documents in DIATAXIS_ROOT directory instead of CWD' do
+    it 'creates documents in DIATAXIS_ROOT directory instead of CWD when the conflict is resolved in favour of root' do
       ENV['DIATAXIS_ROOT'] = remote_dir
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['explanation', 'new', 'Remote Doc'])
+        Diataxis::CLI.run(['explanation', 'new', 'Remote Doc'], choose_destination: choose_root)
       end
 
       expect(File).to exist(File.join(remote_dir, 'docs', 'explanation_remote_doc.md'))
       expect(File).not_to exist(File.join(test_dir, 'docs', 'explanation_remote_doc.md'))
     end
 
-    it 'raises ConfigurationError when DIATAXIS_ROOT has no .diataxis file' do
-      no_config_dir = File.join(remote_dir, 'empty')
+    it 'asks for a decision via the injected prompt when both DIATAXIS_ROOT and a local .diataxis are present' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      # Dir.pwd (the resolver's default `cwd`) resolves symlinks after chdir
+      # (e.g. /var -> /private/var on macOS), so compare against the realpath.
+      real_test_dir = File.realpath(test_dir)
+      prompt = instance_double(Proc)
+      allow(prompt).to receive(:call).with(real_test_dir, File.expand_path(remote_dir)).and_return(:root)
+
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'Ambiguous Doc'], choose_destination: prompt)
+      end
+
+      expect(prompt).to have_received(:call).with(real_test_dir, File.expand_path(remote_dir))
+    end
+
+    it 'publishes to DIATAXIS_ROOT using its default config, without prompting, when CWD has no local .diataxis' do
+      FileUtils.rm_f(config_path)
+      # A sibling of remote_dir, not nested under it -- nesting under remote_dir
+      # (which has its own .diataxis) would let the upward walk find *that*
+      # config instead of exercising the "no .diataxis anywhere" fallback.
+      no_config_dir = File.join(Dir.tmpdir, 'diataxis-spec', 'root_without_config')
+      FileUtils.rm_rf(no_config_dir)
       FileUtils.mkdir_p(no_config_dir)
       ENV['DIATAXIS_ROOT'] = no_config_dir
 
-      Dir.chdir(test_dir) do
-        expect { Diataxis::CLI.run(%w[howto new Test]) }
-          .to raise_error(Diataxis::ConfigurationError, /No \.diataxis configuration file found/)
+      begin
+        Dir.chdir(test_dir) do
+          Diataxis::CLI.run(%w[howto new Test], choose_destination: ->(*) { raise 'must not prompt' })
+        end
+
+        expect(File).to exist(File.join(no_config_dir, 'docs', 'howto_how_to_test.md'))
+      ensure
+        FileUtils.rm_rf(no_config_dir)
       end
     end
 
@@ -708,7 +754,7 @@ RSpec.describe Diataxis do
     it 'updates README at DIATAXIS_ROOT' do
       ENV['DIATAXIS_ROOT'] = remote_dir
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['tutorial', 'new', 'Remote Tutorial'])
+        Diataxis::CLI.run(['tutorial', 'new', 'Remote Tutorial'], choose_destination: choose_root)
       end
 
       readme = File.join(remote_dir, 'README.md')
@@ -720,7 +766,7 @@ RSpec.describe Diataxis do
       ENV['DIATAXIS_ROOT'] = remote_dir
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(%w[explanation new Test])
+        Diataxis::CLI.run(%w[explanation new Test], choose_destination: choose_root)
       end
 
       readme = File.join(remote_dir, 'README.md')
@@ -739,10 +785,40 @@ RSpec.describe Diataxis do
       ENV['DIATAXIS_ROOT'] = remote_dir
 
       Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['adr', 'new', 'Remote Decision'])
+        Diataxis::CLI.run(['adr', 'new', 'Remote Decision'], choose_destination: choose_root)
       end
 
       expect(File).to exist(File.join(remote_dir, 'custom', 'decisions', '0001-remote-decision.md'))
+    end
+
+    it 'forces DIATAXIS_ROOT via the --root flag without prompting' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'Forced Root Doc', '--root'])
+      end
+
+      expect(File).to exist(File.join(remote_dir, 'docs', 'explanation_forced_root_doc.md'))
+    end
+
+    it 'forces the current directory via the --here flag without prompting' do
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'Forced Local Doc', '--here'])
+      end
+
+      expect(File).to exist(File.join(test_dir, 'docs', 'explanation_forced_local_doc.md'))
+      expect(File).not_to exist(File.join(remote_dir, 'docs', 'explanation_forced_local_doc.md'))
+    end
+
+    it 'writes standalone with --here when DIATAXIS_ROOT is set but CWD has no local .diataxis' do
+      FileUtils.rm_f(config_path)
+      ENV['DIATAXIS_ROOT'] = remote_dir
+      Dir.chdir(test_dir) do
+        Diataxis::CLI.run(['explanation', 'new', 'Forced Local Standalone', '--here'])
+      end
+
+      expect(File).to exist(File.join(test_dir, 'explanation_forced_local_standalone.md'))
+      expect(File).not_to exist(docs_paths[:readme])
     end
 
     it 'uses DIATAXIS_ROOT for init when no directory argument given' do

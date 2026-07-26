@@ -94,10 +94,16 @@ module Diataxis
     # `preview: true` builds a document for rendering only (see #render): it
     # skips get_configured_directory so nothing is read from or written to disk
     # (no config lookup, no mkdir). Used by the `--stdout` flag.
-    def initialize(title, directory = '.', tags: [], preview: false)
+    #
+    # `standalone: true` also skips get_configured_directory (the document is
+    # written straight into `directory`, with no .diataxis-driven subdirectory
+    # and no README management by the caller) but, unlike `preview`, still
+    # writes to disk via #create. Used when DestinationResolver finds neither
+    # DIATAXIS_ROOT nor a local .diataxis config.
+    def initialize(title, directory = '.', tags: [], preview: false, standalone: false)
       @title = customize_title(title)
       @tags = tags
-      @directory = preview ? directory : get_configured_directory(directory)
+      @directory = preview || standalone ? directory : get_configured_directory(directory)
       @filename = File.join(@directory, generate_filename)
       custom = customize_filename(@title, @directory)
       @filename = custom if custom
@@ -149,7 +155,13 @@ module Diataxis
       configured_dir = config[self.class.type_config[:config_key]] || config['default']
 
       unless Pathname.new(configured_dir).absolute?
-        config_dir = File.dirname(Config.find_config(default_dir) || '')
+        # Anchor relative paths to wherever the .diataxis that produced `config`
+        # actually lives. When none is found anywhere above default_dir (so
+        # DEFAULT_CONFIG applies), fall back to default_dir itself -- NOT to
+        # File.dirname(''), which resolves to Dir.pwd and would silently write
+        # into the caller's process directory instead of default_dir.
+        found_config_path = Config.find_config(default_dir)
+        config_dir = found_config_path ? File.dirname(found_config_path) : default_dir
         configured_dir = File.expand_path(configured_dir, config_dir)
       end
 

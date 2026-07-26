@@ -75,6 +75,7 @@ RSpec/SpecFilePathFormat:
     - 'spec/template_loader_spec.rb'
     - 'spec/wiki_link_updater_spec.rb'
     - 'spec/markdown_utils_spec.rb'
+    - 'spec/destination_resolver_spec.rb'
 
 # Offense count: 13
 # Configuration parameters: AllowedConstants.
