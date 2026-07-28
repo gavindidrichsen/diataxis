@@ -192,7 +192,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0016](docs/adr/0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md) - Replace per-type class files with registry DSL and template method hooks
 * [ADR-0017](docs/adr/0017-obsidian-not-github-is-now-the-primary-reading-surface.md) - Obsidian, not GitHub, is now the primary reading surface
 * [ADR-0018](docs/adr/0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md) - Prompt on DIATAXIS_ROOT and local .diataxis conflict
-
+* [ADR-0019](docs/adr/0019-tag-adrs-by-scope-instead-of-a-separate-idr-document-type.md) - Tag ADRs by scope instead of a separate IDR document type
 <!-- adrlogstop -->
 
 ### Projects

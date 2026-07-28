@@ -3,7 +3,6 @@
 require_relative 'document'
 require_relative 'document_registry'
 require_relative 'document/adr'
-require_relative 'document/idr'
 require_relative 'document/howto'
 
 module Diataxis
@@ -106,18 +105,6 @@ module Diataxis
       slug_separator: '-',
       template: 'adr',
       section_tag: 'adr'
-    )
-
-    r.register(
-      handler: Diataxis::IDR,
-      command: 'idr',
-      prefix: '[0-9][0-9][0-9][0-9]',
-      category: 'references',
-      config_key: 'idr',
-      readme_section: 'Implementation Design Records',
-      slug_separator: '-',
-      template: 'idr',
-      section_tag: 'idr'
     )
 
     r.register(
