@@ -71,6 +71,21 @@ RSpec.describe Diataxis::TemplateLoader do
       end
     end
 
+    context 'with IDR template' do
+      it 'resolves common.metadata and additional variables' do
+        Dir.chdir(test_dir) do
+          content = described_class.load_template(Diataxis::IDR, 'Test Decision', idr_number: '0001',
+                                                                                  status: 'Proposed')
+
+          expect(content).to include('Test Decision')
+          expect(content).not_to include('{{common.metadata}}')
+          expect(content).to include('Style Guidelines')
+          expect(content).to include('0001')
+          expect(content).to include('Proposed')
+        end
+      end
+    end
+
     context 'when common.metadata file is missing' do
       it 'raises TemplateError with descriptive message' do
         backup_path = "#{common_path}.bak"
@@ -131,6 +146,21 @@ RSpec.describe Diataxis::TemplateLoader do
         content = described_class.load_template(
           Diataxis::ADR, 'Test Decision',
           adr_number: '0001', status: 'Proposed',
+          tags: ['-project/decisions']
+        )
+
+        expect(content).to start_with("---\ntags:\n")
+        expect(content).to include('  - -project/decisions')
+        expect(content).to include('0001')
+        expect(content).to include('Proposed')
+      end
+    end
+
+    it 'works with IDR template and additional variables' do
+      Dir.chdir(test_dir) do
+        content = described_class.load_template(
+          Diataxis::IDR, 'Test Decision',
+          idr_number: '0001', status: 'Proposed',
           tags: ['-project/decisions']
         )
 

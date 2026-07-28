@@ -23,7 +23,7 @@ Metrics/AbcSize:
 # Configuration parameters: CountComments, CountAsOne, AllowedMethods, AllowedPatterns, inherit_mode.
 # AllowedMethods: refine
 Metrics/BlockLength:
-  Max: 84
+  Max: 95
 
 # Offense count: 1
 # Configuration parameters: CountComments, CountAsOne.
@@ -64,7 +64,7 @@ RSpec/ExampleLength:
 
 # Offense count: 33
 RSpec/MultipleExpectations:
-  Max: 5
+  Max: 6
 
 # Offense count: 1
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, IgnoreMetadata.
@@ -90,6 +90,7 @@ Style/Documentation:
     - 'lib/diataxis/document.rb'
     - 'lib/diataxis/document/adr.rb'
     - 'lib/diataxis/document/howto.rb'
+    - 'lib/diataxis/document/idr.rb'
     - 'lib/diataxis/document_registry.rb'
     - 'lib/diataxis/document_types.rb'
     - 'lib/diataxis/file_manager.rb'
