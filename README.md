@@ -11,7 +11,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 * Automatically update README.md with links to all documentation
 * Recursive document discovery in subdirectories
 * Configurable directory structure via `.diataxis` config file
-* `DIATAXIS_ROOT` environment variable for running `dia` from any directory
+* `DIATAXIS_ROOT` environment variable for running `dia` from any directory, with `--here`/`--root` to resolve a local-vs-root conflict non-interactively
 * `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time
 * `--stdout` to print a template to standard output instead of writing a file
 * Shared metadata guidelines injected into templates via `{{common.metadata}}`
@@ -66,7 +66,23 @@ dia explanation new "Why We Chose PostgreSQL"           # creates doc under DIAT
 dia update                                              # updates README at DIATAXIS_ROOT
 ```
 
-When `DIATAXIS_ROOT` is set, all operations — `init`, document creation, and `update` — target that directory and load the `.diataxis` config from there.
+`init` and `update` always target `DIATAXIS_ROOT` (when set) and load the `.diataxis` config from there. `dia <type> new` routes based on whether `DIATAXIS_ROOT` is set to somewhere other than the current directory, and whether a local `.diataxis` governs the current directory:
+
+| `DIATAXIS_ROOT` | local `.diataxis` | Where the new document goes |
+|---|---|---|
+| unset (or same as CWD) | absent | Straight into the current directory — no `docs/` subdirectory, no README update |
+| unset (or same as CWD) | present | The current directory, using the local config (as usual) |
+| set, elsewhere | absent | `DIATAXIS_ROOT`, falling back to the default config if it has none of its own |
+| set, elsewhere | present | **Asks** — this directory, or your `DIATAXIS_ROOT` central knowledge store? |
+
+That last row is the only case that prompts, because it's the only one where the two signals genuinely disagree. Skip the prompt (e.g. for scripts, CI, or an AI-agent session creating several documents in one sitting) with an explicit flag:
+
+```bash
+dia explanation new "Repo-Specific Design Doc" --here   # force this directory, ignoring DIATAXIS_ROOT
+dia explanation new "Vault Note" --root                 # force DIATAXIS_ROOT
+```
+
+If neither flag is given and stdin isn't interactive, `dia` fails with a clear error rather than blocking. See [ADR-0018](docs/adr/0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md) for the full reasoning.
 
 ### Tagging Documents
 
@@ -175,9 +191,9 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0015](docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md) - Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAGS
 * [ADR-0016](docs/adr/0016-replace-per-type-class-files-with-registry-dsl-and-template-method-hooks.md) - Replace per-type class files with registry DSL and template method hooks
 * [ADR-0017](docs/adr/0017-obsidian-not-github-is-now-the-primary-reading-surface.md) - Obsidian, not GitHub, is now the primary reading surface
+* [ADR-0018](docs/adr/0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md) - Prompt on DIATAXIS_ROOT and local .diataxis conflict
+
 <!-- adrlogstop -->
-
-
 
 ### Projects
 
