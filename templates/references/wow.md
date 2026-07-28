@@ -4,8 +4,8 @@
 
 # Template-Specific Guidelines
 
-**Scope Check — WoW, not ADR/IDR:**
-- A WoW records a *team process / working-agreement* decision — how people coordinate (branching discipline, review norms, escalation paths) — never an architecture decision (ADR) or an implementation-design decision (IDR). If what you're recording changes system structure or an internal implementation choice, use `dia adr new` or `dia idr new` instead.
+**Scope Check — WoW, not ADR:**
+- A WoW records a *team process / working-agreement* decision — how people coordinate (branching discipline, review norms, escalation paths) — never a technical decision about the system itself. If what you're recording changes system structure, technology choices, component boundaries, or an internal implementation choice, use `dia adr new` instead (tag it `-scope/implementation` if it's the narrower, implementation-level kind — see the ADR template's Scope Check).
 
 **Trace the WoW back to what surfaced it (mandatory):**
 - A WoW is almost always distilled from something else — a 5-Whys root cause, a project/investigation doc, a support ticket, a retro, a repeated friction point. Name that source in Context and link it (wiki-link for a local doc, permalink for a ticket/PR/commit). A WoW with no traceable origin is just an opinion, not a decision worth recording.

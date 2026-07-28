@@ -21,7 +21,6 @@ RSpec.describe Diataxis do
       howto: File.join(test_dir, 'docs'),
       tutorial: File.join(test_dir, 'docs'),
       adr: File.join(test_dir, 'docs/adr'),
-      idr: File.join(test_dir, 'docs/idr'),
       wow: File.join(test_dir, 'docs/wow'),
       explanation: File.join(test_dir, 'docs'),
       project: File.join(test_dir, 'docs'),
@@ -183,23 +182,6 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[ADR-0001]')
-      end
-    end
-
-    context 'creating IDR' do
-      it 'creates IDR with correct numbering and updates README' do
-        Dir.chdir(test_dir) do
-          run_cli(['idr', 'new', 'Use PostgreSQL Database'])
-        end
-
-        idr_path = File.join(docs_paths[:idr], '0001-use-postgresql-database.md')
-        expect(File).to exist(idr_path)
-
-        content = File.read(idr_path)
-        expect(content).to include('# 0001. Use PostgreSQL Database')
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[IDR-0001]')
       end
     end
 
@@ -655,7 +637,6 @@ RSpec.describe Diataxis do
       Diataxis::CLI.run([])
     rescue Diataxis::UsageError => e
       expect(e.usage_message).to include('adr new "Title"')
-      expect(e.usage_message).to include('idr new "Title"')
       expect(e.usage_message).to include('wow new "Title"')
       expect(e.usage_message).to include('explanation new "Title"')
       expect(e.usage_message).to include('project new "Title"')

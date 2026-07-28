@@ -7,8 +7,7 @@ This directory contains markdown templates for each document type in the Diataxi
 - `howto.md` - Template for how-to guides (procedural, goal-oriented)
 - `tutorial.md` - Template for tutorials (learning-oriented, step-by-step)
 - `explanation.md` - Template for explanations (understanding-oriented, concept-focused)
-- `adr.md` - Template for Architecture Decision Records (decision documentation)
-- `idr.md` - Template for Implementation Design Records (narrower-scope design decisions)
+- `adr.md` - Template for Architecture Decision Records (decision documentation; tag `-scope/implementation` for narrower, implementation-level decisions)
 - `wow.md` - Template for Way-of-Working records (team process/working-agreement decisions)
 
 ## Template Variables
@@ -23,11 +22,6 @@ Templates use `{{variable}}` placeholder syntax for dynamic content:
 ### ADR-Specific Variables
 
 - `{{adr_number}}` - Four-digit ADR number (e.g., 0001)
-- `{{status}}` - Decision status (e.g., "Proposed", "Accepted")
-
-### IDR-Specific Variables
-
-- `{{idr_number}}` - Four-digit IDR number (e.g., 0001)
 - `{{status}}` - Decision status (e.g., "Proposed", "Accepted")
 
 ## Customization
