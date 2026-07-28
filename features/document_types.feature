@@ -13,6 +13,8 @@ Feature: All Document Types
         "tutorials": "test_docs/tutorials",
         "explanations": "test_docs/explanations",
         "adr": "test_docs/adr",
+        "idr": "test_docs/idr",
+        "wow": "test_docs/wow",
         "projects": "test_docs/projects"
       }
       """
@@ -47,6 +49,29 @@ Feature: All Document Types
     And the file "test_docs/README.md" should contain "ADR-0001"
     And the file "test_docs/README.md" should contain "ADR-0002"
 
+  Scenario: Create an IDR with automatic numbering
+    When I run `bundle exec dia idr new "Use PostgreSQL Database"`
+    Then the exit status should be 0
+    And the file "test_docs/idr/0001-use-postgresql-database.md" should exist
+    And the file "test_docs/README.md" should contain "### Implementation Design Records"
+    And the file "test_docs/README.md" should contain "IDR-0001"
+
+  Scenario: Create multiple IDRs with sequential numbering
+    When I run `bundle exec dia idr new "Use PostgreSQL Database"`
+    And I run `bundle exec dia idr new "Use CLI Front End"`
+    Then the exit status should be 0
+    And the file "test_docs/idr/0001-use-postgresql-database.md" should exist
+    And the file "test_docs/idr/0002-use-cli-front-end.md" should exist
+    And the file "test_docs/README.md" should contain "IDR-0001"
+    And the file "test_docs/README.md" should contain "IDR-0002"
+
+  Scenario: Create a WoW record
+    When I run `bundle exec dia wow new "Branch Discipline"`
+    Then the exit status should be 0
+    And the file "test_docs/wow/wow_branch_discipline.md" should exist
+    And the file "test_docs/README.md" should contain "### Ways of Working"
+    And the file "test_docs/README.md" should contain "Branch Discipline"
+
   Scenario: Create a project document
     When I run `bundle exec dia project new "API Migration"`
     Then the exit status should be 0
@@ -72,11 +97,15 @@ Feature: All Document Types
     And I run `bundle exec dia tutorial new "Getting Started"`
     And I run `bundle exec dia explanation new "System Architecture"`
     And I run `bundle exec dia adr new "Use PostgreSQL"`
+    And I run `bundle exec dia idr new "Use PostgreSQL"`
+    And I run `bundle exec dia wow new "Branch Discipline"`
     And I run `bundle exec dia project new "API Migration"`
     And I run `bundle exec dia pr new "Refactor Auth"`
     Then the file "test_docs/README.md" should contain "### How-To Guides"
     And the file "test_docs/README.md" should contain "### Tutorials"
     And the file "test_docs/README.md" should contain "### Explanations"
     And the file "test_docs/README.md" should contain "### Design Decisions"
+    And the file "test_docs/README.md" should contain "### Implementation Design Records"
+    And the file "test_docs/README.md" should contain "### Ways of Working"
     And the file "test_docs/README.md" should contain "### Projects"
     And the file "test_docs/README.md" should contain "### Pull Requests"

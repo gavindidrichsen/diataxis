@@ -12,6 +12,8 @@ module Diataxis
       'default' => DEFAULT_DOCS_ROOT,
       'readme' => 'README.md',
       'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
+      'idr' => "#{DEFAULT_DOCS_ROOT}/idr",
+      'wow' => "#{DEFAULT_DOCS_ROOT}/wow",
       'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd"
     }.freeze
 

@@ -21,6 +21,8 @@ RSpec.describe Diataxis do
       howto: File.join(test_dir, 'docs'),
       tutorial: File.join(test_dir, 'docs'),
       adr: File.join(test_dir, 'docs/adr'),
+      idr: File.join(test_dir, 'docs/idr'),
+      wow: File.join(test_dir, 'docs/wow'),
       explanation: File.join(test_dir, 'docs'),
       project: File.join(test_dir, 'docs'),
       readme: File.join(test_dir, 'README.md')
@@ -181,6 +183,53 @@ RSpec.describe Diataxis do
 
         readme_content = File.read(docs_paths[:readme])
         expect(readme_content).to include('[ADR-0001]')
+      end
+    end
+
+    context 'creating IDR' do
+      it 'creates IDR with correct numbering and updates README' do
+        Dir.chdir(test_dir) do
+          run_cli(['idr', 'new', 'Use PostgreSQL Database'])
+        end
+
+        idr_path = File.join(docs_paths[:idr], '0001-use-postgresql-database.md')
+        expect(File).to exist(idr_path)
+
+        content = File.read(idr_path)
+        expect(content).to include('# 0001. Use PostgreSQL Database')
+
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[IDR-0001]')
+      end
+    end
+
+    context 'creating WoW' do
+      let(:wow_path) { File.join(docs_paths[:wow], 'wow_branch_discipline.md') }
+
+      before do
+        Dir.chdir(test_dir) do
+          run_cli(['wow', 'new', 'Branch Discipline'])
+        end
+      end
+
+      it 'creates WoW file with correct filename prefix' do
+        expect(File).to exist(wow_path)
+      end
+
+      it 'creates WoW with correct template structure' do
+        content = File.read(wow_path)
+        aggregate_failures do
+          expect(content).to include('# Branch Discipline')
+          expect(content).to include('## Context')
+          expect(content).to include('## Decision')
+          expect(content).to include('## Consequences')
+        end
+      end
+
+      it 'updates README with WoW link and section' do
+        readme_content = File.read(docs_paths[:readme])
+        expect(readme_content).to include('[Branch Discipline]')
+        expect(readme_content).to include('### Ways of Working')
       end
     end
 
@@ -606,6 +655,8 @@ RSpec.describe Diataxis do
       Diataxis::CLI.run([])
     rescue Diataxis::UsageError => e
       expect(e.usage_message).to include('adr new "Title"')
+      expect(e.usage_message).to include('idr new "Title"')
+      expect(e.usage_message).to include('wow new "Title"')
       expect(e.usage_message).to include('explanation new "Title"')
       expect(e.usage_message).to include('project new "Title"')
       expect(e.usage_message).to include('pr new "Title"')
