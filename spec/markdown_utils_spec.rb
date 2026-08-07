@@ -129,6 +129,35 @@ RSpec.describe Diataxis::MarkdownUtils do
         end
       end
 
+      it 'handles a second front matter block after an HTML comment' do
+        # Mirrors our own templates: leading front matter, then an HTML
+        # comment block, then a second front matter block for hand-added
+        # tags (per the ADR/WoW template's own instructions), then the title.
+        content = <<~MARKDOWN
+          ---
+          tags:
+            - some-tag
+          ---
+          <!--
+          # Common Guidelines
+          Some guidance text.
+          -->
+
+          ---
+          tags:
+            - -scope/implementation
+          ---
+
+          # 0001. Real Title Here
+
+          Content
+        MARKDOWN
+
+        with_temp_file(content) do |file|
+          expect(described_class.extract_title(file.path)).to eq('0001. Real Title Here')
+        end
+      end
+
       it 'handles malformed front matter (only opening delimiter)' do
         content = <<~MARKDOWN
           ---

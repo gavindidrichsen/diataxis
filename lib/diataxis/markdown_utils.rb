@@ -3,19 +3,42 @@
 module Diataxis
   # Utility module for working with Markdown files
   module MarkdownUtils
-    # Extracts the first heading (title) from a markdown file, skipping YAML front matter and HTML comments
+    # Extracts the first heading (title) from a markdown file, skipping any
+    # number of leading YAML front matter and HTML comment blocks (in any
+    # order — e.g. front matter, then a comment, then a second front matter
+    # block for hand-added tags, as our own templates instruct authors to do).
     # @param filepath [String] Path to the markdown file
     # @return [String, nil] The title without the leading "# ", or nil if no title found
     def self.extract_title(filepath)
       in_yaml_front_matter = false
       in_html_comment = false
-      front_matter_count = 0
 
       File.open(filepath, 'r') do |file|
         file.each_line do |line|
           stripped_line = line.strip
 
-          # Track HTML comment blocks (<!-- ... -->)
+          if in_yaml_front_matter
+            # Only the closing delimiter ends the block; an unterminated
+            # block means we wait forever and return nil (conservative).
+            in_yaml_front_matter = false if stripped_line == '---'
+            next
+          end
+
+          if in_html_comment
+            in_html_comment = false if stripped_line.include?('-->')
+            next
+          end
+
+          # Skip blank lines between structural blocks
+          next if stripped_line.empty?
+
+          # Start of a YAML front matter block
+          if stripped_line == '---'
+            in_yaml_front_matter = true
+            next
+          end
+
+          # Start of an HTML comment block
           if stripped_line.start_with?('<!--')
             in_html_comment = true
             # Check if comment closes on same line
@@ -23,35 +46,11 @@ module Diataxis
             next
           end
 
-          if in_html_comment
-            # Check if this line closes the HTML comment
-            in_html_comment = false if stripped_line.include?('-->')
-            next
-          end
-
-          # Track YAML front matter delimiters (---)
-          if stripped_line == '---'
-            front_matter_count += 1
-            in_yaml_front_matter = front_matter_count == 1
-            next
-          end
-
-          # Skip lines while inside YAML front matter
-          next if in_yaml_front_matter
-
-          # Skip if we've only seen one delimiter (still waiting for closing delimiter)
-          next if front_matter_count == 1
-
           # Found the title heading
-          if stripped_line.start_with?('# ')
-            return stripped_line[2..].strip # Remove "# " prefix and strip whitespace
-          end
+          return stripped_line[2..].strip if stripped_line.start_with?('# ')
 
-          # Skip empty lines
-          next if stripped_line.empty?
-
-          # If we hit non-empty content that's not a heading, stop searching
-          break unless stripped_line.start_with?('#')
+          # Any other content before a heading means there's no title to find
+          break
         end
       end
 
