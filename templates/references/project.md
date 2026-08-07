@@ -40,9 +40,11 @@ Sections:
   - What we know     — (### subsection) confirmed facts / current state, with evidence AND the concrete entry points an agent would open first
   - What we think    — (### subsection) hypotheses, or the chosen plan and the reasoning for it
 - Next Actions       — @urgent items, one line each, each linking to a Key Concept
+- Backlog            — deferred/follow-up items surfaced but NOT on the critical path — triage at project completion, don't action mid-flight
 - Key Concepts       — the meat behind the actions (mechanisms, decisions, jargon)
 - Background         — running breadcrumb of decisions made and progress so far
 - Related Topics     — real links to code, docs, tickets, and local notes
+- Plan               — (only if seeded from a Claude Code plan) the full verbatim plan, always last
 
 **Problem section:**
 - Lead with three bold lines: **Problem:** (one line), **Done looks like:** (one
@@ -73,6 +75,12 @@ Sections:
   (Obsidian form: `[[#Heading Text|display text]]`).
 - Push all explanation into Key Concepts — never pad the Next Actions list itself.
 
+**Backlog section:**
+- A single flat `Backlog` collection, separate from `Next Actions` — NOT the fuller GTD taxonomy (no `@waiting`/`@someday`/"Other Lists" split). One list, one purpose: things worth doing that surfaced while working the critical path but would derail it if actioned now.
+- Populate it as the work surfaces things — a bigger redesign idea, a hardening pass, a "test this on another version/environment" note, an upstream-feedback item. Each entry is one line; link to a Key Concept if it needs more than a sentence of framing.
+- **Do not action Backlog items mid-project.** They exist so the critical path doesn't absorb scope creep. Triage the whole list explicitly at project completion — decide per item: promote to a new project, file a ticket, or drop it.
+- If an item turns out to block the critical path after all, promote it into `Next Actions` (and remove it from `Backlog`) rather than working it from the backlog list.
+
 **Key Concepts section:**
 - One subsection per term, mechanism, or decision a task links to — nothing the
   tasks don't reach for.
@@ -81,13 +89,28 @@ Sections:
 - A concept that touches code includes a source link (with line numbers) and a
   short code sample, per the Code Evidence Requirement above.
 
+**This project doc is the root/hub document — spin off satellite docs rather than absorbing everything inline:**
+- **Troubleshooting/investigation** (something failed and had to be diagnosed — logs read, hypotheses tested, a root cause chased down): don't grow a Key Concept or Background into a full investigation narrative. Create a `dia fivewhy new` doc for it, and link out from the relevant Key Concept with a one-line summary + the link. This keeps the project doc skimmable and gives the investigation itself a proper, reusable home.
+- **Domain knowledge a Key Concept needs but doesn't have** — if a Key Concept would need real depth to explain properly (a mechanism, a gotcha, a "why does this work this way") and that depth doesn't already exist in a local repo doc or the Obsidian vault, don't inline it. Create a `dia explanation new` doc capturing the full domain knowledge, and link to it from the Key Concept, keeping the Key Concept itself to a short pointer + summary.
+- **A decision gets made** (architecture, technology choice, component boundary, an implementation-level choice within settled architecture, or a team working-agreement/process change) — capture it as it happens, don't let it live only as prose in Key Concepts/Background:
+  - System/technical decision (including narrower implementation-level ones — tag those `-scope/implementation`, see the ADR template's Scope Check) → `dia adr new`.
+  - Team process / working-agreement decision (how people coordinate, branching discipline, review norms, a new provisioning practice) → `dia wow new`.
+  - Link the ADR/WoW from the relevant Key Concept or Next Actions item with a one-line summary, same pattern as fivewhy/explanation spin-offs. A WoW's Context section should point back at this project doc as its traceable origin.
+- **The cheatsheet stays the operational first-stop.** Commands, flags, verified snippets belong in the companion `dia cheatsheet new` doc (link it from Related Topics), never duplicated into this project doc's prose.
+- Rule of thumb: this doc should read like a hub with short summaries and links, not like it's trying to also be a fivewhy, an explanation, an ADR/WoW, and a cheatsheet at once.
+
+**Plan section (only when this project was seeded from a Claude Code plan):**
+- If a plan file exists (path shown in the plan-approval banner, typically `~/.claude/plans/<name>.md`), link it plainly from Related Topics AND reproduce its full verbatim content in a final `## Plan` section at the very bottom of the document — after Related Topics, always last. This makes the doc fully self-contained even if the plan file itself is later cleaned up/rotated.
+- Do not summarize or trim the plan content — paste it verbatim inside a fenced block or as plain markdown under the heading, exactly as approved.
+- If the project has no originating plan (started some other way), omit this section entirely — do not add an empty placeholder.
+
 **Background section:**
 - This is the running log, not static context: decisions already made,
   progress, dead-ends. It is what lets the project be resumed later. Keep it
   distinct from "What we know" (which is the current evidenced picture).
 
 **Final Compliance Check (required before finishing):**
-- "Other Lists" / @waiting / @backlog / @someday are NOT present.
+- The fuller GTD "Other Lists" taxonomy (`@waiting`/`@someday`, multiple separate lists) is NOT present — only the single flat `Backlog` collection is permitted, and only if the project has actually surfaced deferred items.
 - Problem leads with **Problem:** + **Done looks like:** + **Motivation:**, then the
   What we know / What we think `###` subsections.
 - "What we know" gives an AI agent concrete entry points (local clones, line-linked
@@ -96,6 +119,9 @@ Sections:
   first move from this doc alone.
 - Next Actions has NO intro line — just the `@urgent` checklist; every item is
   one line and links to a Key Concept (unless trivially self-explanatory).
+- Backlog items (if any) are not being silently actioned — they wait for project-completion triage.
+- Any troubleshooting narrative lives in a linked `dia fivewhy new` doc, not inlined into Key Concepts/Background.
+- Any Key Concept needing depth beyond what's locally/vault-available links to a `dia explanation new` doc rather than inlining it.
 - Each Key Concept that touches code has both a link and a short code sample.
 - Related Topics links are all concrete and valid.
 -->
@@ -123,6 +149,12 @@ Sections:
 
 - [ ] First next action — see [[#Concept One|the concept]]
 - [ ] Second next action — see [[#Concept Two|the concept]]
+
+## Backlog
+
+<!-- Omit this section entirely if nothing has been deferred yet. -->
+
+- Deferred item surfaced during the work — one line, link to a Key Concept if it needs framing.
 
 ## Key Concepts
 

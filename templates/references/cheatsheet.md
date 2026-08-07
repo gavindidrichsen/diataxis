@@ -18,6 +18,15 @@ The reader is mid-task and scanning for the right command — not learning, not 
 - Architecture or design rationale — link to an explanation doc instead.
 - The *why* behind a command, or *how* to choose between alternatives — that's explanation-doc territory. Cheatsheets carry the *what*; explanation docs carry the *why* and *how*.
 
+**Verification Discipline (aim: every command in this cheatsheet has been run at least once against a real target):**
+
+- **The cheatsheet's implicit contract with the reader is "this command works."** A reader scanning a cheatsheet is not reading for context; they are about to *type it into a shell*. An unverified command wastes their time, damages their trust in the file, and — because they cannot tell which command was verified — damages their trust in **every other** command in the same file.
+- **Before writing a new entry, run it.** For each new command, one-liner, table row, code block, or claim about a filesystem/process/log state (e.g. "the log lives at X", "tail this file to see Y", "this command outputs Z"): run it against the intended target (or class of target) via the same channel the reader will use (bolt, `nc`, `curl`, local shell, remote SSH), and confirm the observable outcome the cheatsheet will claim — file exists, byte size non-zero, expected substring in output, exit code as expected, PATH resolution finds the binary, etc.
+- **Capture the verification evidence inline** — either as a comment beside the command (`# verified 2026-08-06 on above-repute: 99 KB / 778 lines`) or in a follow-up bullet — so a future reader can see the claim is not asserted, it is witnessed. This costs one line and buys the whole file its credibility.
+- **When verification is impossible or blocked, STOP and surface the blocker.** Do not silently write an unverified command. Blockers include: no target of the required OS available, target unreachable, credential missing, external URL blocked, tool absent from PATH, dependency uninstalled. In that case: do NOT append the unverified content; surface the specific claim, the verification that would upgrade it, and the specific blocker; ask whether to (a) provision what's needed and verify now, (b) mark the claim `**Inferred, not proven.**` inline in the cheatsheet with the named upgrade path (per Evidence Discipline in the common metadata), or (c) drop the entry entirely. Wait for a decision. Never route around this with a "safe-looking" default.
+- **Retroactive verification obligation on edits.** When editing an existing cheatsheet — even for what looks like a small correction — re-verify any command whose outcome the edit depends on. Do not trust that a command already in the cheatsheet was verified when it was first written.
+- **The failure mode this rule exists to prevent.** A confident-sounding one-liner about "tail `$env:LOCALAPPDATA\PDK\pdk-debug.log` after `pdk new module`" once landed in a project cheatsheet without being run. There was no such file — PDK on Windows writes no runtime log. The command was structurally plausible, syntactically correct, and completely fictional. The downstream reader wasted diagnostic time chasing a non-existent artefact. This aim is the retrofit for that failure — and applies to every cheatsheet, every entry, every edit.
+
 **Format rules (strict):**
 - H1 body placeholder is `# {{title}}` — when populating, keep the title a **plain domain-first noun phrase** (e.g. `# PDK Windows Steel-Thread Explore-Phase Commands`). **Do NOT append the word "Cheatsheet" to the H1.** The `cheatsheet_` filename prefix already signals the doc's type; adding "Cheatsheet" to the H1 also has the side effect of causing `dia update` to slugify the trailing word into the filename (`..._commands_cheatsheet.md` instead of `..._commands.md`), which produces the awkward double-cheatsheet stem you're trying to avoid.
 - One-sentence subtitle immediately below H1 — the "what this tool does in a nutshell".
@@ -65,6 +74,14 @@ The reader is mid-task and scanning for the right command — not learning, not 
 # {{title}}
 
 {{one_sentence_description}}.
+
+<!--
+Verification aim (do not delete this comment until every command below is verified):
+Every command, one-liner, table row, code block, and filesystem/log/process claim in this
+cheatsheet has been run against a real target and its outcome witnessed. If an entry cannot
+be verified, either mark it `**Inferred, not proven.**` with a named upgrade path, or drop it.
+See Verification Discipline in this template's header comment for the full rule.
+-->
 
 ## Quick Reference
 
