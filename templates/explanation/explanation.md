@@ -20,6 +20,7 @@
 - Related Topics links are all concrete and valid.
 - Each code reference includes both a link and an explanatory code sample.
 - File setup instructions use “Create <file>” + code block format (no `cat > ...` heredoc flow).
+- Evidence Discipline (see common.metadata) applied: every factual sub-claim is either backed by a first-hand citation (permalink, quoted log line, Slack ts, ticket ID) or explicitly marked `**Inferred, not proven.**` with its named upgrade-path and reason-not-verified. No weasel-words masking inference — verified by `grep -nE "clearly|must have|obviously|certainly|we know that|presumably"` on the finished doc.
 -->
 
 # {{title}}
