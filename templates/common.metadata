@@ -26,6 +26,7 @@
 - **Commits**: Link to the actual commit: [`short-sha`](https://github.com/org/repo/commit/full-sha). In PR descriptions, each change section must include a commit link so reviewers can navigate directly to the diff.
 - **Docs**: Link to official documentation pages.
 - **Local**: Link to local docs with Obsidian-style wiki links: `[[doc-filename]]` or `[[doc-filename|display text]]`. Use the filename without the `.md` extension. Wiki links resolve by filename, so they survive file moves within the vault.
+- **Chat (Slack, etc.)**: Every quoted message needs its own permalink, not just a link to the thread as a whole — a paraphrase with no per-message link is not proof under the Evidence Discipline below. Slack permalinks aren't one-click like GitHub's `y` key; build them from the message's `ts` (timestamp): `https://<workspace>.slack.com/archives/<channel-id>/p<ts-with-the-decimal-point-removed>` (append `?thread_ts=<root-ts>&cid=<channel-id>` when the message is a thread reply, for readers who need thread context). E.g. `ts` `1789633639.433619` in channel `G049EJF2Z2A` becomes `https://workspace.slack.com/archives/G049EJF2Z2A/p1789633639433619`.
 
 **Code Evidence Requirement (required when code is referenced):**
 - For each major section,
