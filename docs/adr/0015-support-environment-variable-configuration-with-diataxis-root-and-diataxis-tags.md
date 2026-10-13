@@ -6,6 +6,8 @@ Date: 2026-05-02
 
 Accepted
 
+Partly refined since: document-creation routing by [ADR-0018](./0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md), and `dia update` targeting (explicit directory, else `DIATAXIS_ROOT`, else error) by [ADR-0021](./0021-dia-update-targets-an-explicit-directory-or-diataxis-root-and-requires-a-diataxis-root.md).
+
 ## Context
 
 The `dia` CLI tool required users to be in the project root directory when running commands like `dia update` or `dia explanation new "Title"`. This made it awkward to use in several real-world scenarios:

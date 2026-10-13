@@ -167,7 +167,7 @@ Sections:
 
 ## Problem
 
-> **Status (2026-10-13): mostly done.** Routing, `--here`/`--root`, the conflict prompt and no-config writes shipped (ADR-0018, CHANGELOG). One item remains: `dia update` does not follow the same routing as `dia <type> new`. Close this project when that is fixed or decided.
+> **Status (2026-10-13): done in [PR #62](https://github.com/gavindidrichsen/diataxis/pull/62), awaiting merge.** Routing, `--here`/`--root`, the conflict prompt and no-config writes shipped (ADR-0018, CHANGELOG); the `dia update` gaps found while testing are resolved by [[0021-dia-update-targets-an-explicit-directory-or-diataxis-root-and-requires-a-diataxis-root|ADR-0021]]. Delete this doc once the PR is merged.
 
 **Problem:** Creating diataxis docs outside of `DIATAXIS_ROOT` requires a cumbersome `DIATAXIS_ROOT=$PWD dia explanation new ...` incantation, which discourages per-repo documentation.
 
@@ -182,8 +182,8 @@ Sections:
 - **Resolved:** `--here`/`--root` flags now exist (parsed in [`global_flags_handler.rb`](lib/diataxis/cli/global_flags_handler.rb)), and `dia <type> new` asks which one you meant when both `DIATAXIS_ROOT` and a local `.diataxis` apply: [[0018-prompt-on-diataxis-root-and-local-diataxis-conflict|ADR-0018]], [`destination_resolver.rb`](lib/diataxis/cli/destination_resolver.rb). The double-resolution rule below still holds: config is resolved exactly once.
 - Commit [`b771ad5`](https://github.com/gavindidrichsen/diataxis/commit/b771ad5) fixed a double-resolution bug: `command_handlers.rb` used to pre-resolve a subdirectory via `Config.path_for` and pass that *already-resolved* path into `Document.new`, which internally re-ran `get_configured_directory` (`document.rb:146-157`) and walked up from the resolved subdir -- sometimes finding a stray *nested* `.diataxis` and doubling the path (`docs/docs/...`). Fix: pass the raw root straight through so config resolution happens exactly once. **This means today's precedence is already: explicit CLI directory arg > `DIATAXIS_ROOT` > CWD, then `.diataxis` (found by upward walk from whichever root won) supplies per-type subdirectories** -- any new routing model must not reintroduce a second resolution pass.
 - **Resolved:** the `DIATAXIS_ROOT=$PWD dia ...` incantation is no longer needed, and with no `.diataxis` anywhere `dia <type> new` writes into the current directory instead of hard-failing (README routing table; `[Unreleased]` in the CHANGELOG).
-- **Still open (observed 2026-10-13):** `dia update` does not follow the same routing. With `DIATAXIS_ROOT` set to a vault and a repo `.diataxis` in the current directory, `dia update` (no arguments) renamed the vault's documents and left the repo's untouched, with no prompt, because `handle_update` uses `DIATAXIS_ROOT` whenever it is set ([`command_handlers.rb`](lib/diataxis/cli/command_handlers.rb)). `dia update <dir>` is the workaround.
-- **Also open (observed 2026-10-13):** `dia update .` run from a directory that is not a `.diataxis` root (for example `docs/` or `docs/sub/`) does not fail: it searches `<dir>/<default>/**`, finds nothing, and prints "All document filenames already match their titles.", which is misleading. Intended behaviour (maintainer's expectation): `dia update .` means "this directory is a `.diataxis` root", so running it anywhere else should be an **error**, not a silent success; from the project root the same stale files are renamed. Fix idea: error when the target directory has no `.diataxis`, and when one exists in an ancestor say so (`found /x/.diataxis; run dia update /x`). Open design point: a `DIATAXIS_ROOT` directory without its own `.diataxis` (which `dia <type> new` accepts using the default config).
+- **Resolved (ADR-0021):** `dia update` used to follow `DIATAXIS_ROOT` whenever it was set and ignore a repo's `.diataxis` (observed 2026-10-13). It now acts on the directory you pass, else `DIATAXIS_ROOT`, else errors; it never assumes the current directory and never prompts.
+- **Resolved (ADR-0021):** `dia update .` from a subdirectory used to search `<dir>/<default>/**`, find nothing and print "All document filenames already match their titles.". The target must now hold a `.diataxis`; otherwise it fails and names the ancestor root (`Found /x/.diataxis; run dia update /x`).
 - Most of the time, docs go to the central Obsidian vault (`DIATAXIS_ROOT` pointing at `@INBOX`). But targeted repo docs (e.g. the diataxis gem's own `docs/`) need the override.
 - The env-var mechanism itself is an ADR-level decision, not incidental: `docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md`. Any routing-model change should update or supersede that ADR, not silently diverge from it.
 - Entry points for investigation:
@@ -209,8 +209,8 @@ Sections:
 - [x] Map the current resolution precedence in detail -- see [[#Current Resolution Precedence|the concept]]
 - [x] Decide on the new routing model (prompt on conflict plus `--here`/`--root`, ADR-0018) -- see [[#Routing Model Options|the concept]]
 - [x] Prototype the chosen model in a branch (shipped; see the CHANGELOG)
-- [ ] Make `dia update <dir>` fail with a clear message when `<dir>` is not a `.diataxis` root (naming the ancestor root if there is one), instead of reporting "already match"
-- [ ] Make `dia update` (no arguments) follow the same routing as `dia <type> new`, or decide that `DIATAXIS_ROOT` is intentionally its only target and document it — see the open finding under "What we know"
+- [x] Make `dia update <dir>` fail with a clear message when `<dir>` is not a `.diataxis` root (naming the ancestor root if there is one), instead of reporting "already match"
+- [x] Decide how `dia update` with no arguments is routed: explicit directory, else `DIATAXIS_ROOT`, else error (ADR-0021) — chosen over reusing `--here`/`--root`
 - [x] Update `dia --help` / usage text to reflect the new behaviour (`--here`/`--root` are listed)
 
 ## Key Concepts
