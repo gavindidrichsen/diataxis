@@ -167,6 +167,8 @@ Sections:
 
 ## Problem
 
+> **Status (2026-10-13): mostly done.** Routing, `--here`/`--root`, the conflict prompt and no-config writes shipped (ADR-0018, CHANGELOG). One item remains: `dia update` does not follow the same routing as `dia <type> new`. Close this project when that is fixed or decided.
+
 **Problem:** Creating diataxis docs outside of `DIATAXIS_ROOT` requires a cumbersome `DIATAXIS_ROOT=$PWD dia explanation new ...` incantation, which discourages per-repo documentation.
 
 **Done looks like:** Running `dia <type> new "Title"` drops docs into the right place automatically -- the current directory's `.diataxis`-configured location when present, or `DIATAXIS_ROOT` as fallback -- without manual env var overrides.
@@ -177,9 +179,10 @@ Sections:
 
 - `DIATAXIS_ROOT` env var is resolved exactly once, at the composition root: [`cli.rb:15`](https://github.com/gavindidrichsen/diataxis/blob/e06f4abb10871486d643b34c17b40a4254b24517/lib/diataxis/cli.rb#L15). Everything downstream receives `root` as an argument and never touches `ENV` again (comment at `cli.rb:11-14` states this explicitly).
 - `Config.find_config` walks **upward** from the resolved root to `/`, looking for a `.diataxis` file; first one found wins: [`config.rb:34-43`](https://github.com/gavindidrichsen/diataxis/blob/e06f4abb10871486d643b34c17b40a4254b24517/lib/diataxis/config.rb#L34-L43). `Config.load` (`config.rb:18-26`) merges its JSON over `DEFAULT_CONFIG` (`"default": "docs"`, `"projects": "docs/_gtd"`, etc., `config.rb:11-16`).
-- There is no interactive prompt or `--local`/`--here` flag today. Flags are hand-parsed in a `while`/`case` loop, not OptionParser: [`global_flags_handler.rb:18-36`](https://github.com/gavindidrichsen/diataxis/blob/e06f4abb10871486d643b34c17b40a4254b24517/lib/diataxis/cli/global_flags_handler.rb#L18-L36). A new flag (e.g. `--local`) would be added as another `when` branch here, following the `--tag`/`-t` pattern (lines 25-27).
+- **Resolved:** `--here`/`--root` flags now exist (parsed in [`global_flags_handler.rb`](lib/diataxis/cli/global_flags_handler.rb)), and `dia <type> new` asks which one you meant when both `DIATAXIS_ROOT` and a local `.diataxis` apply: [[0018-prompt-on-diataxis-root-and-local-diataxis-conflict|ADR-0018]], [`destination_resolver.rb`](lib/diataxis/cli/destination_resolver.rb). The double-resolution rule below still holds: config is resolved exactly once.
 - Commit [`b771ad5`](https://github.com/gavindidrichsen/diataxis/commit/b771ad5) fixed a double-resolution bug: `command_handlers.rb` used to pre-resolve a subdirectory via `Config.path_for` and pass that *already-resolved* path into `Document.new`, which internally re-ran `get_configured_directory` (`document.rb:146-157`) and walked up from the resolved subdir -- sometimes finding a stray *nested* `.diataxis` and doubling the path (`docs/docs/...`). Fix: pass the raw root straight through so config resolution happens exactly once. **This means today's precedence is already: explicit CLI directory arg > `DIATAXIS_ROOT` > CWD, then `.diataxis` (found by upward walk from whichever root won) supplies per-type subdirectories** -- any new routing model must not reintroduce a second resolution pass.
-- The current workflow to create docs in a specific repo requires: `cd <repo> && DIATAXIS_ROOT=$PWD dia explanation new "Title"`. The repo must contain a `.diataxis` file or the command fails (`ensure_config_exists!` hard-fails otherwise -- see [[project_fix_dia_behavriour_when_no_diataxis_file_is_present]]).
+- **Resolved:** the `DIATAXIS_ROOT=$PWD dia ...` incantation is no longer needed, and with no `.diataxis` anywhere `dia <type> new` writes into the current directory instead of hard-failing (README routing table; `[Unreleased]` in the CHANGELOG).
+- **Still open (observed 2026-10-13):** `dia update` does not follow the same routing. With `DIATAXIS_ROOT` set to a vault and a repo `.diataxis` in the current directory, `dia update` (no arguments) renamed the vault's documents and left the repo's untouched, with no prompt, because `handle_update` uses `DIATAXIS_ROOT` whenever it is set ([`command_handlers.rb`](lib/diataxis/cli/command_handlers.rb)). `dia update <dir>` is the workaround.
 - Most of the time, docs go to the central Obsidian vault (`DIATAXIS_ROOT` pointing at `@INBOX`). But targeted repo docs (e.g. the diataxis gem's own `docs/`) need the override.
 - The env-var mechanism itself is an ADR-level decision, not incidental: `docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md`. Any routing-model change should update or supersede that ADR, not silently diverge from it.
 - Entry points for investigation:
@@ -202,11 +205,11 @@ Sections:
 
 ## Next Actions
 
-- [ ] Map the current resolution precedence in detail -- see [[#Current Resolution Precedence|the concept]]
-- [ ] Decide on the new routing model -- see [[#Routing Model Options|the concept]]
-- [ ] Prototype the chosen model in a branch
-- [ ] Verify that `dia update` scope stays consistent with `dia new` scope
-- [ ] Update `dia --help` / usage text to reflect the new behaviour
+- [x] Map the current resolution precedence in detail -- see [[#Current Resolution Precedence|the concept]]
+- [x] Decide on the new routing model (prompt on conflict plus `--here`/`--root`, ADR-0018) -- see [[#Routing Model Options|the concept]]
+- [x] Prototype the chosen model in a branch (shipped; see the CHANGELOG)
+- [ ] Make `dia update` (no arguments) follow the same routing as `dia <type> new`, or decide that `DIATAXIS_ROOT` is intentionally its only target and document it — see the open finding under "What we know"
+- [x] Update `dia --help` / usage text to reflect the new behaviour (`--here`/`--root` are listed)
 
 ## Key Concepts
 
@@ -242,9 +245,11 @@ This means `DIATAXIS_ROOT` is a blunt global override -- it cannot coexist with 
 - The related project [[project_fix_dia_behavriour_when_no_diataxis_file_is_present]] added the fail-fast behaviour when `.diataxis` is missing -- that work is a prerequisite constraint (we don't want to regress it by making `.diataxis` optional again without a clear fallback path).
 - 2026-07-23: A second GTD doc (`project_improve_the_diataxis_root_override_mechanism.md`) was created independently covering the same problem, with an additional idea -- prompting interactively when a `.diataxis` is detected. Merged that idea in here as Option E and deleted the duplicate, per the "search before creating" convention.
 
+- 2026-10-13 — Reviewed while dropping the README (PR #62): stale statements marked resolved; verified that `dia update` still targets only `DIATAXIS_ROOT` when it is set.
+
 ## Related Topics
 
-- [[project_fix_dia_behavriour_when_no_diataxis_file_is_present]] -- the fail-fast behaviour when no `.diataxis` is found
+- [[0018-prompt-on-diataxis-root-and-local-diataxis-conflict|ADR-0018]] -- the prompt/flags decision; the earlier fail-fast-without-`.diataxis` project is closed (no-config now writes into the current directory)
 - [[project_consolidate_diataxis_rules_across_claude_skills]] -- related effort to simplify the diataxis toolchain
 - `docs/adr/0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md` -- the ADR documenting the current `DIATAXIS_ROOT`/`DIATAXIS_TAGS` design
 - [`commit b771ad5`](https://github.com/gavindidrichsen/diataxis/commit/b771ad5) -- fixed double-nested doc paths from a stray nested `.diataxis`, directly relevant prior art for any routing-precedence change
