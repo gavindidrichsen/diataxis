@@ -15,27 +15,9 @@ module Diataxis
       'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd"
     }.freeze
 
-    # What `dia init` writes: a commented sample above an empty object, so every
-    # default applies until a line is copied into the object.
-    TEMPLATE = <<~TEXT
-      // dia reads this file as JSON; full-line `//` comments are ignored.
-      // Everything is optional: the empty object below means every default applies
-      // (documents in docs/, ADRs in docs/adr, projects in docs/_gtd).
-      // To override a location, put it inside the object. Paths are relative to
-      // this file's directory. Sample (all keys optional):
-      //
-      //   {
-      //     "default": "docs",
-      //     "adr": "docs/adr",
-      //     "projects": "docs/_gtd",
-      //     "explanations": "docs/explanations",
-      //     "tutorials": "docs/tutorials",
-      //     "howtos": "docs/howtos",
-      //     "cheatsheets": "docs/cheatsheets",
-      //     "wow": "docs/wow"
-      //   }
-      {}
-    TEXT
+    # What `dia init` writes: an empty object, so every default applies until an
+    # override is added (see the README for the keys).
+    TEMPLATE = "{}\n"
 
     def self.load(directory = '.')
       config_path = find_config(directory)
@@ -50,10 +32,9 @@ module Diataxis
       Diataxis.logger.info "Created #{config_path} (an empty object: every default applies)"
     end
 
-    # Reads a .diataxis file: full-line `//` comments are ignored and a file with
-    # nothing else in it means `{}`.
+    # Reads a .diataxis file (a JSON object). A file with nothing in it means `{}`.
     def self.parse(config_path)
-      text = File.read(config_path).gsub(%r{^\s*//.*$}, '').strip
+      text = File.read(config_path).strip
       return {} if text.empty?
 
       parsed = JSON.parse(text)

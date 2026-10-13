@@ -6,7 +6,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 
 * **Create** documents from templates with `dia <type> new "Title"` — 9 document types via a registry DSL, with how-to title normalization, auto-numbered ADRs and tag front matter. `new` only creates the file; it never renames anything or writes a README.
 * **Keep names in step with titles** with `dia update [directory]` — renames documents so each filename matches its `# title` and repoints `[[wiki-links]]` to them. It acts on the directory you give, else `DIATAXIS_ROOT`, and fails if neither is available or the target has no `.diataxis`.
-* **Configure only what you change.** A `.diataxis` file only has to exist (empty is fine); add JSON overrides to move where a type is written. `dia init` writes a commented sample.
+* **Configure only what you change.** A `.diataxis` file only has to exist: `dia init` writes `{}` and every default applies. Add JSON overrides to move where a type is written (see Configuration below).
 * Recursive document discovery in subdirectories.
 * `DIATAXIS_ROOT` for running `dia` from any directory, with `--here`/`--root` to resolve a local-vs-root conflict non-interactively when creating documents.
 * `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time.
@@ -28,9 +28,8 @@ Make sure that `dia` is available on your PATH.
 ## Usage
 
 ```bash
-# mark this directory as a diataxis root (writes .diataxis: a commented sample above an empty {})
+# mark this directory as a diataxis root (writes .diataxis containing just {})
 dia init
-cat .diataxis                                           # the sample shows how to override locations
 
 # Create documents — all 9 types supported
 dia howto new "How to configure SSL certificates"       # how-to guide (auto "How to" prefix)
@@ -47,17 +46,37 @@ dia cheatsheet new "Docker commands"                    # cheatsheet
 
 ### Configuration (`.diataxis`)
 
-The file only has to exist. An empty file, a file of only `//` comments, and `{}` all mean "no overrides", so documents go to `docs/`, ADRs to `docs/adr` and projects to `docs/_gtd`. To override a location, put it in the object (paths are relative to the file's directory):
+A `.diataxis` file marks a directory as a documentation root. It only has to exist: `dia init` writes a single empty JSON object,
 
-```jsonc
-// .diataxis
+```json
+{}
+```
+
+and every default applies (documents in `docs/`, ADRs in `docs/adr`, projects in `docs/_gtd`). An empty file is treated the same way. The file is plain JSON, so it cannot hold comments.
+
+#### Overriding locations
+
+To move where a type is written, add its key to the object. Paths are relative to the directory that holds the `.diataxis`. For example, to put how-tos in `docs/guides` and ADRs in `decisions`:
+
+```json
 {
-  // guides live here
-  "howtos": "docs/guides"
+  "howtos": "docs/guides",
+  "adr": "decisions"
 }
 ```
 
-Override keys: `default`, `adr`, `projects`, `explanations`, `tutorials`, `howtos`, `cheatsheets`, `wow`. Invalid JSON is reported as an error naming the file.
+| Key | Document types it controls | Default |
+|---|---|---|
+| `default` | every type that has no key of its own | `docs` |
+| `adr` | `adr` | `docs/adr` |
+| `projects` | `project` | `docs/_gtd` |
+| `explanations` | `explanation`, `pr`, `fivewhy` | the `default` directory |
+| `tutorials` | `tutorial` | the `default` directory |
+| `howtos` | `howto` | the `default` directory |
+| `cheatsheets` | `cheatsheet` | the `default` directory |
+| `wow` | `wow` | the `default` directory |
+
+A key you do not set keeps its default. Note that `default` alone does not move ADRs or projects (they have their own defaults); set `adr` and `projects` too if you want them elsewhere. Invalid JSON, or JSON that is not an object, is reported as an error naming the file. See [ADR-0022](docs/adr/0022-a-diataxis-file-only-has-to-exist-and-dia-init-writes-an-empty-object.md).
 
 ### Renaming documents after a title change (`dia update`)
 
@@ -160,7 +179,7 @@ The behaviour is specified as Cucumber features in [`features/`](features):
 
 | Feature | Behaviour it defines |
 |---|---|
-| `configuration_management` | `.diataxis` may be empty, commented or overridden; `dia init` writes a commented sample; invalid JSON is a clear error |
+| `configuration_management` | a `.diataxis` may be empty or `{}`; overrides move a document type; `dia init` writes `{}`; invalid JSON is a clear error |
 | `document_types` | each document type is created with its template, numbering and location |
 | `title_rename` | `dia update` renames documents to match their titles and repoints wiki-links |
 | `update_target` | `dia update` acts on the given directory or `DIATAXIS_ROOT`, and fails elsewhere |
@@ -228,7 +247,7 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0019](docs/adr/0019-tag-adrs-by-scope-instead-of-a-separate-idr-document-type.md) - Tag ADRs by scope instead of a separate IDR document type
 * [ADR-0020](docs/adr/0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md) - Drop README generation so dia only renames documents and repoints wiki-links
 * [ADR-0021](docs/adr/0021-dia-update-targets-an-explicit-directory-or-diataxis-root-and-requires-a-diataxis-root.md) - dia update targets an explicit directory or DIATAXIS_ROOT and requires a diataxis root
-* [ADR-0022](docs/adr/0022-a-diataxis-file-may-be-empty-or-commented-and-dia-init-writes-a-commented-sample.md) - A .diataxis file may be empty or commented and dia init writes a commented sample
+* [ADR-0022](docs/adr/0022-a-diataxis-file-only-has-to-exist-and-dia-init-writes-an-empty-object.md) - A .diataxis file only has to exist and dia init writes an empty object
 
 ### Projects
 

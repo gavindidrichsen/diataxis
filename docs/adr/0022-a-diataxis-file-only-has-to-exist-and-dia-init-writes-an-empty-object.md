@@ -83,7 +83,7 @@ This discipline exists because a diataxis document that reads *proven* on the su
 - **Related ADRs**: Link to other ADRs: [[0001-title|ADR-0001]].
 -->
 
-# 0022. A .diataxis file may be empty or commented and dia init writes a commented sample
+# 0022. A .diataxis file only has to exist and dia init writes an empty object
 
 Date: 2026-10-13
 
@@ -100,34 +100,34 @@ With README generation gone ([[0020-drop-readme-generation-so-dia-only-renames-d
 Two problems showed up in testing:
 
 - An **empty** `.diataxis` crashed with a raw `JSON::ParserError` stack trace.
-- `dia init` wrote a fully populated JSON object, which listed defaults the user never chose and left no place to explain the overrides.
+- `dia init` wrote a fully populated JSON object, listing defaults the user never chose.
 
-JSON has no comments, although the `json` gem in use happened to accept `//` lines; relying on that would break silently on a gem change.
+A commented sample was tried and rejected: JSON has no comments, so a file containing them is not valid JSON. Strict parsers (`jq`, Python's `json`) reject it, and `dia` would have depended on its own comment-stripping or on the `json` gem's leniency. The file should stay plain JSON.
 
 ## Decision
 
-- **The file only has to exist.** An empty file, a file of only comments, and `{}` all mean "no overrides": every default applies.
-- **Full-line `//` comments are ignored** by `dia` itself (not by the JSON library): lines whose first non-blank characters are `//` are removed before parsing. `//` inside a value is untouched.
-- **Overrides are plain JSON** added inside an object (`{ "howtos": "docs/guides" }`), merged over the defaults.
-- **`dia init` writes a commented sample above an empty `{}`.** The sample shows the override keys (`default`, `adr`, `projects`, `explanations`, `tutorials`, `howtos`, `cheatsheets`, `wow`) and that paths are relative to the file's directory; the object stays empty.
+- **The file only has to exist.** `{}` and an empty file both mean "no overrides": every default applies.
+- **`dia init` writes a single empty object, `{}`.** Nothing else.
+- **Overrides are plain JSON** added inside the object, for example `{ "howtos": "docs/guides" }`, and are merged over the defaults. The keys and their defaults are documented in the README ("Configuration (`.diataxis`)"), not in the file.
 - **Bad content is a clear error.** Invalid JSON, or JSON that is not an object, raises a `ConfigurationError` naming the file, not a stack trace.
 
 ## Consequences
 
 ### Easier
 
-- Marking a directory as a root is `touch .diataxis`.
-- A new `.diataxis` explains itself and carries no values the user did not choose.
+- Marking a directory as a root is `touch .diataxis` (or `dia init`).
+- The file is always valid JSON, so any tool can read it.
 - A malformed config is a one-line message pointing at the file.
 
 ### Harder
 
-- The format is JSON plus full-line `//` comments, which is not standard JSON; editors may flag the comments, and only whole-line `//` comments are supported (not trailing or `/* */` comments).
-- Existing `.diataxis` files keep working unchanged, but `dia init` output differs from before (comments plus `{}` instead of a populated object).
+- The override keys are not discoverable from the file itself; they live in the README.
+- An empty file is accepted although it is not valid JSON; it is treated as `{}` so that a present file is enough.
+- `dia init` output differs from before (`{}` instead of a populated object); existing `.diataxis` files keep working unchanged.
 
 ### Unchanged
 
-- Override keys, precedence (explicit key, then `default`), and the `DEFAULT_CONFIG` values.
+- The override keys, their precedence (explicit key, then `default`), and the `DEFAULT_CONFIG` values.
 
 ## Related Topics
 

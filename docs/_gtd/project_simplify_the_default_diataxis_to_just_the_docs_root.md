@@ -201,13 +201,13 @@ Sections:
 
 **Problem:** Setting only `"default"` in a `.diataxis` leaves ADRs and projects behind in `docs/`, because `DEFAULT_CONFIG` still hard-codes `adr` and `projects` under `docs/`.
 
-**Done looks like:** ADRs and projects follow the default root (`<default>/adr`, `<default>/_gtd`) unless a `.diataxis` key overrides them. (The file itself is already minimal: PR #62 lets it be empty and `dia init` writes a commented sample above `{}`, ADR-0022.)
+**Done looks like:** ADRs and projects follow the default root (`<default>/adr`, `<default>/_gtd`) unless a `.diataxis` key overrides them. (The file itself is already minimal: PR #62 lets it be empty and `dia init` writes just `{}`, ADR-0022.)
 
 **Motivation:** A config file should only hold choices. The smaller it is, the less there is to explain, copy between repos, and get out of step.
 
 ### What we know
 
-- **Done in [PR #62](https://github.com/gavindidrichsen/diataxis/pull/62):** an empty (or comment-only) `.diataxis` works and `dia init` writes a commented sample above `{}` ([[0022-a-diataxis-file-may-be-empty-or-commented-and-dia-init-writes-a-commented-sample|ADR-0022]]). `Config::DEFAULT_CONFIG` is `default`, `adr` and `projects` ([`lib/diataxis/config.rb`](lib/diataxis/config.rb)). `Config.load` merges a user's `.diataxis` over it.
+- **Done in [PR #62](https://github.com/gavindidrichsen/diataxis/pull/62):** an empty `.diataxis` (or `{}`) works and `dia init` writes just `{}` ([[0022-a-diataxis-file-only-has-to-exist-and-dia-init-writes-an-empty-object|ADR-0022]]). `Config::DEFAULT_CONFIG` is `default`, `adr` and `projects` ([`lib/diataxis/config.rb`](lib/diataxis/config.rb)). `Config.load` merges a user's `.diataxis` over it.
 - Path resolution is `config[type's config_key] || config['default']` ([`lib/diataxis/document.rb`](lib/diataxis/document.rb) `get_configured_directory`; ADR does the same in `ADR.pattern`).
 - **Observed quirk (2026-10-13):** with a `.diataxis` of only `{"default":"notes"}`, `dia --here howto new` wrote to `notes/`, but `dia --here adr new` wrote to `docs/adr/` and `dia --here project new` to `docs/_gtd/`, because the merged `DEFAULT_CONFIG` still supplies `adr` and `projects` with `docs/` baked in.
 - `adr` and `projects` are conventions: [[0014-underscore-the-gtd-directory-for-project-files-so-they-always-live-at-the-top|ADR-0014]] puts projects in `_gtd`; ADRs live in an `adr` folder.
@@ -231,7 +231,7 @@ Sections:
 
 | Option | `.diataxis` written by `dia init` | Cost | Notes |
 | --- | --- | --- | --- |
-| Status quo | an empty `{}` plus a commented sample (done) | none | `default` alone does not move ADRs/projects (quirk above) |
+| Status quo | an empty `{}` (done) | none | `default` alone does not move ADRs/projects (quirk above) |
 | Built-in per-type subdirectory | still `{}` | small: `register` option, resolution order, specs | fixes the quirk; recommended |
 | No `.diataxis` needed for docs | none | medium: needs a root marker | no-config already routes into the current directory ([README](README.md)), so a marker file is still needed |
 
