@@ -134,5 +134,5 @@ Two designs were considered. Reusing the `--here`/`--root` flags and the resolve
 - [[0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags|ADR-0015]] - introduced `DIATAXIS_ROOT` and the "explicit directory overrides it" rule.
 - [[0018-prompt-on-diataxis-root-and-local-diataxis-conflict|ADR-0018]] - routing for document creation.
 - [[0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links|ADR-0020]] - what `update` does.
-- [[project_simplify_diataxis_cli_output_routing_behaviour]] - the project that surfaced this.
+- The "Simplify Diataxis CLI Output Routing Behaviour" project (closed; removed from `docs/_gtd`, see git history) surfaced this.
 - [`lib/diataxis/cli/command_handlers.rb`](../../lib/diataxis/cli/command_handlers.rb) - `handle_update`, `update_target`, `require_diataxis_root!`.
