@@ -40,9 +40,7 @@ module Diataxis
       prefix: 'explanation',
       category: 'explanation',
       config_key: 'explanations',
-      readme_section: 'Explanations',
-      template: 'explanation',
-      section_tag: 'explanation'
+      template: 'explanation'
     )
 
     r.register(
@@ -50,9 +48,7 @@ module Diataxis
       prefix: 'tutorial',
       category: 'tutorial',
       config_key: 'tutorials',
-      readme_section: 'Tutorials',
-      template: 'tutorial',
-      section_tag: 'tutorial'
+      template: 'tutorial'
     )
 
     r.register(
@@ -60,9 +56,7 @@ module Diataxis
       prefix: 'project',
       category: 'references',
       config_key: 'projects',
-      readme_section: 'Projects',
-      template: 'project',
-      section_tag: 'project'
+      template: 'project'
     )
 
     r.register(
@@ -70,9 +64,7 @@ module Diataxis
       prefix: 'pr',
       category: 'explanation',
       config_key: 'explanations',
-      readme_section: 'Pull Requests',
-      template: 'pr',
-      section_tag: 'pr'
+      template: 'pr'
     )
 
     r.register(
@@ -80,9 +72,7 @@ module Diataxis
       prefix: 'fivewhy',
       category: 'explanation',
       config_key: 'explanations',
-      readme_section: '5 Whys',
-      template: 'fivewhy',
-      section_tag: 'fivewhy'
+      template: 'fivewhy'
     )
 
     r.register(
@@ -90,9 +80,7 @@ module Diataxis
       prefix: 'wow',
       category: 'references',
       config_key: 'wow',
-      readme_section: 'Ways of Working',
-      template: 'wow',
-      section_tag: 'wow'
+      template: 'wow'
     )
 
     r.register(
@@ -101,10 +89,8 @@ module Diataxis
       prefix: '[0-9][0-9][0-9][0-9]',
       category: 'references',
       config_key: 'adr',
-      readme_section: 'Design Decisions',
       slug_separator: '-',
-      template: 'adr',
-      section_tag: 'adr'
+      template: 'adr'
     )
 
     r.register(
@@ -113,9 +99,7 @@ module Diataxis
       prefix: 'howto',
       category: 'howto',
       config_key: 'howtos',
-      readme_section: 'How-To Guides',
-      template: 'howto',
-      section_tag: 'howto'
+      template: 'howto'
     )
 
     r.register(
@@ -123,9 +107,7 @@ module Diataxis
       prefix: 'cheatsheet',
       category: 'references',
       config_key: 'cheatsheets',
-      readme_section: 'Cheatsheets',
-      template: 'cheatsheet',
-      section_tag: 'cheatsheet'
+      template: 'cheatsheet'
     )
   end
 end

@@ -7,7 +7,6 @@ Feature: Title Change and Filename Rename
     Given a file named ".diataxis" with:
       """
       {
-        "readme": "test_docs/README.md",
         "default": "test_docs",
         "howtos": "test_docs/how-to",
         "tutorials": "test_docs/tutorials",
@@ -28,8 +27,6 @@ Feature: Title Change and Filename Rename
     When I run `bundle exec dia update .`
     Then the exit status should be 0
     And the file "test_docs/explanations/explanation_advanced_system_design.md" should exist
-    And the file "test_docs/README.md" should contain "Advanced System Design"
-    And the file "test_docs/README.md" should contain "explanation_advanced_system_design.md"
 
   Scenario: Rename how-to when title changes
     When I run `bundle exec dia howto new "Configure System"`
@@ -43,10 +40,13 @@ Feature: Title Change and Filename Rename
     When I run `bundle exec dia update .`
     Then the exit status should be 0
     And the file "test_docs/how-to/howto_how_to_configure_advanced_networking.md" should exist
-    And the file "test_docs/README.md" should contain "How to Configure Advanced Networking"
 
-  Scenario: README links update after rename
+  Scenario: Wiki-links update after rename
     When I run `bundle exec dia tutorial new "Getting Started"`
+    And a file named "test_docs/notes.md" with:
+      """
+      See [[tutorial_getting_started]] and [[tutorial_getting_started|Getting Started]].
+      """
     Given a file named "test_docs/tutorials/tutorial_getting_started.md" with:
       """
       # Quick Start Guide
@@ -54,15 +54,16 @@ Feature: Title Change and Filename Rename
       A faster way to get started.
       """
     When I run `bundle exec dia update .`
-    Then the file "test_docs/README.md" should not contain "tutorial_getting_started.md"
-    And the file "test_docs/README.md" should contain "tutorial_quick_start_guide.md"
-    And the file "test_docs/README.md" should contain "Quick Start Guide"
+    Then the exit status should be 0
+    And the file "test_docs/tutorials/tutorial_quick_start_guide.md" should exist
+    And the file "test_docs/notes.md" should contain "[[tutorial_quick_start_guide]]"
+    And the file "test_docs/notes.md" should contain "[[tutorial_quick_start_guide|Quick Start Guide]]"
+    And the file "test_docs/notes.md" should not contain "tutorial_getting_started"
 
   Scenario: Rename project file outside the configured projects directory
     Given a file named ".diataxis" with:
       """
       {
-        "readme": "test_docs/README.md",
         "default": "test_docs",
         "projects": "test_docs/_gtd"
       }
@@ -76,8 +77,6 @@ Feature: Title Change and Filename Rename
     When I run `bundle exec dia update .`
     Then the exit status should be 0
     And the file "test_docs/other/project_new_title.md" should exist
-    And the file "test_docs/README.md" should contain "New Title"
-    And the file "test_docs/README.md" should contain "project_new_title.md"
 
   Scenario: Wiki-links to a renamed file are repointed, exact matches only
     When I run `bundle exec dia explanation new "System Architecture"`

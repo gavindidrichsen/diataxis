@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative 'errors'
 
 module Diataxis
   # Configuration manager for Diataxis
@@ -10,27 +11,40 @@ module Diataxis
     DEFAULT_DOCS_ROOT = 'docs'
     DEFAULT_CONFIG = {
       'default' => DEFAULT_DOCS_ROOT,
-      'readme' => 'README.md',
       'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
-      'wow' => "#{DEFAULT_DOCS_ROOT}/wow",
       'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd"
     }.freeze
 
+    # What `dia init` writes: an empty object, so every default applies until an
+    # override is added (see the README for the keys).
+    TEMPLATE = "{}\n"
+
     def self.load(directory = '.')
       config_path = find_config(directory)
-      if config_path
-        user_config = JSON.parse(File.read(config_path))
-        DEFAULT_CONFIG.merge(user_config)
-      else
-        DEFAULT_CONFIG
-      end
+      return DEFAULT_CONFIG unless config_path
+
+      DEFAULT_CONFIG.merge(parse(config_path))
     end
 
-    def self.create(directory = '.', config = DEFAULT_CONFIG)
+    def self.create(directory = '.')
       config_path = File.join(directory, CONFIG_FILE)
-      File.write(config_path, "#{JSON.pretty_generate(config)}\n")
-      Diataxis.logger.info "Created #{config_path} with default configuration"
+      File.write(config_path, TEMPLATE)
+      Diataxis.logger.info "Created #{config_path} (an empty object: every default applies)"
     end
+
+    # Reads a .diataxis file (a JSON object). A file with nothing in it means `{}`.
+    def self.parse(config_path)
+      text = File.read(config_path).strip
+      return {} if text.empty?
+
+      parsed = JSON.parse(text)
+      return parsed if parsed.is_a?(Hash)
+
+      raise ConfigurationError.new("#{config_path} must contain a JSON object, not #{parsed.class}.", config_path: config_path)
+    rescue JSON::ParserError => e
+      raise ConfigurationError.new("#{config_path} is not valid JSON: #{e.message.lines.first.to_s.strip}", config_path: config_path)
+    end
+    private_class_method :parse
 
     def self.find_config(start_dir)
       current_dir = File.expand_path(start_dir)

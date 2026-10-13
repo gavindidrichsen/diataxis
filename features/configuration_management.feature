@@ -8,7 +8,6 @@ Feature: Configuration Management and Document Creation
     Given a file named ".diataxis" with:
       """
       {
-        "readme": "test_docs/README.md",
         "howtos": "test_docs/how-to",
         "tutorials": "test_docs/tutorials",
         "explanations": "test_docs/explanations",
@@ -21,10 +20,43 @@ Feature: Configuration Management and Document Creation
     Then the exit status should be 0
     And the output should contain "Created new howto:"
     And the file "test_docs/how-to/howto_how_to_configure_system.md" should exist
-    And the file "test_docs/README.md" should exist
 
-  Scenario: README contains correct how-to link
-    When I run `bundle exec dia howto new "Configure System"`
-    Then the file "test_docs/README.md" should contain "### How-To Guides"
-    And the file "test_docs/README.md" should contain "How to configure System"
-    And the file "test_docs/README.md" should contain "how-to/howto_how_to_configure_system.md"
+  Scenario: An empty .diataxis applies every default
+    Given a file named "empty/.diataxis" with:
+      """
+      """
+    When I cd to "empty"
+    And I run `bundle exec dia howto new "Configure System"`
+    Then the exit status should be 0
+    And the file "docs/howto_how_to_configure_system.md" should exist
+
+  Scenario: dia init writes an empty object
+    Given a directory named "fresh"
+    When I cd to "fresh"
+    And I run `bundle exec dia init`
+    Then the exit status should be 0
+    And the file ".diataxis" should contain "{}"
+    And the file ".diataxis" should not contain "docs"
+    And I run `bundle exec dia howto new "Configure System"`
+    And the file "docs/howto_how_to_configure_system.md" should exist
+
+  Scenario: Invalid JSON in .diataxis is a clear error, not a stack trace
+    Given a file named "broken/.diataxis" with:
+      """
+      { not json
+      """
+    When I cd to "broken"
+    And I run `bundle exec dia howto new "Configure System"`
+    Then the exit status should be 1
+    And the output should contain "is not valid JSON"
+    And the output should not contain "from "
+
+  Scenario: An override in .diataxis moves that document type
+    Given a file named "override/.diataxis" with:
+      """
+      { "howtos": "docs/guides" }
+      """
+    When I cd to "override"
+    And I run `bundle exec dia howto new "Configure System"`
+    Then the exit status should be 0
+    And the file "docs/guides/howto_how_to_configure_system.md" should exist

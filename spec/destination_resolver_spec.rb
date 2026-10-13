@@ -42,7 +42,7 @@ RSpec.describe Diataxis::CLI::DestinationResolver do
   context 'when DIATAXIS_ROOT is unset and a local .diataxis exists' do
     before { File.write(cwd_config_path, JSON.generate(Diataxis::Config::DEFAULT_CONFIG)) }
 
-    it 'writes normally into the current directory (config-driven, README managed)' do
+    it 'writes normally into the current directory (config-driven)' do
       destination = described_class.resolve(root: nil, cwd: cwd, prompt: refuting_prompt)
 
       expect(destination.directory).to eq(cwd)

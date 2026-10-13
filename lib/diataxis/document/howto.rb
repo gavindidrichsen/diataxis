@@ -11,9 +11,7 @@ module Diataxis
       prefix: 'howto',
       category: 'howto',
       config_key: 'howtos',
-      readme_section: 'How-To Guides',
-      template: 'howto',
-      section_tag: 'howto'
+      template: 'howto'
     )
 
     # Only intercepts the title (to rewrite it into "How to ..."); every other

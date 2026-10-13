@@ -7,7 +7,6 @@ Feature: Document Tagging
     Given a file named ".diataxis" with:
       """
       {
-        "readme": "test_docs/README.md",
         "default": "test_docs",
         "explanations": "test_docs/explanations"
       }

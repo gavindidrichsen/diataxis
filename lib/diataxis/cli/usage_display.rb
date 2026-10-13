@@ -48,7 +48,8 @@ module Diataxis
           Commands:
             init                      - Initialize .diataxis config file
           #{doc_commands}
-            update [directory]        - Update document filenames and README.md
+            update [directory]        - Rename documents to match their titles and repoint wiki-links
+                                    (the directory must hold a .diataxis; defaults to DIATAXIS_ROOT)
           #{'  '}
           Environment Variables:
             DIATAXIS_ROOT             - Root directory for dia commands (overrides CWD)

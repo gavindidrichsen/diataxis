@@ -12,17 +12,14 @@ module Diataxis
     class << self
       attr_reader :type_config
 
-      def register_type(command:, prefix:, category:, config_key:, readme_section:, slug_separator: '_', template: nil,
-                        section_tag: nil, **_ignored)
+      def register_type(command:, prefix:, category:, config_key:, slug_separator: '_', template: nil)
         @type_config = {
           command: command,
           prefix: prefix,
           category: category,
           config_key: config_key,
-          readme_section: readme_section,
           slug_separator: slug_separator,
-          template: template,
-          section_tag: section_tag
+          template: template
         }
         DocumentRegistry.register(command, self)
       end
@@ -71,22 +68,14 @@ module Diataxis
         filename.match?(/^#{Regexp.escape(type_config[:prefix])}_.*\.md$/)
       end
 
-      def readme_section_title
-        type_config[:readme_section]
-      end
-
       def config_key
         type_config[:config_key]
-      end
-
-      def format_readme_entry(title, relative_path, _filepath)
-        "* [#{title}](#{relative_path})"
       end
 
       def find_files(config_root = '.')
         search_pattern = File.expand_path(pattern(config_root), config_root)
         files = Dir.glob(search_pattern).sort
-        Diataxis.logger.info "Found #{files.length} #{type_config[:section_tag] || name&.split('::')&.last || 'unknown'} files matching #{search_pattern}"
+        Diataxis.logger.info "Found #{files.length} #{type_config[:command]} files matching #{search_pattern}"
         files
       end
     end
@@ -96,8 +85,7 @@ module Diataxis
     # (no config lookup, no mkdir). Used by the `--stdout` flag.
     #
     # `standalone: true` also skips get_configured_directory (the document is
-    # written straight into `directory`, with no .diataxis-driven subdirectory
-    # and no README management by the caller) but, unlike `preview`, still
+    # written straight into `directory`, with no .diataxis-driven subdirectory) but, unlike `preview`, still
     # writes to disk via #create. Used when DestinationResolver finds neither
     # DIATAXIS_ROOT nor a local .diataxis config.
     def initialize(title, directory = '.', tags: [], preview: false, standalone: false)

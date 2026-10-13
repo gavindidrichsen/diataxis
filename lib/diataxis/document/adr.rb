@@ -10,10 +10,8 @@ module Diataxis
       prefix: '[0-9][0-9][0-9][0-9]',
       category: 'references',
       config_key: 'adr',
-      readme_section: 'Design Decisions',
       slug_separator: '-',
-      template: 'adr',
-      section_tag: 'adr'
+      template: 'adr'
     )
 
     def self.pattern(config_root = '.')
@@ -41,12 +39,6 @@ module Diataxis
     def self.title_of_filename?(title, filename_stem)
       clean_title = title.sub(/^\d+\. /, '')
       filename_stem.sub(/^\d+-/, '') == slugify(clean_title)
-    end
-
-    def self.format_readme_entry(title, relative_path, filepath)
-      adr_num = File.basename(filepath)[0..3]
-      clean_title = title.sub(/^\d+\. /, '')
-      "* [ADR-#{adr_num}](#{relative_path}) - #{clean_title}"
     end
 
     protected

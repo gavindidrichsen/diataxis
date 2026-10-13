@@ -2,7 +2,7 @@
 
 ## Description
 
-This guide walks you through adding a new document template type to the Diataxis gem. The registry DSL makes this a simple process — most of the infrastructure (CLI routing, help text, document creation, README integration) is automatic.
+This guide walks you through adding a new document template type to the Diataxis gem. The registry DSL makes this a simple process — most of the infrastructure (CLI routing, help text, document creation, rename and wiki-link upkeep) is automatic.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Once a type is registered, the following happens with zero additional code:
 - **CLI command**: `dia <command> new "Title"` is routed automatically via `DocumentRegistry.lookup` in `CommandRouter`
 - **Help text**: `dia --help` lists the new command automatically via `DocumentRegistry.command_names` in `UsageDisplay`
 - **Document creation**: `CommandHandlers.handle_document` is generic — it works for all registered types
-- **README integration**: `dia update .` discovers files, generates sections, and manages links for all registered types
+- **Rename and link upkeep**: `dia update .` discovers files of every registered type, renames them to match their titles, and repoints wiki-links
 
 ## Usage
 
@@ -92,9 +92,7 @@ r.register(
   prefix: 'checklist',        # Filename prefix: checklist_my_title.md
   category: 'references',     # Template directory: templates/references/
   config_key: 'checklists',   # .diataxis config key for custom directory
-  readme_section: 'Checklists', # README section heading
-  template: 'checklist',      # Template filename (without .md)
-  section_tag: 'checklist'    # HTML comment tag in README
+  template: 'checklist'       # Template filename (without .md)
 )
 ```
 
@@ -106,9 +104,7 @@ r.register(
 | `prefix` | yes | Filename prefix — files are named `<prefix>_<slug>.md` |
 | `category` | yes | Template subdirectory under `templates/` |
 | `config_key` | yes | Key in `.diataxis` config for custom directory path |
-| `readme_section` | yes | Section heading used in the generated README |
 | `template` | yes | Template filename (without `.md` extension) in `templates/<category>/` |
-| `section_tag` | yes | HTML comment tag used to mark the README section |
 | `slug_separator` | no | Character between prefix and slug (default: `_`). ADR uses `-` |
 | `handler` | no | Custom Document subclass (see "Custom behavior" below) |
 
@@ -119,7 +115,6 @@ By default, documents are created in the directory specified by the `default` ke
 ```ruby
 DEFAULT_CONFIG = {
   'default' => DEFAULT_DOCS_ROOT,
-  'readme' => 'README.md',
   'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
   'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd",
   'checklists' => "#{DEFAULT_DOCS_ROOT}/checklists"  # Add this
@@ -135,7 +130,7 @@ bundle exec rspec
 bundle exec cucumber
 ```
 
-The existing test suite exercises template loading, document creation, and README integration for all registered types. If your template uses `{{common.metadata}}`, the TemplateLoader tests will verify it resolves correctly.
+The existing test suite exercises template loading, document creation, and rename/wiki-link upkeep for all registered types. If your template uses `{{common.metadata}}`, the TemplateLoader tests will verify it resolves correctly.
 
 ## Custom behavior
 
@@ -157,10 +152,8 @@ r.register(
   prefix: '[0-9][0-9][0-9][0-9]',
   category: 'references',
   config_key: 'adr',
-  readme_section: 'Design Decisions',
   slug_separator: '-',
-  template: 'adr',
-  section_tag: 'adr'
+  template: 'adr'
 )
 ```
 
@@ -178,9 +171,6 @@ bundle exec dia checklist new "Deployment checklist"
 # Verify the file was created
 ls docs/checklists/
 
-# Verify README was updated
-cat docs/README.md | grep -A2 "Checklists"
-
 # Test title change and filename sync
 # (edit the title in the created file, then:)
 bundle exec dia update .
@@ -188,7 +178,7 @@ bundle exec dia update .
 
 ## Removing a document type
 
-Removing a type is the reverse of adding one: undo the registration, delete the template, and strip the tests and docs that referenced it. Because `register` drives the CLI, help text, and README integration automatically, there is no per-command code to hunt down — the same single registration that wired everything up is the single thing you unwire.
+Removing a type is the reverse of adding one: undo the registration, delete the template, and strip the tests and docs that referenced it. Because `register` drives the CLI, help text, and rename/wiki-link upkeep automatically, there is no per-command code to hunt down — the same single registration that wired everything up is the single thing you unwire.
 
 ### Step 1: Delete the register call
 
@@ -221,7 +211,7 @@ Tests that merely *used* the type as a convenient fixture (e.g. a tagging test t
 ### Step 4: Update the docs
 
 - This guide's template-directory listing (under "Create the template file").
-- Any README sections or other docs that named the type.
+- Any docs (including the repo README) that named the type.
 
 ### Step 5: Run tests
 

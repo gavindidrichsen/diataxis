@@ -1,21 +1,16 @@
 # Diataxis
 
-Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It supports 9 document types — how-to guides, tutorials, explanations, ADRs, notes, handovers, 5-why analyses, project briefs, and PR summaries — with automatic README integration.
+Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It supports 9 document types — how-to guides, tutorials, explanations, ADRs, 5-why analyses, project briefs, PR summaries, ways of working, and cheatsheets — and keeps filenames and wiki-links in step with titles.
 
 ## Features
 
-* Create and manage 9 document types via a simple registry DSL
-* How-to guides with automatic "How to" title normalization
-* ADRs with auto-numbered sequential filenames
-* Tutorials, explanations, notes, handovers, 5-why analyses, project briefs, and PR summaries
-* Automatically update README.md with links to all documentation
-* Recursive document discovery in subdirectories
-* Configurable directory structure via `.diataxis` config file
-* `DIATAXIS_ROOT` environment variable for running `dia` from any directory, with `--here`/`--root` to resolve a local-vs-root conflict non-interactively
-* `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time
-* `--stdout` to print a template to standard output instead of writing a file
-* Shared metadata guidelines injected into templates via `{{common.metadata}}`
-* Maintains alphabetical order in documentation lists
+* **Create** documents from templates with `dia <type> new "Title"` — 9 document types via a registry DSL, with how-to title normalization, auto-numbered ADRs and tag front matter. `new` only creates the file; it never renames anything or writes a README.
+* **Keep names in step with titles** with `dia update [directory]` — renames documents so each filename matches its `# title` and repoints `[[wiki-links]]` to them. It acts on the directory you give, else `DIATAXIS_ROOT`, and fails if neither is available or the target has no `.diataxis`.
+* **Configure only what you change.** A `.diataxis` file only has to exist: `dia init` writes `{}` and every default applies. Add JSON overrides to move where a type is written (see Configuration below).
+* Recursive document discovery in subdirectories.
+* `DIATAXIS_ROOT` for running `dia` from any directory, with `--here`/`--root` to resolve a local-vs-root conflict non-interactively when creating documents.
+* `--tag`/`-t` flags and `DIATAXIS_TAGS` for attaching YAML front matter tags at creation time.
+* `--stdout` to print a template to standard output instead of writing a file.
 
 ## Installation
 
@@ -33,9 +28,8 @@ Make sure that `dia` is available on your PATH.
 ## Usage
 
 ```bash
-# initialize a new diataxis project (creates .diataxis config)
+# mark this directory as a diataxis root (writes .diataxis containing just {})
 dia init
-cat .diataxis                                           # view and edit the default configuration
 
 # Create documents — all 9 types supported
 dia howto new "How to configure SSL certificates"       # how-to guide (auto "How to" prefix)
@@ -43,18 +37,65 @@ dia howto new "Configure SSL certificates"              # imperative form also w
 dia tutorial new "Getting Started with Docker"          # tutorial
 dia explanation new "Why We Use PostgreSQL"             # explanation
 dia adr new "Do whiteboard wednesday talks"             # ADR (auto-numbered)
-dia note new "Meeting Notes Q4"                         # note
-dia handover new "Frontend Ownership"                   # handover
-dia 5why new "Login Timeout Root Cause"                 # 5-why analysis
+dia fivewhy new "Login Timeout Root Cause"              # 5-why analysis
 dia project new "API Migration"                         # project brief
 dia pr new "Refactor Auth Module"                       # PR summary
+dia wow new "Branch Discipline"                         # way of working
+dia cheatsheet new "Docker commands"                    # cheatsheet
 ```
 
-If you change any document titles, then run the following to automatically rename the filenames and update the links:
+### Configuration (`.diataxis`)
+
+A `.diataxis` file marks a directory as a documentation root. It only has to exist: `dia init` writes a single empty JSON object,
+
+```json
+{}
+```
+
+and every default applies (documents in `docs/`, ADRs in `docs/adr`, projects in `docs/_gtd`). An empty file is treated the same way. The file is plain JSON, so it cannot hold comments.
+
+#### Overriding locations
+
+To move where a type is written, add its key to the object. Paths are relative to the directory that holds the `.diataxis`. For example, to put how-tos in `docs/guides` and ADRs in `decisions`:
+
+```json
+{
+  "howtos": "docs/guides",
+  "adr": "decisions"
+}
+```
+
+| Key | Document types it controls | Default |
+|---|---|---|
+| `default` | every type that has no key of its own | `docs` |
+| `adr` | `adr` | `docs/adr` |
+| `projects` | `project` | `docs/_gtd` |
+| `explanations` | `explanation`, `pr`, `fivewhy` | the `default` directory |
+| `tutorials` | `tutorial` | the `default` directory |
+| `howtos` | `howto` | the `default` directory |
+| `cheatsheets` | `cheatsheet` | the `default` directory |
+| `wow` | `wow` | the `default` directory |
+
+A key you do not set keeps its default. Note that `default` alone does not move ADRs or projects (they have their own defaults); set `adr` and `projects` too if you want them elsewhere. Invalid JSON, or JSON that is not an object, is reported as an error naming the file. See [ADR-0022](docs/adr/0022-a-diataxis-file-only-has-to-exist-and-dia-init-writes-an-empty-object.md).
+
+### Renaming documents after a title change (`dia update`)
+
+If you change a document's title, run `dia update` to rename its file and repoint `[[wiki-links]]` to it:
 
 ```bash
-dia update .
+dia update .                       # the directory that holds the .diataxis
+dia update /path/to/docs/root      # a specific directory, from anywhere
+dia update                         # DIATAXIS_ROOT
 ```
+
+| You run | It acts on |
+|---|---|
+| `dia update <directory>` | that directory, which must hold a `.diataxis` |
+| `dia update` | `$DIATAXIS_ROOT` (which must hold a `.diataxis`) |
+| `dia update`, with `DIATAXIS_ROOT` unset | nothing: it fails and tells you to pass a directory or set `DIATAXIS_ROOT` |
+| `dia update <directory>` without a `.diataxis` in it | nothing: it fails, naming the `.diataxis` root above it if there is one |
+
+`update` never assumes the current directory and never prompts. Creating a document (`dia <type> new`) does not rename anything; run `dia update` for that. See [ADR-0021](docs/adr/0021-dia-update-targets-an-explicit-directory-or-diataxis-root-and-requires-a-diataxis-root.md).
 
 ### Environment Variables
 
@@ -63,14 +104,14 @@ Set `DIATAXIS_ROOT` to run `dia` commands from any directory without `cd`-ing to
 ```bash
 export DIATAXIS_ROOT=/path/to/my/project
 dia explanation new "Why We Chose PostgreSQL"           # creates doc under DIATAXIS_ROOT
-dia update                                              # updates README at DIATAXIS_ROOT
+dia update                                              # renames documents under DIATAXIS_ROOT to match their titles
 ```
 
-`init` and `update` always target `DIATAXIS_ROOT` (when set) and load the `.diataxis` config from there. `dia <type> new` routes based on whether `DIATAXIS_ROOT` is set to somewhere other than the current directory, and whether a local `.diataxis` governs the current directory:
+`init` targets `DIATAXIS_ROOT` when set. `dia update` targets the directory you pass, otherwise `DIATAXIS_ROOT`, otherwise it fails (it never assumes the current directory); the `.diataxis` config is loaded from that directory. `dia <type> new` routes based on whether `DIATAXIS_ROOT` is set to somewhere other than the current directory, and whether a local `.diataxis` governs the current directory:
 
 | `DIATAXIS_ROOT` | local `.diataxis` | Where the new document goes |
 |---|---|---|
-| unset (or same as CWD) | absent | Straight into the current directory — no `docs/` subdirectory, no README update |
+| unset (or same as CWD) | absent | Straight into the current directory — no `docs/` subdirectory |
 | unset (or same as CWD) | present | The current directory, using the local config (as usual) |
 | set, elsewhere | absent | `DIATAXIS_ROOT`, falling back to the default config if it has none of its own |
 | set, elsewhere | present | **Asks** — this directory, or your `DIATAXIS_ROOT` central knowledge store? |
@@ -123,9 +164,9 @@ dia adr new "Use PostgreSQL" --stdout                # ADR number/status still i
 dia howto new "Configure Redis" --stdout --tag backend
 ```
 
-`--stdout` has no filesystem side effects: it needs no `.diataxis` config, creates no directories, writes no file, and leaves `README.md` untouched. Type-specific behaviour (how-to title normalization, ADR numbering, tag front matter) is preserved.
+`--stdout` has no filesystem side effects: it needs no `.diataxis` config, creates no directories and writes no file. Type-specific behaviour (how-to title normalization, ADR numbering, tag front matter) is preserved.
 
-For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
+For design decisions see [docs/adr](./docs/adr); to add a document type see [how to add a new document template](./docs/how_to_add_a_new_document_template.md). The index below is maintained by hand (`dia` no longer generates a README).
 
 ## Testing
 
@@ -133,6 +174,18 @@ This project uses:
 
 * **RSpec** for unit testing
 * **Cucumber with Aruba** for BDD/CLI integration testing
+
+The behaviour is specified as Cucumber features in [`features/`](features):
+
+| Feature | Behaviour it defines |
+|---|---|
+| `configuration_management` | a `.diataxis` may be empty or `{}`; overrides move a document type; `dia init` writes `{}`; invalid JSON is a clear error |
+| `document_types` | each document type is created with its template, numbering and location |
+| `title_rename` | `dia update` renames documents to match their titles and repoints wiki-links |
+| `update_target` | `dia update` acts on the given directory or `DIATAXIS_ROOT`, and fails elsewhere |
+| `no_readme` | `dia` creates and renames documents but never writes a README |
+| `subdirectory_discovery`, `yaml_front_matter` | documents in subdirectories and with front matter are found and renamed |
+| `diataxis_root`, `tagging` | `DIATAXIS_ROOT`, `--here`/`--root`, and tags |
 
 For detailed information on using Cucumber with Aruba, see [Cucumber & Aruba Cheatsheet](../../../tools/@cheatsheets/cucumber.md).
 
@@ -173,7 +226,6 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 
 ### Design Decisions
 
-<!-- adrlog -->
 * [ADR-0001](docs/adr/0001-adopt-diataxis-documentation-framework.md) - Adopt Diataxis Documentation Framework
 * [ADR-0002](docs/adr/0002-use-configuration-file-for-document-paths.md) - Use Configuration File for Document Paths
 * [ADR-0003](docs/adr/0003-auto-generate-readme-with-document-links.md) - Auto-Generate README with Document Links
@@ -193,11 +245,12 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0017](docs/adr/0017-obsidian-not-github-is-now-the-primary-reading-surface.md) - Obsidian, not GitHub, is now the primary reading surface
 * [ADR-0018](docs/adr/0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md) - Prompt on DIATAXIS_ROOT and local .diataxis conflict
 * [ADR-0019](docs/adr/0019-tag-adrs-by-scope-instead-of-a-separate-idr-document-type.md) - Tag ADRs by scope instead of a separate IDR document type
-<!-- adrlogstop -->
+* [ADR-0020](docs/adr/0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md) - Drop README generation so dia only renames documents and repoints wiki-links
+* [ADR-0021](docs/adr/0021-dia-update-targets-an-explicit-directory-or-diataxis-root-and-requires-a-diataxis-root.md) - dia update targets an explicit directory or DIATAXIS_ROOT and requires a diataxis root
+* [ADR-0022](docs/adr/0022-a-diataxis-file-only-has-to-exist-and-dia-init-writes-an-empty-object.md) - A .diataxis file only has to exist and dia init writes an empty object
 
 ### Projects
 
-<!-- projectlog -->
 * [Drop the README altogether](docs/_gtd/project_drop_the_readme_altogether.md)
 * [Simplify Diataxis CLI Output Routing Behaviour](docs/_gtd/project_simplify_diataxis_cli_output_routing_behaviour.md)
-<!-- projectlogstop -->
+* [Simplify the default .diataxis to just the docs root](docs/_gtd/project_simplify_the_default_diataxis_to_just_the_docs_root.md)
