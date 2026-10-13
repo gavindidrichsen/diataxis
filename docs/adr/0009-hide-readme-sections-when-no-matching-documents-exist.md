@@ -4,7 +4,7 @@ Date: 2025-11-04
 
 ## Status
 
-Proposed
+Superseded by [ADR-0020](./0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md)
 
 ## Context
 

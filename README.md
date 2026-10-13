@@ -1,6 +1,6 @@
 # Diataxis
 
-Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It supports 9 document types — how-to guides, tutorials, explanations, ADRs, notes, handovers, 5-why analyses, project briefs, and PR summaries — with automatic README integration.
+Diataxis is a command-line tool for managing documentation following the [Diataxis framework](https://diataxis.fr/). It supports 9 document types — how-to guides, tutorials, explanations, ADRs, notes, handovers, 5-why analyses, project briefs, and PR summaries — and keeps filenames and wiki-links in step with titles.
 
 ## Features
 
@@ -8,7 +8,7 @@ Diataxis is a command-line tool for managing documentation following the [Diatax
 * How-to guides with automatic "How to" title normalization
 * ADRs with auto-numbered sequential filenames
 * Tutorials, explanations, notes, handovers, 5-why analyses, project briefs, and PR summaries
-* Automatically update README.md with links to all documentation
+* `dia update` renames documents to match their titles and repoints `[[wiki-links]]` to them
 * Recursive document discovery in subdirectories
 * Configurable directory structure via `.diataxis` config file
 * `DIATAXIS_ROOT` environment variable for running `dia` from any directory, with `--here`/`--root` to resolve a local-vs-root conflict non-interactively
@@ -63,14 +63,14 @@ Set `DIATAXIS_ROOT` to run `dia` commands from any directory without `cd`-ing to
 ```bash
 export DIATAXIS_ROOT=/path/to/my/project
 dia explanation new "Why We Chose PostgreSQL"           # creates doc under DIATAXIS_ROOT
-dia update                                              # updates README at DIATAXIS_ROOT
+dia update                                              # renames documents under DIATAXIS_ROOT to match their titles
 ```
 
 `init` and `update` always target `DIATAXIS_ROOT` (when set) and load the `.diataxis` config from there. `dia <type> new` routes based on whether `DIATAXIS_ROOT` is set to somewhere other than the current directory, and whether a local `.diataxis` governs the current directory:
 
 | `DIATAXIS_ROOT` | local `.diataxis` | Where the new document goes |
 |---|---|---|
-| unset (or same as CWD) | absent | Straight into the current directory — no `docs/` subdirectory, no README update |
+| unset (or same as CWD) | absent | Straight into the current directory — no `docs/` subdirectory |
 | unset (or same as CWD) | present | The current directory, using the local config (as usual) |
 | set, elsewhere | absent | `DIATAXIS_ROOT`, falling back to the default config if it has none of its own |
 | set, elsewhere | present | **Asks** — this directory, or your `DIATAXIS_ROOT` central knowledge store? |
@@ -123,9 +123,9 @@ dia adr new "Use PostgreSQL" --stdout                # ADR number/status still i
 dia howto new "Configure Redis" --stdout --tag backend
 ```
 
-`--stdout` has no filesystem side effects: it needs no `.diataxis` config, creates no directories, writes no file, and leaves `README.md` untouched. Type-specific behaviour (how-to title normalization, ADR numbering, tag front matter) is preserved.
+`--stdout` has no filesystem side effects: it needs no `.diataxis` config, creates no directories and writes no file. Type-specific behaviour (how-to title normalization, ADR numbering, tag front matter) is preserved.
 
-For more information including design decisions and how-to's see [docs/README.md](./docs/README.md).
+For design decisions see [docs/adr](./docs/adr); to add a document type see [how to add a new document template](./docs/how_to_add_a_new_document_template.md). The index below is maintained by hand (`dia` no longer generates a README).
 
 ## Testing
 
@@ -173,7 +173,6 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 
 ### Design Decisions
 
-<!-- adrlog -->
 * [ADR-0001](docs/adr/0001-adopt-diataxis-documentation-framework.md) - Adopt Diataxis Documentation Framework
 * [ADR-0002](docs/adr/0002-use-configuration-file-for-document-paths.md) - Use Configuration File for Document Paths
 * [ADR-0003](docs/adr/0003-auto-generate-readme-with-document-links.md) - Auto-Generate README with Document Links
@@ -193,11 +192,9 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 * [ADR-0017](docs/adr/0017-obsidian-not-github-is-now-the-primary-reading-surface.md) - Obsidian, not GitHub, is now the primary reading surface
 * [ADR-0018](docs/adr/0018-prompt-on-diataxis-root-and-local-diataxis-conflict.md) - Prompt on DIATAXIS_ROOT and local .diataxis conflict
 * [ADR-0019](docs/adr/0019-tag-adrs-by-scope-instead-of-a-separate-idr-document-type.md) - Tag ADRs by scope instead of a separate IDR document type
-<!-- adrlogstop -->
+* [ADR-0020](docs/adr/0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md) - Drop README generation so dia only renames documents and repoints wiki-links
 
 ### Projects
 
-<!-- projectlog -->
 * [Drop the README altogether](docs/_gtd/project_drop_the_readme_altogether.md)
 * [Simplify Diataxis CLI Output Routing Behaviour](docs/_gtd/project_simplify_diataxis_cli_output_routing_behaviour.md)
-<!-- projectlogstop -->
