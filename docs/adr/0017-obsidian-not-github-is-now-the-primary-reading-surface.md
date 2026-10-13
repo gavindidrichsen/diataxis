@@ -24,7 +24,7 @@ The tooling has already been drifting this way: the ADR and project templates bo
 
 - The generated index uses Obsidian wiki-links — `[[explanation_advanced_system_design]]` — instead of relative Markdown links. The link target carries no `.md` extension; on-disk filenames are unchanged.
 - Obsidian (graph, backlinks, tags) is the primary navigation surface. The README is demoted from "the index" to, at most, a convenience file — it is no longer the canonical way to discover documents.
-- Whether to stop generating the README altogether is **deliberately not decided here**. It was tracked as an open project ([[project_drop_the_readme_altogether]]) and is decided in [ADR-0020](./0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md): the README is dropped.
+- Whether to stop generating the README altogether is **deliberately not decided here**. It was tracked as an open project ("Drop the README altogether", since closed and removed; see git history) and is decided in [ADR-0020](./0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md): the README is dropped.
 
 ## Consequences
 
@@ -47,4 +47,4 @@ The tooling has already been drifting this way: the ADR and project templates bo
 
 - [[@jira/bolt-180-fix-gem-conflicts-with-pdk/repositories/diataxis/docs/adr/0003-auto-generate-readme-with-document-links|ADR-0003]] — superseded; established the README as the discovery surface.
 - [[@jira/bolt-180-fix-gem-conflicts-with-pdk/repositories/diataxis/docs/adr/0006-implement-automated-readme-link-management|ADR-0006]] — superseded; mandated relative Markdown links.
-- [[project_drop_the_readme_altogether]] — open project tracking the README's fate.
+- The "Drop the README altogether" project (closed; removed from `docs/_gtd`, see git history) tracked the README's fate and was decided in [ADR-0020](./0020-drop-readme-generation-so-dia-only-renames-documents-and-repoints-wiki-links.md).

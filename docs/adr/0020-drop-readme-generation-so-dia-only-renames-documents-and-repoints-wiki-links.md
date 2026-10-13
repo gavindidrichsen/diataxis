@@ -95,7 +95,7 @@ Supersedes [ADR-0009](./0009-hide-readme-sections-when-no-matching-documents-exi
 
 ## Context
 
-[ADR-0017](./0017-obsidian-not-github-is-now-the-primary-reading-surface.md) demoted the generated README from "the index" to a convenience file, and deliberately left open whether `dia` should keep generating it ([[project_drop_the_readme_altogether]]).
+[ADR-0017](./0017-obsidian-not-github-is-now-the-primary-reading-surface.md) demoted the generated README from "the index" to a convenience file, and deliberately left open whether `dia` should keep generating it (the "Drop the README altogether" project, since closed).
 
 The README code was also doing a second, unrelated job. `ReadmeManager` was the only thing that renamed documents to match their titles: renaming happened inside the loop that built the index entries, so `dia update` could not rename without writing a README, and every `dia <type> new` silently ran a full-tree rename pass as a side effect of refreshing it. One class carried two responsibilities.
 
@@ -134,5 +134,5 @@ Keeping the README as an opt-in flag would have kept all of that machinery alive
 - [[0017-obsidian-not-github-is-now-the-primary-reading-surface|ADR-0017]] - demoted the README and deferred this decision.
 - [[0009-hide-readme-sections-when-no-matching-documents-exist|ADR-0009]] - superseded; it only made sense while a README was generated.
 - [[0003-auto-generate-readme-with-document-links|ADR-0003]] and [[0006-implement-automated-readme-link-management|ADR-0006]] - already superseded by ADR-0017.
-- [[project_drop_the_readme_altogether]] - the project that tracked this decision.
+- The "Drop the README altogether" project (closed; removed from `docs/_gtd`, see git history) tracked this decision.
 - [`lib/diataxis/document_renamer.rb`](../../lib/diataxis/document_renamer.rb) - the extracted rename step.

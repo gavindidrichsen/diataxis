@@ -14,7 +14,7 @@ Before this change, `DIATAXIS_ROOT` was a blunt global override (ADR-0015): when
 
 Separately, `ensure_config_exists!` (added to guard against silently writing into an unconfigured directory) hard-failed with `ConfigurationError` whenever `DIATAXIS_ROOT` pointed at a directory with no `.diataxis` of its own, and whenever neither `DIATAXIS_ROOT` nor a local `.diataxis` were present at all -- even though both are recoverable, unambiguous situations.
 
-See [`project_simplify_diataxis_cli_output_routing_behaviour.md`](../_gtd/project_simplify_diataxis_cli_output_routing_behaviour.md) for the fuller investigation and routing-model options considered (local-first, CWD-default, global config, flag override, interactive prompt).
+See the closed "Simplify Diataxis CLI Output Routing Behaviour" project (removed from `docs/_gtd` once done; see git history) for the fuller investigation and routing-model options considered (local-first, CWD-default, global config, flag override, interactive prompt).
 
 ## Decision
 
@@ -52,6 +52,6 @@ The interactive prompt only fires for that last, truly ambiguous case; every oth
 ## References
 
 - [ADR-0015: Support environment variable configuration with DIATAXIS_ROOT and DIATAXIS_TAGS](./0015-support-environment-variable-configuration-with-diataxis-root-and-diataxis-tags.md) -- the precedence model this decision refines for document creation
-- [`project_simplify_diataxis_cli_output_routing_behaviour.md`](../_gtd/project_simplify_diataxis_cli_output_routing_behaviour.md) -- the investigation and options considered
+- The closed "Simplify Diataxis CLI Output Routing Behaviour" project (removed once done; see git history) -- the investigation and options considered
 - [`destination_resolver.rb`](../../lib/diataxis/cli/destination_resolver.rb) -- implementation
 - [`destination_resolver_spec.rb`](../../spec/destination_resolver_spec.rb) -- routing-matrix test coverage

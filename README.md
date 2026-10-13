@@ -251,6 +251,4 @@ Everyone interacting in the Diataxis project's codebases, issue trackers, chat r
 
 ### Projects
 
-* [Drop the README altogether](docs/_gtd/project_drop_the_readme_altogether.md)
-* [Simplify Diataxis CLI Output Routing Behaviour](docs/_gtd/project_simplify_diataxis_cli_output_routing_behaviour.md)
 * [Simplify the default .diataxis to just the docs root](docs/_gtd/project_simplify_the_default_diataxis_to_just_the_docs_root.md)
