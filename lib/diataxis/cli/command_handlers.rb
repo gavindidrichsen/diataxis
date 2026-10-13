@@ -15,8 +15,7 @@ module Diataxis
 
         validate_directory!(directory)
 
-        config = default_config
-        Config.create(directory, config)
+        Config.create(directory)
       end
 
       def self.handle_document(command, args, tags: [], root: nil, stdout: false, destination_override: nil,
@@ -32,14 +31,36 @@ module Diataxis
         end
       end
 
+      # `dia update <directory>` applies to exactly that directory; without one it
+      # applies to DIATAXIS_ROOT. There is no implicit current directory, and the
+      # target must itself be a .diataxis root.
       def self.handle_update(args, root: nil)
-        directory = args.empty? ? normalize_root(root) : File.expand_path(args[0])
+        directory = update_target(args, root)
         validate_directory!(directory)
+        require_diataxis_root!(directory)
 
         Config.load(directory)
 
         renamed = DocumentRenamer.new(directory, DocumentRegistry.all).rename_all
         Diataxis.logger.info(update_summary(renamed))
+      end
+
+      private_class_method def self.update_target(args, root)
+        return File.expand_path(args[0]) unless args.empty?
+        return File.expand_path(root) unless root.nil? || root.to_s.empty?
+
+        raise UsageError, 'No directory given and DIATAXIS_ROOT is not set. ' \
+                          'Run `dia update <directory>` (for example `dia update .`) or set DIATAXIS_ROOT.'
+      end
+
+      private_class_method def self.require_diataxis_root!(directory)
+        config_file = File.join(directory, Config::CONFIG_FILE)
+        return if File.file?(config_file)
+
+        ancestor = Config.find_config(directory)
+        hint = ancestor ? "Found #{ancestor}; run `dia update #{File.dirname(ancestor)}`." : 'Run `dia init` there first.'
+        raise ConfigurationError.new("'#{directory}' is not a #{Config::CONFIG_FILE} root (no #{Config::CONFIG_FILE} in it). #{hint}",
+                                     config_path: config_file)
       end
 
       private_class_method def self.validate_directory!(directory)
@@ -96,10 +117,6 @@ module Diataxis
       private_class_method def self.resolve_destination(root, destination_override, choose_destination)
         prompt_kwargs = choose_destination ? { prompt: choose_destination } : {}
         DestinationResolver.resolve(root: root, override: destination_override, **prompt_kwargs)
-      end
-
-      private_class_method def self.default_config
-        Config::DEFAULT_CONFIG
       end
     end
   end

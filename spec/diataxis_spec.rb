@@ -118,7 +118,8 @@ RSpec.describe Diataxis do
 
       it 'shows clear error message' do
         Dir.chdir(test_dir) do
-          expect { run_cli(['howto', 'new', 'Test Error']) }.to raise_error(JSON::ParserError)
+          expect { run_cli(['howto', 'new', 'Test Error']) }
+            .to raise_error(Diataxis::ConfigurationError, /is not valid JSON/)
         end
       end
     end
@@ -467,6 +468,61 @@ RSpec.describe Diataxis do
         Dir.chdir(test_dir) { run_cli(['update', '.']) }
 
         expect(File).to exist(misplaced)
+      end
+    end
+  end
+
+  describe 'update target' do
+    let(:stale) { File.join(docs_paths[:docs], 'explanation_old_name.md') }
+
+    before do
+      FileUtils.mkdir_p(docs_paths[:docs])
+      File.write(stale, "# A Better Name\n")
+    end
+
+    it 'updates the directory it is given, wherever it is run from' do
+      Dir.mktmpdir('diataxis-elsewhere') do |elsewhere|
+        Dir.chdir(elsewhere) { Diataxis::CLI.run(['update', test_dir], root: nil, default_tags: nil) }
+      end
+
+      expect(File).to exist(File.join(docs_paths[:docs], 'explanation_a_better_name.md'))
+    end
+
+    it 'updates DIATAXIS_ROOT when no directory is given' do
+      Dir.mktmpdir('diataxis-elsewhere') do |elsewhere|
+        Dir.chdir(elsewhere) { run_cli(['update']) }
+      end
+
+      expect(File).to exist(File.join(docs_paths[:docs], 'explanation_a_better_name.md'))
+    end
+
+    it 'fails when no directory is given and DIATAXIS_ROOT is not set' do
+      Dir.chdir(test_dir) do
+        expect { Diataxis::CLI.run(['update'], root: nil, default_tags: nil) }
+          .to raise_error(Diataxis::UsageError, /DIATAXIS_ROOT is not set/)
+      end
+      expect(File).to exist(stale)
+    end
+
+    it 'fails from a subdirectory and names the .diataxis root that governs it' do
+      Dir.chdir(docs_paths[:docs]) do
+        expect { Diataxis::CLI.run(['update', '.'], root: nil, default_tags: nil) }
+          .to raise_error(Diataxis::ConfigurationError, /Found .*\.diataxis; run `dia update .*`/)
+      end
+      expect(File).to exist(stale)
+    end
+
+    it 'fails for a directory with no .diataxis anywhere above it' do
+      Dir.mktmpdir('diataxis-bare') do |bare|
+        expect { Diataxis::CLI.run(['update', bare], root: nil, default_tags: nil) }
+          .to raise_error(Diataxis::ConfigurationError, /not a \.diataxis root.*Run `dia init` there first/)
+      end
+    end
+
+    it 'fails when DIATAXIS_ROOT points at a directory without a .diataxis' do
+      Dir.mktmpdir('diataxis-bare') do |bare|
+        expect { Diataxis::CLI.run(['update'], root: bare, default_tags: nil) }
+          .to raise_error(Diataxis::ConfigurationError, /not a \.diataxis root/)
       end
     end
   end

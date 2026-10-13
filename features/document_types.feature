@@ -1,6 +1,6 @@
 Feature: All Document Types
   As a documentation maintainer
-  I want to create all 6 document types
+  I want to create each document type
   So that I can organize documentation using the Diataxis framework
 
   Background:
