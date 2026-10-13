@@ -2,7 +2,7 @@
 
 require_relative '../config'
 require_relative '../document_registry'
-require_relative '../readme_manager'
+require_relative '../document_renamer'
 require_relative '../errors'
 require_relative 'destination_resolver'
 
@@ -26,9 +26,9 @@ module Diataxis
         if stdout
           print_document(args, document_class, tags: tags)
         else
-          create_document_with_readme_update(args, document_class, tags: tags, root: root,
-                                                                   destination_override: destination_override,
-                                                                   choose_destination: choose_destination)
+          create_document(args, document_class, tags: tags, root: root,
+                                                destination_override: destination_override,
+                                                choose_destination: choose_destination)
         end
       end
 
@@ -38,8 +38,8 @@ module Diataxis
 
         Config.load(directory)
 
-        readme_manager = ReadmeManager.new(directory, DocumentRegistry.all)
-        readme_manager.update
+        renamed = DocumentRenamer.new(directory, DocumentRegistry.all).rename_all
+        Diataxis.logger.info(update_summary(renamed))
       end
 
       private_class_method def self.validate_directory!(directory)
@@ -72,9 +72,8 @@ module Diataxis
         puts document_class.new(title, tags: tags, preview: true).render
       end
 
-      private_class_method def self.create_document_with_readme_update(args, document_class, tags: [], root: nil,
-                                                                       destination_override: nil,
-                                                                       choose_destination: nil)
+      private_class_method def self.create_document(args, document_class, tags: [], root: nil,
+                                                    destination_override: nil, choose_destination: nil)
         title = args[1..].join(' ')
         destination = resolve_destination(root, destination_override, choose_destination)
 
@@ -85,12 +84,13 @@ module Diataxis
         # subdirectory can find a *different*, nested .diataxis file before it
         # reaches the root one, and re-apply the relative path against that
         # nested file's location, silently doubling it (e.g. docs/docs/...).
-        if destination.standalone?
-          document_class.new(title, destination.directory, tags: tags, standalone: true).create
-        else
-          document_class.new(title, destination.directory, tags: tags).create
-          ReadmeManager.new(destination.directory, DocumentRegistry.all).update
-        end
+        document_class.new(title, destination.directory, tags: tags, standalone: destination.standalone?).create
+      end
+
+      private_class_method def self.update_summary(renamed)
+        return 'All document filenames already match their titles.' if renamed.zero?
+
+        "Renamed #{renamed} document(s) to match their titles."
       end
 
       private_class_method def self.resolve_destination(root, destination_override, choose_destination)

@@ -21,10 +21,9 @@ RSpec.describe Diataxis do
       howto: File.join(test_dir, 'docs'),
       tutorial: File.join(test_dir, 'docs'),
       adr: File.join(test_dir, 'docs/adr'),
-      wow: File.join(test_dir, 'docs/wow'),
+      wow: File.join(test_dir, 'docs'),
       explanation: File.join(test_dir, 'docs'),
-      project: File.join(test_dir, 'docs'),
-      readme: File.join(test_dir, 'README.md')
+      project: File.join(test_dir, 'docs')
     }
   end
   let(:config_path) { File.join(test_dir, '.diataxis') }
@@ -67,7 +66,25 @@ RSpec.describe Diataxis do
         end
 
         expect(File).to exist(File.join(docs_paths[:howto], 'howto_how_to_test_document.md'))
-        expect(File).to exist(docs_paths[:readme])
+      end
+    end
+
+    context 'default configuration contents' do
+      it 'only carries the default root, ADR and project locations' do
+        expect(Diataxis::Config::DEFAULT_CONFIG.keys).to contain_exactly('default', 'adr', 'projects')
+      end
+
+      it 'puts WoW documents in the default docs directory' do
+        Dir.chdir(test_dir) { run_cli(['wow', 'new', 'Branch Discipline']) }
+
+        expect(File).to exist(File.join(docs_paths[:docs], 'wow_branch_discipline.md'))
+      end
+
+      it 'still honours an explicit wow location' do
+        File.write(config_path, JSON.generate('default' => 'docs', 'wow' => 'docs/ways'))
+        Dir.chdir(test_dir) { run_cli(['wow', 'new', 'Branch Discipline']) }
+
+        expect(File).to exist(File.join(test_dir, 'docs', 'ways', 'wow_branch_discipline.md'))
       end
     end
 
@@ -76,7 +93,6 @@ RSpec.describe Diataxis do
 
       before do
         config = {
-          'readme' => 'custom/README.md',
           'howtos' => 'custom/howtos',
           'tutorials' => 'custom/learn',
           'adr' => 'custom/decisions'
@@ -91,7 +107,6 @@ RSpec.describe Diataxis do
         end
 
         expect(File).to exist(File.join(custom_dir, 'howtos/howto_how_to_test_custom_path.md'))
-        expect(File).to exist(File.join(custom_dir, 'README.md'))
       end
     end
 
@@ -122,20 +137,12 @@ RSpec.describe Diataxis do
         expect(File).to exist(File.join(test_dir, 'project_test_project.md'))
         expect(File).not_to exist(File.join(test_dir, 'docs', '_gtd', 'project_test_project.md'))
       end
-
-      it 'does not create or update the README' do
-        Dir.chdir(test_dir) do
-          run_cli(%w[howto new Test])
-        end
-
-        expect(File).not_to exist(docs_paths[:readme])
-      end
     end
   end
 
   describe 'document creation' do
     context 'creating how-tos' do
-      it 'creates how-to with correct template and updates README' do
+      it 'creates how-to with correct template' do
         Dir.chdir(test_dir) do
           run_cli(['howto', 'new', 'Configure System'])
         end
@@ -145,14 +152,11 @@ RSpec.describe Diataxis do
 
         content = File.read(howto_path)
         expect(content.downcase).to include('# how to configure system')
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content.downcase).to include('[how to configure system]')
       end
     end
 
     context 'creating tutorial' do
-      it 'creates tutorial with correct template and updates README' do
+      it 'creates tutorial with correct template' do
         Dir.chdir(test_dir) do
           run_cli(['tutorial', 'new', 'Getting Started'])
         end
@@ -162,14 +166,11 @@ RSpec.describe Diataxis do
 
         content = File.read(tutorial_path)
         expect(content).to include('# Getting Started')
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Getting Started]')
       end
     end
 
     context 'creating ADR' do
-      it 'creates ADR with correct numbering and updates README' do
+      it 'creates ADR with correct numbering' do
         Dir.chdir(test_dir) do
           run_cli(['adr', 'new', 'Use PostgreSQL Database'])
         end
@@ -179,9 +180,6 @@ RSpec.describe Diataxis do
 
         content = File.read(adr_path)
         expect(content).to include('# 0001. Use PostgreSQL Database')
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[ADR-0001]')
       end
     end
 
@@ -206,12 +204,6 @@ RSpec.describe Diataxis do
           expect(content).to include('## Decision')
           expect(content).to include('## Consequences')
         end
-      end
-
-      it 'updates README with WoW link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Branch Discipline]')
-        expect(readme_content).to include('### Ways of Working')
       end
     end
 
@@ -239,12 +231,6 @@ RSpec.describe Diataxis do
           expect(content).to include('## Key Concepts')
         end
       end
-
-      it 'updates README with project link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Sprint Planning]')
-        expect(readme_content).to include('### Projects')
-      end
     end
 
     context 'creating pr' do
@@ -268,12 +254,6 @@ RSpec.describe Diataxis do
           expect(content).to include('## Background')
           expect(content).to include('## Changes')
         end
-      end
-
-      it 'updates README with pr link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Fix Login Bug]')
-        expect(readme_content).to include('### Pull Requests')
       end
     end
 
@@ -318,17 +298,11 @@ RSpec.describe Diataxis do
           end
         end
       end
-
-      it 'updates README with fivewhy link and section' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[Deploy Script Silently Failed]')
-        expect(readme_content).to include('### 5 Whys')
-      end
     end
   end
 
   describe 'document title changes' do
-    it 'renames file and updates README when title changes' do
+    it 'renames file when title changes' do
       Dir.chdir(test_dir) do
         # Create initial document
         run_cli(['howto', 'new', 'Original Title'])
@@ -346,11 +320,6 @@ RSpec.describe Diataxis do
         new_path = File.join(docs_paths[:howto], 'howto_how_to_updated_title.md')
         expect(File).not_to exist(original_path)
         expect(File).to exist(new_path)
-
-        # Check README update
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content.downcase).not_to include('original title')
-        expect(readme_content.downcase).to include('updated title')
       end
     end
   end
@@ -388,12 +357,6 @@ RSpec.describe Diataxis do
         expected_sections.each do |section|
           expect(content).to include(section)
         end
-      end
-
-      it 'updates README with explanation section and link' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[System Architecture]')
-        expect(readme_content).to include('### Explanations')
       end
     end
 
@@ -437,12 +400,6 @@ RSpec.describe Diataxis do
         expect(File).to exist(new_path)
       end
 
-      it 'updates README links' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).not_to include('[System Architecture]')
-        expect(readme_content).to include('[Advanced System Design]')
-      end
-
       it 'maintains correct document structure' do
         content = File.read(new_path)
         expect(content).to include('# Advanced System Design')
@@ -472,7 +429,6 @@ RSpec.describe Diataxis do
 
         # Create config in other repo
         other_config = {
-          'readme' => 'docs/README.md',
           'howtos' => 'docs/how-to',
           'adr' => 'docs/references/adr'
         }
@@ -490,64 +446,27 @@ RSpec.describe Diataxis do
         end
       end
 
-      it 'only includes documents from the current repository in README' do
-        Dir.chdir(test_dir) do
-          run_cli(['update', '.'])
+      it 'only renames documents that belong to the current repository' do
+        main_adr = File.join(docs_paths[:adr], '0001-main-repo-decision.md')
+        other_adr = File.join(other_docs_paths[:adr], '0001-other-repo-decision.md')
+        { main_adr => 'Main Repo Decision', other_adr => 'Other Repo Decision' }.each do |file, old_title|
+          File.write(file, File.read(file).sub("# 0001. #{old_title}", '# 0001. Retitled Decision'))
         end
 
-        readme_content = File.read(docs_paths[:readme])
+        Dir.chdir(test_dir) { run_cli(['update', '.']) }
 
-        # Should include ADR from current repo
-        expect(readme_content).to include('[ADR-0001](docs/adr/0001-main-repo-decision.md)')
-
-        # Should not include ADR from other repo
-        expect(readme_content).not_to include('other-repo-decision.md')
+        expect(File).to exist(File.join(docs_paths[:adr], '0001-retitled-decision.md'))
+        expect(File).to exist(other_adr)
       end
 
       it 'respects configured paths when searching for documents' do
-        # Create ADR in non-standard location in current repo
-        FileUtils.mkdir_p(File.join(test_dir, 'wrong/path'))
-        wrong_path_adr = File.join(test_dir, 'wrong/path/0002-misplaced-decision.md')
-        File.write(wrong_path_adr, "# 2. Misplaced Decision\n\nDate: 2025-03-05\n")
+        misplaced = File.join(test_dir, 'wrong/path/0002-misplaced-decision.md')
+        FileUtils.mkdir_p(File.dirname(misplaced))
+        File.write(misplaced, "# 2. Retitled Misplaced\n")
 
-        Dir.chdir(test_dir) do
-          run_cli(['update', '.'])
-        end
+        Dir.chdir(test_dir) { run_cli(['update', '.']) }
 
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).not_to include('misplaced-decision.md')
-      end
-    end
-  end
-
-  describe 'README management' do
-    context 'with existing README' do
-      before do
-        FileUtils.mkdir_p(File.dirname(docs_paths[:readme]))
-        File.write(docs_paths[:readme], "Custom project description\n")
-      end
-
-      it 'preserves custom content while updating document links' do
-        Dir.chdir(test_dir) do
-          run_cli(['howto', 'new', 'Test Document'])
-        end
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('Custom project description')
-        expect(readme_content.downcase).to include('[how to test document]')
-      end
-    end
-
-    context 'without existing README' do
-      it 'creates new README with correct sections' do
-        Dir.chdir(test_dir) do
-          run_cli(['howto', 'new', 'Test Document'])
-        end
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('# ')
-        expect(readme_content).to include('### How-To Guides')
-        expect(readme_content).to include('<!-- howtolog -->')
+        expect(File).to exist(misplaced)
       end
     end
   end
@@ -560,61 +479,6 @@ RSpec.describe Diataxis do
 
       expect(Dir).to exist(docs_paths[:docs])
       expect(Dir).to exist(docs_paths[:howto])
-    end
-  end
-
-  describe 'dynamic README section management' do
-    context 'with mixed document types' do
-      before do
-        Dir.chdir(test_dir) do
-          run_cli(['howto', 'new', 'Deploy Application'])
-          run_cli(['adr', 'new', 'Use Docker'])
-          # NOTE: No tutorials or explanations created
-        end
-      end
-
-      it 'shows sections with content' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('### How-To Guides')
-        expect(readme_content).to include('### Design Decisions')
-      end
-
-      it 'hides sections without content' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).not_to include('### Tutorials')
-        expect(readme_content).not_to include('### Explanations')
-        expect(readme_content).not_to include('### Handovers')
-      end
-
-      it 'maintains proper document links in visible sections' do
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('[How to deploy Application]')
-        expect(readme_content).to include('[ADR-0001]')
-      end
-    end
-
-    context 'when sections gain content' do
-      before do
-        # Start with no tutorials
-        Dir.chdir(test_dir) do
-          run_cli(['howto', 'new', 'Basic Guide'])
-        end
-      end
-
-      it 'adds sections when documents are created' do
-        # Verify no tutorials section initially
-        initial_readme = File.read(docs_paths[:readme])
-        expect(initial_readme).not_to include('### Tutorials')
-
-        # Add a tutorial
-        Dir.chdir(test_dir) do
-          run_cli(['tutorial', 'new', 'Getting Started'])
-        end
-
-        readme_content = File.read(docs_paths[:readme])
-        expect(readme_content).to include('### Tutorials')
-        expect(readme_content).to include('[Getting Started]')
-      end
     end
   end
 
@@ -673,16 +537,6 @@ RSpec.describe Diataxis do
 
       expect(output.downcase).to include('# how to stdout demo')
       expect(File).not_to exist(File.join(docs_paths[:howto], 'howto_how_to_stdout_demo.md'))
-    end
-
-    it 'does not create or update the README' do
-      FileUtils.rm_f(docs_paths[:readme])
-
-      capture_stdout do
-        Dir.chdir(test_dir) { run_cli(['explanation', 'new', 'No Side Effects', '--stdout']) }
-      end
-
-      expect(File).not_to exist(docs_paths[:readme])
     end
 
     it 'prepends tags to the printed template' do
@@ -783,34 +637,6 @@ RSpec.describe Diataxis do
       expect(File).to exist(File.join(test_dir, 'docs', 'explanation_local_doc.md'))
     end
 
-    it 'updates README at DIATAXIS_ROOT' do
-      ENV['DIATAXIS_ROOT'] = remote_dir
-      Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['tutorial', 'new', 'Remote Tutorial'], choose_destination: choose_root)
-      end
-
-      readme = File.join(remote_dir, 'README.md')
-      expect(File).to exist(readme)
-      expect(File.read(readme)).to include('[Remote Tutorial]')
-    end
-
-    it 'runs update command with DIATAXIS_ROOT when no directory argument given' do
-      ENV['DIATAXIS_ROOT'] = remote_dir
-
-      Dir.chdir(test_dir) do
-        Diataxis::CLI.run(%w[explanation new Test], choose_destination: choose_root)
-      end
-
-      readme = File.join(remote_dir, 'README.md')
-      File.read(readme)
-
-      Dir.chdir(test_dir) do
-        Diataxis::CLI.run(['update'])
-      end
-
-      expect(File.read(readme)).to include('[Test]')
-    end
-
     it 'loads config from DIATAXIS_ROOT, not CWD' do
       custom_config = { 'default' => 'docs', 'adr' => 'custom/decisions' }
       File.write(remote_config_path, JSON.generate(custom_config))
@@ -850,7 +676,6 @@ RSpec.describe Diataxis do
       end
 
       expect(File).to exist(File.join(test_dir, 'explanation_forced_local_standalone.md'))
-      expect(File).not_to exist(docs_paths[:readme])
     end
 
     it 'uses DIATAXIS_ROOT for init when no directory argument given' do

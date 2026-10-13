@@ -31,7 +31,7 @@ Feature: DIATAXIS_ROOT Environment Variable
     And I run `bundle exec dia explanation new "Remote Document" --root`
     And I run `bundle exec dia update`
     Then the exit status should be 0
-    And the file "remote_root/README.md" should contain "Remote Document"
+    And the output should contain "match their titles"
 
   Scenario: DIATAXIS_ROOT with custom config
     Given a directory named "remote_root"
@@ -39,7 +39,6 @@ Feature: DIATAXIS_ROOT Environment Variable
     And a file named "remote_root/.diataxis" with:
       """
       {
-        "readme": "my_docs/README.md",
         "default": "my_docs",
         "adr": "my_docs/decisions"
       }
@@ -55,7 +54,6 @@ Feature: DIATAXIS_ROOT Environment Variable
       """
       {
         "default": "docs",
-        "readme": "README.md",
         "adr": "docs/adr",
         "projects": "docs/_gtd"
       }
@@ -72,7 +70,6 @@ Feature: DIATAXIS_ROOT Environment Variable
       """
       {
         "default": "docs",
-        "readme": "README.md",
         "adr": "docs/adr",
         "projects": "docs/_gtd"
       }

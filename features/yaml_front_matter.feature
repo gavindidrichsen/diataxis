@@ -7,7 +7,6 @@ Feature: YAML Front Matter Support
     Given a file named ".diataxis" with:
       """
       {
-        "readme": "docs/README.md",
         "howtos": "docs/how-tos"
       }
       """
@@ -31,8 +30,6 @@ Feature: YAML Front Matter Support
       """
     When I run `bundle exec dia update .`
     Then the exit status should be 0
-    And the file "docs/README.md" should contain "How to Setup Server on Linux"
-    And the file "docs/README.md" should contain "how-tos/howto_how_to_setup_server_on_linux.md"
 
   Scenario: Extract title from document without YAML front matter
     Given a file named "docs/how-tos/howto_deploy_app.md" with:
@@ -45,8 +42,6 @@ Feature: YAML Front Matter Support
       """
     When I run `bundle exec dia update .`
     Then the exit status should be 0
-    And the file "docs/README.md" should contain "How to Deploy Application"
-    And the file "docs/README.md" should contain "how-tos/howto_how_to_deploy_application.md"
 
   Scenario: Handle multiple documents with mixed front matter
     Given a file named "docs/how-tos/howto_with_metadata.md" with:
@@ -68,12 +63,8 @@ Feature: YAML Front Matter Support
       """
     When I run `bundle exec dia update .`
     Then the exit status should be 0
-    And the file "docs/README.md" should contain "How to Test with Metadata"
-    And the file "docs/README.md" should contain "How to Test without Metadata"
-    And the file "docs/README.md" should contain "how-tos/howto_how_to_test_with_metadata.md"
-    And the file "docs/README.md" should contain "how-tos/howto_how_to_test_without_metadata.md"
 
-  Scenario: Create new document and update README with YAML front matter
+  Scenario: Update a document that gains YAML front matter
     When I run `bundle exec dia howto new "Configure Database"`
     Then the exit status should be 0
     And the file "docs/how-tos/howto_how_to_configure_database.md" should exist
@@ -87,4 +78,5 @@ Feature: YAML Front Matter Support
       ---
       """
     When I run `bundle exec dia update .`
-    Then the file "docs/README.md" should contain "How to configure Database"
+    Then the exit status should be 0
+    And the file "docs/how-tos/howto_how_to_configure_database.md" should exist

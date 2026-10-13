@@ -10,9 +10,7 @@ module Diataxis
     DEFAULT_DOCS_ROOT = 'docs'
     DEFAULT_CONFIG = {
       'default' => DEFAULT_DOCS_ROOT,
-      'readme' => 'README.md',
       'adr' => "#{DEFAULT_DOCS_ROOT}/adr",
-      'wow' => "#{DEFAULT_DOCS_ROOT}/wow",
       'projects' => "#{DEFAULT_DOCS_ROOT}/_gtd"
     }.freeze
 
